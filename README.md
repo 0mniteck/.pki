@@ -57,3 +57,12 @@ curl -o /tmp/warp.status -s --pinnedpubkey "sha256//$(<.pki/registry/www.cloudfl
 
 #### add each repo to deploy keys in this repo as read only
 #### add ssh config host for `git@.pki:0mniteck/.pki.git` from each project bootstrap
+```
+if [[ \"\$ssh_conf\" != *.pki* ]]; then
+  echo \"
+Host .pki
+  Hostname github.com
+  IdentityFile $home/\$IDENTITY_FILE
+  IdentitiesOnly yes\" >> $home/.ssh/config
+fi
+```
