@@ -55,8 +55,9 @@ curl -o /tmp/warp.status -s --pinnedpubkey "sha256//$(<.pki/registry/www.cloudfl
 	branch = main
 ```
 
-#### add each repo to deploy keys in this repo as read only
-#### add ssh config host for `git@.pki:0mniteck/.pki.git` from each project bootstrap
+#### add read only deploy key ecdsa_sk
+
+#### add ssh config host and keys for `git@.pki:0mniteck/.pki.git` from each project bootstrap
 ```
 if [[ \"\$ssh_conf\" != *.pki* ]]; then
   echo \"
