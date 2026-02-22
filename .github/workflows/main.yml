@@ -47,6 +47,9 @@ jobs:
           
           pushd $GITHUB_WORKSPACE
             check.index
+            git add -A
+            git commit -S -m "Test Push"
+            git push
           popd
 
           echo DONE
