@@ -47,10 +47,8 @@ jobs:
           
           pushd $GITHUB_WORKSPACE
             check.index
-            git config --global user.email 10482171+0mniteck@users.noreply.github.com
-            git config --global user.name 'Shant Patrick Tchatalbachian'
             git add -A
-            git commit -S -m "Test Push"
+            git commit -m "Test Push"
             git push
           popd
 
