@@ -1,1 +1,55 @@
 #!/usr/bin/env -S - bash --norc --noprofile
+fetch.pki() { # $1 = domain/FQDN
+pushd registry
+  openssl s_client -servername $1 -connect $1:443 < /dev/null | sed -n "/-----BEGIN/,/-----END/p" > $1.pem && \
+  openssl x509 -in $1.pem -pubkey -noout > $1.pubkey.pem && openssl x509 -in $1.pem -enddate -noout > $1.exp &&\
+  openssl asn1parse -noout -inform pem -in $1.pubkey.pem -out $1.pubkey.der && \
+  openssl dgst -sha256 -binary $1.pubkey.der | openssl base64 > $1.pubkey && \
+  rm -f *.pem *.der || exit 1
+  echo "Successfully fetched pubkey for $1"
+popd
+}
+
+check.csv() { # $1 = domain/FQDN
+  dater=$(date -d "$(cat registry/$1.exp | cut -d'=' -f2)" +%s)
+  date=$(date +%s)
+  if [[ "$dater" -le "$date" ]]; then
+    fetch.pki $1
+  fi
+}
+
+check.pki() { # $1 = domain/FQDN
+  if [[ -f "registry/$1.pubkey" ]]; then
+    check.csv $1
+  else
+    fetch.pki $1
+  fi
+}
+
+invalidate.pki() {
+  
+}
+
+check.against.pki() { # $1 = domain/FQDN
+  if [[ -f "registry/$1.pubkey" ]]; then
+    check.csv $1
+  else
+    invalidate.pki $1
+  fi
+}
+
+check.index() {
+  for i in $(cat index.csv | tr ',' '\n' | cat); do
+    check.pki $i
+  done
+}
+
+check.against.index() {
+  for i in $(cat index.csv | tr ',' '\n' | cat); do
+    check.against.pki $i
+  done
+}
+
+check.index
+
+echo DONE
