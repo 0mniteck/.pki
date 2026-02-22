@@ -13,7 +13,7 @@ jobs:
       - name: Fetch PKI
         run: |
           fetch.pki() { # $1 = domain/FQDN
-          pushd /registry
+          pushd registry
             openssl s_client -servername $1 -connect $1:443 < /dev/null | sed -n "/-----BEGIN/,/-----END/p" > $1.pem && \
             openssl x509 -in $1.pem -pubkey -noout > $1.pubkey.pem && openssl x509 -in $1.pem -enddate -noout > $1.exp &&\
             openssl asn1parse -noout -inform pem -in $1.pubkey.pem -out $1.pubkey.der && \
