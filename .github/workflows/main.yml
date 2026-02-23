@@ -55,10 +55,10 @@ jobs:
           
           pushd $GITHUB_WORKSPACE
             check.index
-            git config --global user.email 10482171+0mniteck@users.noreply.github.com
-            git config --global user.name 'Shant Patrick Tchatalbachian'
+            git config user.name 'github-actions[bot]'
+            git config user.email 'github-actions[bot]@users.noreply.github.com'
             git add -A
-            git commit -m "Ran .pki fetch - Index number $(cat index.ver)"
+            git commit -m "Index number $(cat index.ver) - Ran .pki fetch - $(date '+%m/%d/%y at %H:%m')"
             git push
           popd
 
