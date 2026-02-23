@@ -1,17 +1,21 @@
 name: CI
 on:
+  schedule:
+    - cron: '0 0 * * *'
   push:
-    branches: [ "main" ]
-  pull_request:
     branches: [ "main" ]
   workflow_dispatch:
 jobs:
   fetch:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # checkout@v6
       - name: Fetch PKI
         run: |
+          touch .ver
+          index_number=$((<(cat .ver) + 1))
+          echo $index_number > .ver
+          
           fetch.pki() { # $1 = domain/FQDN
           pushd registry
             openssl s_client -servername $1 -connect $1:443 < /dev/null | sed -n "/-----BEGIN/,/-----END/p" > $1.pem && \
@@ -50,7 +54,7 @@ jobs:
             git config --global user.email 10482171+0mniteck@users.noreply.github.com
             git config --global user.name 'Shant Patrick Tchatalbachian'
             git add -A
-            git commit -m "Test Push"
+            git commit -m "Ran .pki fetch - Index number <(cat .ver)"
             git push
           popd
 
