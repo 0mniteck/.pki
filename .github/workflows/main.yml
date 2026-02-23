@@ -54,7 +54,7 @@ jobs:
             git config --global user.email 10482171+0mniteck@users.noreply.github.com
             git config --global user.name 'Shant Patrick Tchatalbachian'
             git add -A
-            git commit -m "Ran .pki fetch - Index number <(cat .ver)"
+            git commit -m "Ran .pki fetch - Index number $(cat .ver)"
             git push
           popd
 
