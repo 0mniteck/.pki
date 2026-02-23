@@ -13,8 +13,8 @@ popd
 }
 
 check.remote.pki() { # $1 = domain/FQDN
-  curl -o test/$1.pubkey -s --pinnedpubkey "sha256//$(<registry/www.cloudflare.com.pubkey)" \
---tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://www.cloudflare.com/cdn-cgi/trace
+  curl -o test/$1.pubkey -s --pinnedpubkey "sha256//1FtgkXeU53bUTaObUogizKNIqs/ZGaEo1k2AwG30xts=" \
+--tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://raw.githubusercontent.com/0mniteck/.pki/refs/heads/main/registry/$1.pubkey
 }
 
 check.csv() { # $1 = domain/FQDN
@@ -31,15 +31,16 @@ check.against.csv() { # $1 = domain/FQDN
   if [[ "$dater" -le "$date" ]]; then
     fetch.pki $1
   fi
-  check.remote.pki $1
+  check.against.pki $1
 }
 
-check.pki() { # $1 = domain/FQDN
-  if [[ -f "registry/$1.pubkey" ]]; then
-    check.csv $1
-  else
+check.liveness.csv() { # $1 = domain/FQDN
+  dater=$(date -d "$(cat local/$1.exp | cut -d'=' -f2)" +%s)
+  date=$(date +%s)
+  if [[ "$dater" -le "$date" ]]; then
     fetch.pki $1
   fi
+  check.remote.pki $1
 }
 
 invalidate.pki() {
@@ -55,15 +56,29 @@ validate.pki() {
 
 check.against.pki() { # $1 = domain/FQDN
   if [[ -f "registry/$1.pubkey" ]]; then
-    check.csv $1
+    check.against.csv $1
   else
     invalidate.pki $1
+  fi
+}
+
+check.pki() { # $1 = domain/FQDN
+  if [[ -f "registry/$1.pubkey" ]]; then
+    check.csv $1
+  else
+    fetch.pki $1
   fi
 }
 
 check.index() {
   for i in $(cat index.csv | tr ',' '\n' | cat); do
     check.pki $i
+  done
+}
+
+check.liveness() {
+  for i in $(cat index.csv | tr ',' '\n' | cat); do
+    check.liveness.pki $i
   done
 }
 
