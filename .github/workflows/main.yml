@@ -13,7 +13,7 @@ jobs:
       - name: Fetch PKI
         run: |
           touch .ver
-          index_number=$((<(cat .ver) + 1))
+          index_number=$(($(cat .ver) + 1))
           echo $index_number > .ver
           
           fetch.pki() { # $1 = domain/FQDN
