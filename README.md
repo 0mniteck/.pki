@@ -1,8 +1,9 @@
 # .pki
-New project for collecting and pinning widely used public keys for mutual auth in https curl requests as a stop gap measure
+New project for collecting and pinning widely used public keys for mutual auth in https curl requests
+(as a stop gap measure only after an ssh connection is established)
 
-Will be added to other projects as a submodule and github workflows will update the `registry/` folder
-with know domains and their expiries from a list stored in an `index.csv`
+Will be added to other projects as a submodule and github workflows will update and validate the repo
+with know domains and their expiries into the `registry/` from a list stored in an `index.csv`
 
 #### fetch index
 > [Github Workflow](.github/workflows/main.yml)
@@ -19,7 +20,7 @@ with know domains and their expiries from a list stored in an `index.csv`
 	branch = main
 ```
 
-#### add read only deploy key ecdsa_sk and RSA 4096 (attended/unattended)
+#### add read only deploy keys ecdsa_sk and RSA 4096 (attended/unattended)
 
 #### add .ssh/config host and ssh keys for `git@.pki:0mniteck/.pki.git` from each projects `.identity` file
 ```
