@@ -12,9 +12,9 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # checkout@v6
       - name: Fetch PKI
         run: |
-          touch .ver
-          index_number=$(($(cat .ver) + 1))
-          echo $index_number > .ver
+          touch index.ver
+          index_number=$(($(cat index.ver) + 1))
+          echo $index_number > index.ver
           
           fetch.pki() { # $1 = domain/FQDN
           pushd registry
@@ -31,7 +31,11 @@ jobs:
             dater=$(date -d "$(cat registry/$1.exp | cut -d'=' -f2)" +%s)
             date=$(date +%s)
             if [[ "$dater" -le "$date" ]]; then
+              echo "$1.pubkey expired"
+              echo "Fetching new pubkey for $1"
               fetch.pki $1
+            else
+              echo "$1.pubkey is still valid"
             fi
           }
           
@@ -54,7 +58,7 @@ jobs:
             git config --global user.email 10482171+0mniteck@users.noreply.github.com
             git config --global user.name 'Shant Patrick Tchatalbachian'
             git add -A
-            git commit -m "Ran .pki fetch - Index number $(cat .ver)"
+            git commit -m "Ran .pki fetch - Index number $(cat index.ver)"
             git push
           popd
 
