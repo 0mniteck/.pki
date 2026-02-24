@@ -6,8 +6,11 @@ permissions:
 on:
   workflow_dispatch:
 jobs:
+  fetch-pki:
+    uses: 0mniteck/.pki/.github/workflows/main.yml@8336f1d6eb6b36e4145b00ce4f6daf2ff66affe8 #v0.0.2
   immutable-rel:
     runs-on: ubuntu-latest
+    needs: fetch-pki
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # checkout@v6
