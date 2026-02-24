@@ -50,7 +50,7 @@ EOF__
 
 ```
 
-#### Lastly add checks at the project level script
+#### Lastly add checks at the project level script + attestation checks # WIP
 ```
 validate.with.pki() { # \$1 = domain/FQDN, # \$2 = filename, # \$3 = full_url
   fetch.with.pki() {
