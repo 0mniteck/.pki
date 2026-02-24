@@ -26,25 +26,16 @@ jobs:
               repo: context.repo.repo,
               run_id: run_id
             });
-
-            // Filter artifacts to include only attestations
             const attestationArtifacts = response.data.artifacts.filter(a => a.name.startsWith('attestation-'));
             return attestationArtifacts.map(artifact => artifact.id);
-
       - name: Download Attestations
         run: |
           attestation_ids=(${{ steps.fetch_attestation.outputs.result }})
-          
           for id in "${attestation_ids[@]}"; do
-            # Fetch the raw content of the attestation artifact
             attestation_content=$(curl -H "Accept: application/json" \
               -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
               https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$id)
-
-            # Extract the URL for raw download from the artifact response
             download_url=$(echo "$attestation_content" | jq -r '.archive_download_url')
-
-            # Save the raw attestation to a file
             mkdir -p attestations
             curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "$download_url" > "attestations/attestation_$id.json"  # Adjust extension as necessary
             echo "Attestation saved to attestations/attestation_$id.json"
@@ -54,6 +45,7 @@ jobs:
         with:
           tag: ${{ github.ref }}
           draft: true
-          files: 'attestations/attestation_**.json'  # File to include as attestation
+          files: |
+            'attestations/attestation_**.json'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
