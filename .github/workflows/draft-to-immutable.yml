@@ -12,6 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # checkout@v6
       - name: Generate attestation
+        id: generate_attestation
         uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f #v3
         with: 
             subject-path: 'registry/**'
@@ -21,12 +22,14 @@ jobs:
           curl -L \
           -H "Accept: application/vnd.github+html" \
           -H "Authorization: Bearer ${{ github.token }}" \
-          https://github.com/0mniteck/.pki/actions/runs/${{ github.run_id }}/jobs/${{ job.check_run_id }}/summary_raw > summary.info
+          https://github.com/0mniteck/.pki/actions/runs/${{ github.run_id }}/jobs/${{ steps.generate_attestation.outputs.id }}/summary_raw > summary.info
       - name: Download Attestations
         id: download_attestation
         run: |
-          mkdir -p attestations && sum=$(cat summary.info | cut -d'"' -f2 | cut -d'/' -f7)
-          curl $(cat summary.info | cut -d'"' -f2)/download > attestations/attestation.json
+          mkdir -p attestations
+          cat summary.info | cut -d'"' -f2 | cut -d'/' -f7 > id
+          cat id
+          cat summary.info | cut -d'"' -f2 | xargs -i{} curl {}/download > attestations/attestation.json
       - name: Add assets to a draft release
         uses: gittools/actions/gitreleasemanager/addasset@71a79f7569b981036febd9ce5870f87e069928e7 # v4.3.3
         with:
