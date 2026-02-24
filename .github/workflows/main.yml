@@ -3,7 +3,8 @@ on:
   schedule:
     - cron: '0 0 * * *'
   push:
-    branches: [ "main" ]
+    paths:
+      - '**.csv'
   workflow_dispatch:
 jobs:
   fetch:
@@ -17,7 +18,7 @@ jobs:
           echo $index_number > index.ver
 
           validate.pki() {
-            curl -s --pinnedpubkey "sha256//$(<register/$1.pubkey)" \
+            curl -s --pinnedpubkey "sha256//$(<registry/$1.pubkey)" \
             --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://$1/ > /dev/null || exit 1
           }
           
