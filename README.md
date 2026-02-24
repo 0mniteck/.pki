@@ -49,3 +49,16 @@ cat > $HOME/$PKI_ID_FILE.pub << EOF__
 EOF__
 
 ```
+
+#### Lastly add checks at the project level
+```
+validate.with.pki() { # \$1 = domain/FQDN, # \$2 = filename, # \$3 = full_url
+  fetch.with.pki() {
+    curl -s --pinnedpubkey \"sha256//\$(<.pki/registry/\$1.pubkey)\" \
+    --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://\$3 > \$2 || exit 1
+  }
+  curl -s --pinnedpubkey \"sha256//\$(<.pki/registry/\$1.pubkey)\" \
+  --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://\$1 > /dev/null || exit 1
+  fetch.with.pki \$1 \$2 \$3 || exit 1
+}
+```
