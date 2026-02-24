@@ -29,6 +29,7 @@ jobs:
             const attestationArtifacts = response.data.artifacts.filter(a => a.name.startsWith('attestation-'));
             return attestationArtifacts.map(artifact => artifact.id);
       - name: Download Attestations
+        id: download_attestation
         run: |
           attestation_ids=(${{ steps.fetch_attestation.outputs.result }})
           for id in "${attestation_ids[@]}"; do
@@ -40,12 +41,13 @@ jobs:
             curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "$download_url" > "attestations/attestation_$id.json"
             echo "Attestation saved to attestations/attestation_$id.json"
           done
+          return $(date +%d-%m-%Y)
       - name: SoftProp Realease Draft for Review
         uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b #v2.5.0
         with:
-          tag: ${{ github.ref }}
+          tag: ${{ steps.download_attestation.outputs.result }}
           draft: true
           files: |
             'attestations/attestation_**.json'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
