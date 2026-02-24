@@ -1,11 +1,59 @@
-name: CI
+name: Draft_Immutable_Release
+permissions:
+  id-token: write
+  contents: write
+  attestations: write
 on:
   workflow_dispatch:
 jobs:
   immutable-rel:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # checkout@v6
-      - name: Push Attestations PKI
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # checkout@v6
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f #v3
+        with: 
+            subject-path: 'registry/**'
+      - name: Fetch Attestation
+        id: fetch_attestation
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd #v8
+        with:
+          script: |
+            const run_id = '${{ github.run_id }}';
+            const response = await github.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: run_id
+            });
+
+            // Filter artifacts to include only attestations
+            const attestationArtifacts = response.data.artifacts.filter(a => a.name.startsWith('attestation-'));
+            return attestationArtifacts.map(artifact => artifact.id);
+
+      - name: Download and Save Attestations
         run: |
-            
+          attestation_ids=(${{ steps.fetch_attestation.outputs.result }})
+          
+          for id in "${attestation_ids[@]}"; do
+            # Fetch the raw content of the attestation artifact
+            attestation_content=$(curl -H "Accept: application/json" \
+              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$id)
+
+            # Extract the URL for raw download from the artifact response
+            download_url=$(echo "$attestation_content" | jq -r '.archive_download_url')
+
+            # Save the raw attestation to a file
+            mkdir -p attestations
+            curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "$download_url" > "attestations/attestation_$id.json"  # Adjust extension as necessary
+            echo "Attestation saved to attestations/attestation_$id.json"
+          done
+      - name: SoftProp Realease Draft for Review
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b #v2.5.0
+        with:
+          tag: ${{ github.ref }}
+          draft: true
+          files: 'attestations/attestation_**.json'  # File to include as attestation
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
