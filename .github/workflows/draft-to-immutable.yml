@@ -17,36 +17,21 @@ jobs:
             subject-path: 'registry/**'
       - name: Fetch Attestation ID's
         id: fetch_attestation
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd #v8
-        with:
-          script: |
-            const run_id = '${{ github.run_id }}';
-            const response = await github.actions.listWorkflowRunArtifacts({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: run_id
-            });
-            const attestationArtifacts = response.data.artifacts.filter(a => a.name.startsWith('attestation-'));
-            return attestationArtifacts.map(artifact => artifact.id);
+        run: |
+          curl -L \
+          -H "Accept: application/vnd.github+html" \
+          -H "Authorization: Bearer ${{ github.token }}" \
+          https://github.com/0mniteck/.pki/actions/runs/${{ github.job }}/jobs/${{ github.run_id }}/summary_raw > summary.info
       - name: Download Attestations
         id: download_attestation
         run: |
-          attestation_ids=(${{ steps.fetch_attestation.outputs.result }})
-          for id in "${attestation_ids[@]}"; do
-            attestation_content=$(curl -H "Accept: application/json" \
-              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$id)
-            download_url=$(echo "$attestation_content" | jq -r '.archive_download_url')
-            mkdir -p attestations
-            curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "$download_url" > "attestations/attestation_$id.json"
-            echo "Attestation saved to attestations/attestation_$id.json"
-          done
-          return $(date +%d-%m-%Y)
-      - name: Add assets to a release
+          mydir -p attestations
+          curl $(cat summary.info | cut -d'"' -f2)/download > attestations/attestation_$(cat summary.info | cut -d'"' -f2 | cut -d'/' -f7).json
+      - name: Add assets to a draft release
         uses: gittools/actions/gitreleasemanager/addasset@71a79f7569b981036febd9ce5870f87e069928e7 # v4.3.3
         with:
           token: ${{ github.token }}
           repository: '0mniteck/.pki'
-          name: 'Index Version 10'
+          name: 'v0.0.2'
           assets: |
               'attestations/attestation_**.json'
