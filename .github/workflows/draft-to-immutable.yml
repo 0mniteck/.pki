@@ -37,7 +37,7 @@ jobs:
               https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$id)
             download_url=$(echo "$attestation_content" | jq -r '.archive_download_url')
             mkdir -p attestations
-            curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "$download_url" > "attestations/attestation_$id.json"  # Adjust extension as necessary
+            curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "$download_url" > "attestations/attestation_$id.json"
             echo "Attestation saved to attestations/attestation_$id.json"
           done
       - name: SoftProp Realease Draft for Review
