@@ -1,9 +1,8 @@
-name: Draft Immutable Release
+name: Immutable Release
 permissions:
   id-token: write
   contents: write
   attestations: write
-  artifact-metadata: write
 on:
   workflow_dispatch:
 jobs:
@@ -16,7 +15,12 @@ jobs:
         id: generate_attestation
         uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f #v3
         with:
-            subject-path: 'registry/**'
+            subject-path: |
+              index.csv
+              index.ver
+              local.sh
+              'registry/**'
+              '.github/workflows/**'
       - name: Fetch Attestation ID's
         id: fetch_attestation
         run: |
@@ -24,10 +28,7 @@ jobs:
           echo 1. ${{ steps.generate_attestation.outputs.bundle-path }} >> runner_outputs
           echo 2. ${{ steps.generate_attestation.outputs.attestation-url }} >> runner_outputs
           echo 3. ${{ steps.generate_attestation.outputs.attestation-id }} >> runner_outputs
-          echo 4. ${{ steps.generate_attestation.outputs.job-summary }} >> runner_outputs
-          echo 5. ${{ steps.generate_attestation.outputs.GITHUB_STEP_SUMMARY }} >> runner_outputs
           cat runner_outputs
-          RUNNER_OUT=runner_outputs
       - name: Download Attestations
         id: download_attestation
         run: |
@@ -44,14 +45,23 @@ jobs:
           -H "Authorization: Bearer ${{ github.token }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/0mniteck/.pki/releases \
-          -d '{"tag_name":"v0.0.2","target_commitish":"master","name":"v0.0.2","body":"${RUNNER_OUT}","draft":true,"prerelease":false,"generate_release_notes":true}'
+          -d '{"tag_name":"v0.0.2","target_commitish":"main","name":"v0.0.2","body":"","draft":true,"make_latest":false,"prerelease":false,"generate_release_notes":true}'
       - name: Add assets to draft release
         uses: gittools/actions/gitreleasemanager/addasset@71a79f7569b981036febd9ce5870f87e069928e7 # v4.3.3
         with:
           token: ${{ github.token }}
           repository: '0mniteck/.pki'
-          name: 'v0.0.2'
+          milestone: 'v0.0.2'
           assets: |
-              "runner_outputs"
+              "runner_outputs.log"
               "attestations/attestation_**.json"
               "${RUNNER_TEMP}/created_attestation_paths.txt"
+      - name: Publish Release
+        run: |
+          curl -L \
+          -X PATCH \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ github.token }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/OWNER/REPO/releases/RELEASE_ID \
+          -d '{"tag_name":"v0.0.2","target_commitish":"main","name":"v0.0.2","body":"Automating release workflow.","draft":false,"make_latest":true,"immutable":true,"prerelease":false}'
