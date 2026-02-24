@@ -25,8 +25,8 @@ jobs:
       - name: Download Attestations
         id: download_attestation
         run: |
-          mkdir -p attestations
-          curl $(cat summary.info | cut -d'"' -f2)/download > attestations/attestation_$(cat summary.info | cut -d'"' -f2 | cut -d'/' -f7).json
+          mkdir -p attestations && sum=$(cat summary.info | cut -d'"' -f2 | cut -d'/' -f7)
+          curl $(cat summary.info | cut -d'"' -f2)/download > attestations/attestation_$sum.json
       - name: Add assets to a draft release
         uses: gittools/actions/gitreleasemanager/addasset@71a79f7569b981036febd9ce5870f87e069928e7 # v4.3.3
         with:
