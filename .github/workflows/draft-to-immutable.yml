@@ -21,11 +21,11 @@ jobs:
           curl -L \
           -H "Accept: application/vnd.github+html" \
           -H "Authorization: Bearer ${{ github.token }}" \
-          https://github.com/0mniteck/.pki/actions/runs/${{ github.job }}/jobs/${{ github.run_id }}/summary_raw > summary.info
+          https://github.com/0mniteck/.pki/actions/runs/${{ github.run_id }}/jobs/${{ job.check_run_id }}/summary_raw > summary.info
       - name: Download Attestations
         id: download_attestation
         run: |
-          mydir -p attestations
+          mkdir -p attestations
           curl $(cat summary.info | cut -d'"' -f2)/download > attestations/attestation_$(cat summary.info | cut -d'"' -f2 | cut -d'/' -f7).json
       - name: Add assets to a draft release
         uses: gittools/actions/gitreleasemanager/addasset@71a79f7569b981036febd9ce5870f87e069928e7 # v4.3.3
