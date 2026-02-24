@@ -1,5 +1,7 @@
 #!/usr/bin/env -S - bash --norc --noprofile
 
+# WIP
+
 fetch.pki() { # $1 = domain/FQDN
 mkdir -p local
 pushd local
