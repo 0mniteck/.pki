@@ -1,0 +1,15 @@
+name: CI
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+jobs:
+  immutable-rel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # checkout@v6
+      - name: Push Attestations PKI
+        run: |
+            
