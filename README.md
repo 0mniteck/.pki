@@ -8,7 +8,7 @@ with know domains and their expiries into the `registry/` from a list stored in 
 #### fetch index
 > [Github Workflow](.github/workflows/main.yml)
 
-#### client side checks
+#### client side validation of index
 > [local.sh](local.sh)
 
 #### add submodule to `.gitconfig` of project and `git submodules init`
@@ -50,7 +50,7 @@ EOF__
 
 ```
 
-#### Lastly add checks at the project level
+#### Lastly add checks at the project level script
 ```
 validate.with.pki() { # \$1 = domain/FQDN, # \$2 = filename, # \$3 = full_url
   fetch.with.pki() {
