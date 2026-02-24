@@ -28,13 +28,13 @@ if [[ \"\$ssh_conf\" != *.pki* ]]; then
   echo \"
 Host .pki
   Hostname github.com
-  IdentityFile $home/\$IDENTITY_FILE
+  IdentityFile $home/\$PKI_ID_FILE
   IdentitiesOnly yes\" >> $home/.ssh/config
 fi
 ```
 
 ```
-cat > $HOME/$IDENTITY_FILE << EOF_
+cat > $HOME/$PKI_ID_FILE << EOF_
 -----BEGIN OPENSSH PRIVATE KEY-----
 
 ...
@@ -42,7 +42,7 @@ cat > $HOME/$IDENTITY_FILE << EOF_
 -----END OPENSSH PRIVATE KEY-----
 EOF_
 
-cat > $HOME/$IDENTITY_FILE.pub << EOF__
+cat > $HOME/$PKI_ID_FILE.pub << EOF__
 
 ...
 
