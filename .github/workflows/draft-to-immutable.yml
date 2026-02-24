@@ -42,10 +42,11 @@ jobs:
             echo "Attestation saved to attestations/attestation_$id.json"
           done
           return $(date +%d-%m-%Y)
-      - name: SoftProp Realease Draft for Review
-        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b #v2.5.0
+      - name: Add assets to a release
+        uses: gittools/actions/gitreleasemanager/addasset@71a79f7569b981036febd9ce5870f87e069928e7 # v4.3.3
         with:
-          tag: ${{ steps.download_attestation.outputs.result }}
-          draft: true
-          files: |
-            'attestations/attestation_**.json'
+          token: ${{ github.token }}
+          repository: '0mniteck/.pki'
+          name: 'Index Version 10'
+          assets: |
+              'attestations/attestation_**.json'
