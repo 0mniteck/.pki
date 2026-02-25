@@ -1,8 +1,13 @@
 #!/usr/bin/env -S - bash --norc --noprofile
+# WIP - SLA 1 day
+## Usage: Accepts: Any url thats a FQDN; If the link was a domain.tld/file it will attempt to fetch it otherwise,
+##        Validates: The attestations against the pki and pinned pubkeys as well as checks expiry before each use.
+##        Returns: If provided a url/file it returns a file to the current directory visible exit 1 on failure
+## 
+## Requirements: apt-get -qq update && apt-get -qq install gh
+## Recommended: fetch over secure gateway, or over git@ssh_sk(security_key)
 
-# WIP - ETA 1 day SLA
-pkexec bash -c 'apt-get -qq update && apt-get -qq install gh'
-local=$HOMR/.pki/registry
+local=$HOME/.pki/registry
 remote=./registry
 mkdir -p $local
 
@@ -17,28 +22,28 @@ pushd $local/ > /dev/null
 popd > /dev/null
 }
 
-validate.with.pki() { # \$1 = domain/FQDN, # \$2 = filename, # \$3 = full_url
+validate.with.pki() { # $1 = domain/FQDN, # $2 = filename-or-/dev/null, # $3 = full_url or blank
   attest.with.gh() {
 	pushd $remote/ > /dev/null
-    gh attestation verify $1 --repo 0mniteck/.pki || exit 1;
-    echo \"$1.pubkey Attested\"
+    gh attestation verify $1 --repo 0mniteck/.pki || trturn 1;
+    echo "$1.pubkey Attested"
   }
   fetch.with.pki() {
-    curl -s --pinnedpubkey \"sha256//\$(<$remote/\$1.pubkey)\" \
+    curl -s --pinnedpubkey "sha256//$(<$remote/$1.pubkey)" \
     --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://\$3 > \$2 || exit 1
   }
   check.remote.pki() { # $1 = domain/FQDN
-  chk_rmt=$(curl -o test/$1.pubkey -s --pinnedpubkey "sha256//1FtgkXeU53bUTaObUogizKNIqs/ZGaEo1k2AwG30xts=" \
+  chk_rmt=$(curl -o $local/$1.pubkey -s --pinnedpubkey "sha256//1FtgkXeU53bUTaObUogizKNIqs/ZGaEo1k2AwG30xts=" \
   --tlsv1.3 --from.proto -all,+https --remove-on-error --no-insecure https://raw.githubusercontent.com/0mniteck/.pki/refs/heads/main/registry/$1.pubkey)
   chk_rmt
   }
-  attest.with.gh \$1 || exit 1
-  curl -s --pinnedpubkey \"sha256//\$(<.pki/registry/\$1.pubkey)\" \
-  --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://\$1 > /dev/null || exit 1
+  attest.with.gh $1 || exit 1
+  curl -s --pinnedpubkey \"sha256//$(<.pki/registry/$1.pubkey)" \
+  --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://$1 > /dev/null || exit 1
   
   popd > /dev/null
-  fetch.with.pki \$1 \$2 \$3 || exit 1
-  echo \"\$1.pubkey is valid, fetched \$2.\"
+  fetch.with.pki $1 $2 $3 || exit 1
+  echo "$1.pubkey is valid, fetched $2."
 }
 
 invalidate.pki() { # $1 = domain/FQDN
