@@ -6,16 +6,17 @@ Adding it to other projects as a submodule. Github workflows will update, valida
 with know domains and their expiries adding into the `registry/` from the list stored in an `index.csv`
 
 #### fetch and validate index registry + attest with sigstore + immutable releases
-> [Github Workflow](.github/workflows/immutable.yml)
+> [Github Workflow](.github/workflows/check-attest.yml)
 
 #### client side validation of `registry/` against expiry, attested pki, and liveness
 > [local.sh](local.sh) # WIP - ETA 2 days SLA
 
-#### add checks at the project level script + attestation checks # WIP - ETA 2 days SLA
-```
+#### add checks at the project level script + attestation checks
 validate.with.pki() { # \$1 = domain/FQDN, # \$2 = filename, # \$3 = full_url
   attest.with.gh() {
-    #WIP
+    pkexec bash -c 'apt-get -qq update && \
+					apt-get install gh'
+	gh attestation verify || exit 1
   }
   fetch.with.pki() {
     curl -s --pinnedpubkey \"sha256//\$(<.pki/registry/\$1.pubkey)\" \
@@ -26,7 +27,6 @@ validate.with.pki() { # \$1 = domain/FQDN, # \$2 = filename, # \$3 = full_url
   fetch.with.pki \$1 \$2 \$3 || exit 1
 }
 ```
-##
 
 #### add submodule to `.gitconfig` of project and `git submodules init`
 ```
