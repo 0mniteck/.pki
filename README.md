@@ -7,6 +7,11 @@ with know domains and their expiries adding into the `registry/` from the list s
 
 #### fetch and validate index registry + attest with sigstore + immutable releases
 > [Github Workflow](.github/workflows/check-attest.yml)
+> #### <h3>Attestation Created</h3>
+> <ul><li><a href="https://github.com/0mniteck/.pki/attestations/19776406">https://github.com/0mniteck/.pki/attestations/19776406</a>
+> </li></ul>
+> #### 02/25/2026 - # v0.0.3 Immutable Tag
+>
 
 #### client side validation of `registry/` against expiry, attested pki, and liveness
 > [local.sh](local.sh) # WIP - ETA 1 day SLA
