@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 jobs:
   release-pki:
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@3ffda874b6b7fa1d1db8acd14074ffee9d5d5644 #v0.0.2
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@c5ba574e9c0b77ce8bd357df765f3181bdaef8de #v0.0.2
   immutable-rel:
     runs-on: ubuntu-latest
     needs: release-pki
