@@ -4,6 +4,7 @@ permissions:
   contents: write
   attestations: write
 on:
+  workflow_run:
   workflow_dispatch:
 jobs:
   fetch-pki:
