@@ -14,7 +14,7 @@ permissions:
   attestations: write
 jobs:
   release-pki:
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@b30c939237dfd12ac2169cb77512e995081c21cf # v0.0.2
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@22a578a09c09dd7d1c770d9b1699fe39b0e60175 # v0.0.2
   immutable-rel:
     needs: release-pki
     permissions:
