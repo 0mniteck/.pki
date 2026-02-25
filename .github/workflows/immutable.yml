@@ -30,7 +30,7 @@ jobs:
           cat runner_outputs && mv runner_outputs runner_outputs.log
       - name: Download Attestations
         id: download_attestation
-        run: |
+        run: | 
           mkdir -p attestations
           curl -L -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ github.token }}" \
@@ -43,9 +43,9 @@ jobs:
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/0mniteck/.pki/releases \
           -d '{
-          "tag_name":"v0.0.2",
+          "tag_name":"v0.0.$(cat index.ver)",
           "target_commitish":"main",
-          "name":"v0.0.2",
+          "name":"v0.0.$(cat index.ver)",
           "body":"# Automating release workflow.",
           "draft":true,
           "prerelease":false,
@@ -53,6 +53,7 @@ jobs:
           "make_latest":"false" 
           }' | jq .id || exit 1) || exit 1
           echo "responded=$response" >> $GITHUB_ENV
+          echo "ver=v0.0.$(cat index.ver)" >> $GITHUB_ENV
       - name: Install GitReleaseManager
         uses: gittools/actions/gitreleasemanager/setup@d96456f5d2fd78923086859f5328008482688611 # v4.3.3
         with:
@@ -62,7 +63,7 @@ jobs:
         with:
           token: ${{ github.token }}
           repository: '0mniteck/.pki'
-          milestone: 'v0.0.2'
+          milestone: "v0.0.${{ env.ver }}"
           assets: |
             runner_outputs.log
             attestations/attestation.json
@@ -74,10 +75,10 @@ jobs:
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/0mniteck/.pki/releases/${{ env.responded }} \
           -d '{
-          "tag_name":"v0.0.2",
+          "tag_name":"v0.0.$(cat index.ver)",
           "target_commitish":"main",
-          "name":"v0.0.2",
-          "body":"# Automating release workflow.\n## Attestations are attached below.",
+          "name":"v0.0.$(cat index.ver)",
+          "body":"## Attestations are attached below.",
           "draft":false,
           "immutable":true,
           "prerelease":false,
