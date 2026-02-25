@@ -16,11 +16,14 @@ jobs:
   release-pki:
     uses: 0mniteck/.pki/.github/workflows/immutable.yml@c5ba574e9c0b77ce8bd357df765f3181bdaef8de #v0.0.2
   immutable-rel:
+    permissions:
+      id-token: write
+      contents: read
+      attestations: read
     runs-on: ubuntu-latest
     needs: release-pki
     steps:
       - name: Checkout v6
-        id: checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # checkout@v6
       - name: Install gh CLI
         run: sudo apt-get -qq update && sudo apt-get -qq install gh
