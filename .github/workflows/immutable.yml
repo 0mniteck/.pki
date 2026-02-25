@@ -27,7 +27,7 @@ jobs:
           echo 1. ${{ steps.generate_attestation.outputs.bundle-path }} > runner_outputs
           echo 2. ${{ steps.generate_attestation.outputs.attestation-url }} >> runner_outputs
           echo 3. ${{ steps.generate_attestation.outputs.attestation-id }} >> runner_outputs
-          cat runner_outputs
+          cat runner_outputs && mv runner_outputs runner_outputs.log
       - name: Download Attestations
         id: download_attestation
         run: |
@@ -62,7 +62,7 @@ jobs:
           milestone: 'v0.0.2'
           assets: |
             runner_outputs.log
-            attestations/attestation_**.json
+            attestations/attestation.json
       - name: Publish Release
         run: |
           curl -L -X PATCH -H "Accept: application/vnd.github+json" \
