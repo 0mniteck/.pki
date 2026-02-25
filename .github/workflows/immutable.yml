@@ -1,7 +1,6 @@
 name: Immutable Release
 on:
   workflow_call:
-  workflow_dispatch:
 jobs:
   fetch-pki:
     uses: 0mniteck/.pki/.github/workflows/fetch.yml@e6aba7754b7eb66908a8ff4c9db6ee46b77dc0c0 #v0.0.2
