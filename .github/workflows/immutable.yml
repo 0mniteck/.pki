@@ -1,8 +1,4 @@
 name: Immutable Release
-permissions:
-  id-token: write
-  contents: write
-  attestations: write
 on:
   workflow_call:
   workflow_dispatch:
@@ -43,7 +39,7 @@ jobs:
       - name: Draft Release
         id: draft_release
         run: |
-          export -- response.id=$(curl -L -X POST -H "Accept: application/vnd.github+json" \
+          export -- response=$(curl -L -X POST -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ github.token }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/0mniteck/.pki/releases \
@@ -58,7 +54,7 @@ jobs:
           "make_latest":"false" 
           }' | jq .id || exit 1) || exit 1
         env:
-          response: ${response.id}
+          responded: ${response}
       - name: Add assets to draft release
         uses: gittools/actions/gitreleasemanager/addasset@71a79f7569b981036febd9ce5870f87e069928e7 # v4.3.3
         with:
@@ -73,7 +69,7 @@ jobs:
           curl -L -X PATCH -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ github.token }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
-          https://api.github.com/repos/0mniteck/.pki/releases/${responce} \
+          https://api.github.com/repos/0mniteck/.pki/releases/${responded} \
           -d '{
           "tag_name":"v0.0.2",
           "target_commitish":"main",
