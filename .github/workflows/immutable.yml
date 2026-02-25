@@ -41,24 +41,24 @@ jobs:
           ${{ steps.generate_attestation.outputs.attestation-url }}/download > attestations/attestation.json
       - name: Draft Release
         id: draft_release
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd #v8
-        with: 
-          script: |
-            const response = curl -L -X POST -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ github.token }}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/repos/0mniteck/.pki/releases \
-            -d '{
-            "tag_name":"v0.0.2",
-            "target_commitish":"main",
-            "name":"v0.0.2",
-            "body":"# Automating release workflow.\n## Attestations are attached below.",
-            "draft":true,
-            "prerelease":false,
-            "generate_release_notes":true,
-            "make_latest":"false" 
-            }' | jq .id || exit 1
-            return $response || exit 1
+        run: |
+          response.id=$(curl -L -X POST -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ github.token }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/0mniteck/.pki/releases \
+          -d '{
+          "tag_name":"v0.0.2",
+          "target_commitish":"main",
+          "name":"v0.0.2",
+          "body":"# Automating release workflow.\n## Attestations are attached below.",
+          "draft":true,
+          "prerelease":false,
+          "generate_release_notes":true,
+          "make_latest":"false" 
+          }' | jq .id || exit 1) || exit 1
+          export -- response=$response.id || exit 1
+        env:
+          response.id: ${response}
       - name: Add assets to draft release
         uses: gittools/actions/gitreleasemanager/addasset@71a79f7569b981036febd9ce5870f87e069928e7 # v4.3.3
         with:
@@ -69,20 +69,18 @@ jobs:
             runner_outputs.log
             attestations/attestation_**.json
       - name: Publish Release
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd #v8
-        with: 
-          script: |
-            const response = curl -L -X PATCH -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ github.token }}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/repos/0mniteck/.pki/releases/${{ steps.draft_release.outputs.result }} \
-            -d '{
-            "tag_name":"v0.0.2",
-            "target_commitish":"main",
-            "name":"v0.0.2",
-            "body":"# Automating release workflow.\n## Attestations are attached below.",
-            "draft":false,
-            "immutable":true,
-            "prerelease":false,
-            "make_latest":"true"
-            }' | jq .id || exit 1
+        run: |
+          curl -L -X PATCH -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ github.token }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/0mniteck/.pki/releases/${responce.id} \
+          -d '{
+          "tag_name":"v0.0.2",
+          "target_commitish":"main",
+          "name":"v0.0.2",
+          "body":"# Automating release workflow.\n## Attestations are attached below.",
+          "draft":false,
+          "immutable":true,
+          "prerelease":false,
+          "make_latest":"true"
+          }' | jq .id || exit 1
