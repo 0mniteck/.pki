@@ -10,8 +10,8 @@ on:
       - 'registry/**'
 permissions:
   id-token: write
-  contents: read
-  attestations: read
+  contents: write
+  attestations: write
 jobs:
   release-pki:
     uses: 0mniteck/.pki/.github/workflows/immutable.yml@c5ba574e9c0b77ce8bd357df765f3181bdaef8de #v0.0.2
