@@ -7,6 +7,7 @@ on:
     paths:
       - '**.csv'
       - '**.ver'
+      - 'registry/**'
 permissions:
   id-token: write
   contents: read
@@ -22,10 +23,8 @@ jobs:
         id: checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # checkout@v6
       - name: Install gh CLI
-        run: |
-          sudo apt-get -qq update
-          sudo apt-get -qq install gh
+        run: sudo apt-get -qq update && sudo apt-get -qq install gh
       - name: Authenticate with GitHub CLI
-        run: echo "${{ github.token }}" | gh auth login --with-token
-      - name: Run gh command
+        run: echo "${{ github.token }}" | gh auth login --with-token || exit 1
+      - name: Run gh Attestation
         run: gh attestation verify || exit 1
