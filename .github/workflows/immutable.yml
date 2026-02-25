@@ -33,7 +33,7 @@ jobs:
           curl -L -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ github.token }}" \
           ${{ steps.generate_attestation.outputs.attestation-url }}/download > attestations/Build-Attestation.json
-          echo "ver=v0.0.$(cat index.ver)" >> $GITHUB_ENV
+          echo "ver=$(cat index.ver)" >> $GITHUB_ENV
       - name: Draft Release
         id: draft_release
         run: |
