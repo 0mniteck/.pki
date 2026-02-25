@@ -14,17 +14,17 @@ permissions:
   attestations: write
 jobs:
   release-pki:
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@26b5b3c8773da06002ff02646328fcae235a2848 #v0.0.2
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@0ff56937c5f025904a48105f709fe0c3da2e269a # v0.0.2
   immutable-rel:
+    needs: release-pki
     permissions:
       id-token: write
       contents: read
       attestations: read
     runs-on: ubuntu-latest
-    needs: release-pki
     steps:
       - name: Checkout v6
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - name: Install gh CLI
         run: sudo apt-get -qq update && sudo apt-get -qq install gh
       - name: Authenticate with GitHub CLI
