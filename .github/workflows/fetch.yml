@@ -1,7 +1,6 @@
 name: Fetch and Validate
 on:
   workflow_call:
-  workflow_dispatch:
 jobs:
   fetch:
     runs-on: ubuntu-latest
