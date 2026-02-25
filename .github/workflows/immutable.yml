@@ -18,9 +18,7 @@ jobs:
             subject-path: |
               .github/workflows/**
               registry/**
-              index.csv
-              index.ver
-              local.sh
+              ./**
       - name: Fetch Attestation ID's
         id: fetch_attestation
         run: |
