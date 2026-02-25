@@ -42,7 +42,7 @@ jobs:
       - name: Draft Release
         id: draft_release
         run: |
-          const response=$(curl -L -X POST -H "Accept: application/vnd.github+json" \
+          response=$(curl -L -X POST -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ github.token }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/0mniteck/.pki/releases \
@@ -68,7 +68,7 @@ jobs:
             attestations/attestation_**.json
       - name: Publish Release
         run: |
-          const response=$(curl -L -X PATCH -H "Accept: application/vnd.github+json" \
+          response=$(curl -L -X PATCH -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ github.token }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/0mniteck/.pki/releases/${{ steps.draft_release.outputs.return }} \
