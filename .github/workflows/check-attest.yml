@@ -30,4 +30,7 @@ jobs:
       - name: Authenticate with GitHub CLI
         run: echo "${{ github.token }}" | gh auth login --with-token || exit 1
       - name: Run gh Attestation
-        run: gh attestation verify $GITHUB_WORKSPACE/registry/* --repo 0mniteck/.pki || exit 1
+        run: |
+          for I in $GITHUB_WORKSPACE/registry/* do
+            gh attestation verify $I --repo 0mniteck/.pki || exit 1
+          done
