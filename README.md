@@ -12,10 +12,11 @@ with know domains and their expiries adding into the `registry/` from the list s
 > [local.sh](local.sh) # WIP - ETA 2 days SLA
 
 #### add checks at the project level script + attestation checks
+```
 validate.with.pki() { # \$1 = domain/FQDN, # \$2 = filename, # \$3 = full_url
   attest.with.gh() {
-    pkexec bash -c 'apt-get -qq update && \
-					apt-get install gh'
+    pkexec bash -c \"apt-get -qq update && \
+					 apt-get install gh\"
 	gh attestation verify || exit 1
   }
   fetch.with.pki() {
