@@ -24,17 +24,17 @@ jobs:
       - name: Fetch Attestation ID's
         id: fetch_attestation
         run: |
-          echo 1. ${{ steps.generate_attestation.outputs.bundle-path }} > runner_outputs
-          echo 2. ${{ steps.generate_attestation.outputs.attestation-url }} >> runner_outputs
-          echo 3. ${{ steps.generate_attestation.outputs.attestation-id }} >> runner_outputs
-          cat runner_outputs && mv runner_outputs runner_outputs.log
+          echo 1. ${{ steps.generate_attestation.outputs.bundle-path }} > runner_outputs.log
+          echo 2. ${{ steps.generate_attestation.outputs.attestation-url }} >> runner_outputs.log
+          echo 3. ${{ steps.generate_attestation.outputs.attestation-id }} >> runner_outputs.log
+          cat runner_outputs.log
       - name: Download Attestations
         id: download_attestation
         run: | 
           mkdir -p attestations
           curl -L -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ github.token }}" \
-          ${{ steps.generate_attestation.outputs.attestation-url }}/download > attestations/attestation.json
+          ${{ steps.generate_attestation.outputs.attestation-url }}/download > attestations/Build-Attestation.json
       - name: Draft Release
         id: draft_release
         run: |
@@ -66,7 +66,7 @@ jobs:
           milestone: "v0.0.${{ env.ver }}"
           assets: |
             runner_outputs.log
-            attestations/attestation.json
+            attestations/Build-Attestation.json
       - name: Publish Release
         id: puv
         run: |
