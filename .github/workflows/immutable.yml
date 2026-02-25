@@ -52,7 +52,7 @@ jobs:
           "generate_release_notes":true,
           "make_latest":"false" 
           }' | jq .id || exit 1) || exit 1
-          echo "{responded}={$response}" >> $GITHUB_ENV
+          echo "responded=$response" >> $GITHUB_ENV
       - name: Install GitReleaseManager
         uses: gittools/actions/gitreleasemanager/setup@d96456f5d2fd78923086859f5328008482688611 # v4.3.3
         with:
@@ -67,8 +67,7 @@ jobs:
             runner_outputs.log
             attestations/attestation.json
       - name: Publish Release
-        env:
-          responded: ${responded}
+        id: puv
         run: |
           curl -L -X PATCH -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ github.token }}" \
