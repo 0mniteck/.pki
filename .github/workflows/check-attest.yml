@@ -14,7 +14,7 @@ permissions:
   attestations: write
 jobs:
   release-pki:
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@08a72ba690b85342605e1c9e0ce31e5c52756160 # v0.0.2
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@4cfb7ef799722954be0f8633a9cb403f5338559e # v0.0.2
   immutable-rel:
     needs: release-pki
     permissions:
@@ -30,4 +30,4 @@ jobs:
       - name: Authenticate with GitHub CLI
         run: echo "${{ github.token }}" | gh auth login --with-token || exit 1
       - name: Run gh Attestation
-        run: gh attestation verify || exit 1
+        run: gh attestation verify registry/* --signer-repo 0mniteck/.pki || exit 1
