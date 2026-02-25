@@ -31,6 +31,6 @@ jobs:
         run: echo "${{ github.token }}" | gh auth login --with-token || exit 1
       - name: Run gh Attestation
         run: |
-          for I in $GITHUB_WORKSPACE/registry/* do
-            gh attestation verify $I --repo 0mniteck/.pki || exit 1
-          done
+          for I in $GITHUB_WORKSPACE/registry/*; do
+            gh attestation verify $I --repo 0mniteck/.pki || exit 1;
+          done;
