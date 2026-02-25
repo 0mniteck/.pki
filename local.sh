@@ -1,6 +1,6 @@
 #!/usr/bin/env -S - bash --norc --noprofile
 
-# WIP
+# WIP - ETA 2 days SLA
 
 fetch.pki() { # $1 = domain/FQDN
 mkdir -p local
