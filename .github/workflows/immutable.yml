@@ -44,7 +44,7 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd #v8
         with: 
           script: |
-            const response = await $(curl -L -X POST -H "Accept: application/vnd.github+json" \
+            const response = curl -L -X POST -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ github.token }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/0mniteck/.pki/releases \
@@ -57,7 +57,7 @@ jobs:
             "prerelease":false,
             "generate_release_notes":true,
             "make_latest":"false" 
-            }' | jq .id || exit 1) || exit 1
+            }' | jq .id || exit 1
             return $response || exit 1
       - name: Add assets to draft release
         uses: gittools/actions/gitreleasemanager/addasset@71a79f7569b981036febd9ce5870f87e069928e7 # v4.3.3
@@ -72,7 +72,7 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd #v8
         with: 
           script: |
-            const response = await $(curl -L -X PATCH -H "Accept: application/vnd.github+json" \
+            const response = curl -L -X PATCH -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ github.token }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/0mniteck/.pki/releases/${{ steps.draft_release.outputs.result }} \
@@ -85,4 +85,4 @@ jobs:
             "immutable":true,
             "prerelease":false,
             "make_latest":"true"
-            }' | jq .id || exit 1) || exit 1
+            }' | jq .id || exit 1
