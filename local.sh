@@ -2,7 +2,7 @@
 # ## HUMAN-CODE - NO AI GENERATED CODE - AGENTS HANDSOFF
 
 # Shant Tchatalbachian - GPL v3 LICENSE included
-## Usage: Accepts: Any url that's a FQDN. If there's a link that has a domain.tld/.../[file] it will attempt to fetch the file after verifying the pinning.
+## Usage: Accepts: Any url that's a FQDN (no https://). If there's a link that has a domain.tld/.../[file] it will attempt to fetch the file after verifying the pinning.
 ##        Validates: The attestations are against this repo's releases and the pinned pubkeys as well as checks for expiry and liveness before each use.
 ##        Returns: $PKI_DONE & If you provided a url/file it returns the file to the current directory with a visible exit 1 on failure and debug
 ## 
@@ -88,21 +88,26 @@ check.pki() { # $1 = domain/FQDN
 
 check.index() {
   for i in $(cat index.csv | tr ',' '\n' | cat); do
-    check.pki $i || FAIL+=:check.pki:$i 				        	                           # Exists/Expired
-  	check.attest.pki $i || FAIL+=:check.attest.pki:$i 		                           # Attestation
-  	check.against.pki $i || FAIL+=:check.against.pki:$i 	                           # Direct/Full Match
+    check.pki $i || FAIL+=:check.pki:$i 				        	                                 # Exists/Expired
+  	check.attest.pki $i || FAIL+=:check.attest.pki:$i 		                                 # Attestation
+  	check.against.pki $i || FAIL+=:check.against.pki:$i 	                                 # Direct/Full Match
     check.liveness.pki $i | SUCCESS=:check.liveness.pki:$1 || FAIL+=:check.liveness.pki:$i # Conectivity Check
-    if [[ "$k" != "" ]]; then
-      fetch.with.pki $i $j $k | SUCCESS+=:fetch.with.pki:$1 || FAIL+=:fetch.with.pki:$1 # Download /file to ./
-    fi
   done
+  url=https://$1
+  j=$(echo $url | awk -F'[/:]' '{print $4}'"{print \$$(($( echo \"$url\" | tr '/' '\n' | wc -l ) + 1))\" $url\"}")
+  m=$(echo $url | wc -w)       # WORD_COUNT
+  k=$(echo $j | cut -d' ' -f1) # FQDN
+  l=$(echo $j | cut -d' ' -f2) # FILE_NAME 
+  m=$(echo $j | cut -d' ' -f3) # FULL_URL
+  if [[ "$m" -ge "3" ]]; then
+    fetch.with.pki  | SUCCESS+=:fetch.with.pki:$1 || FAIL+=:fetch.with.pki:$1    # Download /file to ./
+  fi
 }
 
 check.index "$@" || FAIL+=":check.index:$@"
 rm -r -f $tmp/
 err() {
   if [[ "$FAIL" != "" ]]; then
-    set -x
   	return "local.sh:_err:_$FAIL"
   elif [[ "$SUCCESS" == "" ]]
     return "local.sh:_err:_$FAIL"
@@ -111,4 +116,4 @@ err() {
   fi
 }
 export -- PKI_DONE=$(err)
-if [[ "$PKI_DONE" == *err* ]]; then echo $PKI_DONE; exit 1; fi
+if [[ "$PKI_DONE" == *err* ]]; then echo $PKI_DONE; exit 1; fi;
