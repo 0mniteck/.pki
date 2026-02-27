@@ -10,7 +10,7 @@
 ## Recommended: fetch over secure gateway, or over git@ssh_sk(security_key)
 
 local=$HOME/.pki/registry
-remote=./registry
+remote=./.pki/registry
 tmp=$HOME/tmp
 mkdir -p $local
 mkdir -p $tmp
