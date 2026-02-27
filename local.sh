@@ -95,12 +95,12 @@ check.index() {
   done
   url=https://$1
   j=$(echo $url | awk -F'[/:]' '{print $4}'"{print \$$(($( echo \"$url\" | tr '/' '\n' | wc -l ) + 1))\" $url\"}")
-  m=$(echo $url | wc -w)       # WORD_COUNT
-  k=$(echo $j | cut -d' ' -f1) # FQDN
-  l=$(echo $j | cut -d' ' -f2) # FILE_NAME 
-  m=$(echo $j | cut -d' ' -f3) # FULL_URL
-  if [[ "$m" -ge "3" ]]; then
-    fetch.with.pki  | SUCCESS+=:fetch.with.pki:$1 || FAIL+=:fetch.with.pki:$1    # Download /file to ./
+  k=$(echo $j | wc -w)       # WORD_COUNT
+  l=$(echo $j | cut -d' ' -f1) # FQDN
+  m=$(echo $j | cut -d' ' -f2) # FILE_NAME 
+  n=$(echo $j | cut -d' ' -f3) # FULL_URL
+  if [[ "$k" -ge "3" ]]; then
+    fetch.with.pki $l $m $n | SUCCESS+=:fetch.with.pki:$1 || FAIL+=:fetch.with.pki:$1    # Download /file to ./
   fi
 }
 
