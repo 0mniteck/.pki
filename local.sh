@@ -5,13 +5,16 @@
 ## Usage: Accepts: Any url that's a FQDN (no https://). If there's a link that has a domain.tld/.../[file] it will attempt to fetch the file after verifying the pinning.
 ##        Validates: The attestations are against this repo's releases and the pinned pubkeys as well as checks for expiry and liveness before each use.
 ##        Returns: $PKI_DONE & If you provided a url/file it returns the file to the current directory with a visible exit 1 on failure and debug
-## 
+##
 ## Requirements: apt-get -qq update && apt-get -qq install gh
 ## Recommended: fetch over secure gateway, or over git@ssh_sk(security_key)
 
-local=$HOME/.pki/registry
+run_as=$(id -u -n)
+run_home=/home/$run_as
+
+local=$run_home/.pki/registry
 remote=./.pki/registry
-tmp=$HOME/tmp
+tmp=$run_home/tmp
 mkdir -p $local
 mkdir -p $tmp
 
@@ -36,7 +39,7 @@ invalidate.pki() { # $1 = domain/FQDN
 }
 
 check.liveness.pki() { # $1 = domain/FQDN
-  curl -s --pinnedpubkey \"sha256//$(<$local/$1.pubkey)" \
+  curl -s --pinnedpubkey "sha256//$(<$local/$1.pubkey)" \
   --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://$1 > /dev/null || FAIL+=:check.liveness.pki:$1 	
 }
 
@@ -116,4 +119,7 @@ err() {
   fi
 }
 export -- PKI_DONE=$(err)
-if [[ "$PKI_DONE" == *err* ]]; then echo $PKI_DONE; exit 1; fi;
+if [[ "$PKI_DONE" == *err* ]]; then
+  echo $PKI_DONE
+  exit 1
+fi
