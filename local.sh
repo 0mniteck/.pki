@@ -69,28 +69,27 @@ check.csv() { # $1 = domain/FQDN
   dater=$(date -d "$(cat $remote/$1.exp | cut -d'=' -f2)" +%s)
   if [[ "$dater" -le "$date" ]]; then
     FAIL+=:remote.invalidate.pki:$1
-    dateq=$(date -d "$(cat $local/$1.exp | cut -d'=' -f2)" +%s)
-    if [[ "$dateq" -le "$date" ]]; then
-    invalidate.pki $local:$1 || FAIL+=:local.invalidate.pki:$1
-    fi
   fi
+  dateq=$(date -d "$(cat $local/$1.exp | cut -d'=' -f2)" +%s)
+  if [[ "$dateq" -le "$date" ]]; then
+    invalidate.pki $1 || FAIL+=:local.invalidate.pki:$1
+  fi 
 }
 
 check.pki() { # $1 = domain/FQDN
+if [[ -f "$remote/$1.pubkey" ]]; then
   if [[ -f "$local/$1.pubkey" ]]; then
-    check.csv $local:$1 || FAIL+=:local.check.csv:$1
+    check.csv $1 || FAIL+=:local.check.csv:$1
   else
-    invalidate.pki $local:$1 || FAIL+=:local.invalidate.pki:$1
+    invalidate.pki $1 || FAIL+=:local.invalidate.pki:$1
   fi
-  if [[ -f "$remote/$1.pubkey" ]]; then
-    check.csv $remote:$1 || FAIL+=:check.remote.csv:$1
-  else
-    FAIL+=:remote.invalidate.pki:$1
-  fi
+else
+  FAIL+=:remote.invalidate.pki:$1
+fi
 }
 
 check.index() {
-  for i in $(cat index.csv | tr ',' '\n' | cat); do
+  for i in $(cat .pki/index.csv | tr ',' '\n' | cat); do
     check.pki $i || FAIL+=:check.pki:$i 				        	                                 # Exists/Expired
   	check.attest.pki $i || FAIL+=:check.attest.pki:$i 		                                 # Attestation
   	check.against.pki $i || FAIL+=:check.against.pki:$i 	                                 # Direct/Full Match
@@ -98,7 +97,7 @@ check.index() {
   done
   url=https://$1
   j=$(echo $url | awk -F'[/:]' '{print $4}'"{print \$$(($( echo \"$url\" | tr '/' '\n' | wc -l ) + 1))\" $url\"}")
-  k=$(echo $j | wc -w)       # WORD_COUNT
+  k=$(echo $j | wc -w)         # WORD_COUNT
   l=$(echo $j | cut -d' ' -f1) # FQDN
   m=$(echo $j | cut -d' ' -f2) # FILE_NAME 
   n=$(echo $j | cut -d' ' -f3) # FULL_URL
