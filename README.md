@@ -6,6 +6,7 @@ Adding it to other projects as a submodule. Github workflows will update, valida
 with know domains and their expiries adding into the `registry/` from the list stored in an `index.csv`
 
 #### fetch and validate index registry + attest with sigstore + immutable releases
+[![Check Attestation](https://github.com/0mniteck/.pki/actions/workflows/check-attest.yml/badge.svg)](https://github.com/0mniteck/.pki/actions/workflows/check-attest.yml)
 > [Github Workflow](.github/workflows/check-attest.yml)
 > #### <h3>Attestation Created</h3>
 > <ul><li><a href="https://github.com/0mniteck/.pki/attestations/19776406">https://github.com/0mniteck/.pki/attestations/19776406</a>
@@ -14,7 +15,7 @@ with know domains and their expiries adding into the `registry/` from the list s
 >
 
 #### client side validation of `registry/` against expiry, attested pki, and liveness
-> [local.sh](local.sh) # WIP - ETA 1 day SLA
+> [local.sh](local.sh) # WIP
 
 #### add attestation and liveness checks at the project level script
 ```
