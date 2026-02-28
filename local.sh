@@ -15,8 +15,8 @@ run_home=/home/$run_as
 local=$run_home/.pki/registry
 remote=./.pki/registry
 tmp=$run_home/tmp
-mkdir -p $local
-mkdir -p $tmp
+mkdir -p $local || FAIL+=:mkdir.local.pki
+mkdir -p $tmp || FAIL+=:mkdir.tmp.pki
 
 fetch.with.pki() { # $1 = domain/FQDN, # $2 = filename-or-/dev/null, # $3 = full_url or blank
   curl -s --pinnedpubkey "sha256//$(<$local/$1.pubkey)" \
