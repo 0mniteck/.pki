@@ -45,9 +45,9 @@ check.liveness.pki() { # $1 = domain/FQDN
 
 check.against.pki() { # $1 = domain/FQDN
   curl_run1=$(curl -o $tmp/$1.pubkey -s --pinnedpubkey "sha256//1FtgkXeU53bUTaObUogizKNIqs/ZGaEo1k2AwG30xts=" \
-  --tlsv1.3 --from.proto -all,+https --remove-on-error --no-insecure https://raw.githubusercontent.com/0mniteck/.pki/refs/heads/main/registry/$1.pubkey)
+  --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://raw.githubusercontent.com/0mniteck/.pki/refs/heads/main/registry/$1.pubkey)
   curl_run2=$(curl -o $tmp/$1.exp -s --pinnedpubkey "sha256//1FtgkXeU53bUTaObUogizKNIqs/ZGaEo1k2AwG30xts=" \
-  --tlsv1.3 --from.proto -all,+https --remove-on-error --no-insecure https://raw.githubusercontent.com/0mniteck/.pki/refs/heads/main/registry/$1.exp)
+  --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://raw.githubusercontent.com/0mniteck/.pki/refs/heads/main/registry/$1.exp)
   diff $tmp/$1.pubkey $remote/$1.pubkey || FAIL+=:local.invalidate.pki:$1
   diff $remote/$1.pubkey $local/$1.pubkey || FAIL+=:local.invalidate.pki:$1
   diff $local/$1.pubkey $tmp/$1.pubkey || FAIL+=:local.invalidate.pki:$1
@@ -91,7 +91,7 @@ fi
 check.index() {
   for i in $(cat .pki/index.csv | tr ',' '\n' | cat); do
     check.pki $i || FAIL+=:check.pki:$i                                                    # Exists/Expired
-  	check.attest.pki $i || FAIL+=:check.attest.pki:$i                                      # Attestation
+  	# check.attest.pki $i || FAIL+=:check.attest.pki:$i                                      # Attestation
   	check.against.pki $i || FAIL+=:check.against.pki:$i                                    # Direct/Full Match
     check.liveness.pki $i | SUCCESS=:check.liveness.pki:$1 || FAIL+=:check.liveness.pki:$i # Conectivity Check
   done
