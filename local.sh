@@ -90,9 +90,9 @@ fi
 
 check.index() {
   for i in $(cat .pki/index.csv | tr ',' '\n' | cat); do
-    check.pki $i || FAIL+=:check.pki:$i 				        	                                 # Exists/Expired
-  	check.attest.pki $i || FAIL+=:check.attest.pki:$i 		                                 # Attestation
-  	check.against.pki $i || FAIL+=:check.against.pki:$i 	                                 # Direct/Full Match
+    check.pki $i || FAIL+=:check.pki:$i                                                    # Exists/Expired
+  	check.attest.pki $i || FAIL+=:check.attest.pki:$i                                      # Attestation
+  	check.against.pki $i || FAIL+=:check.against.pki:$i                                    # Direct/Full Match
     check.liveness.pki $i | SUCCESS=:check.liveness.pki:$1 || FAIL+=:check.liveness.pki:$i # Conectivity Check
   done
   url=https://$1
@@ -102,7 +102,7 @@ check.index() {
   m=$(echo $j | cut -d' ' -f2) # FILE_NAME 
   n=$(echo $j | cut -d' ' -f3) # FULL_URL
   if [[ "$k" -ge "3" ]]; then
-    fetch.with.pki $l $m $n | SUCCESS+=:fetch.with.pki:$1 || FAIL+=:fetch.with.pki:$1    # Download /file to ./
+    fetch.with.pki $l $m $n | SUCCESS+=:fetch.with.pki:$1 || FAIL+=:fetch.with.pki:$1
   fi
 }
 
