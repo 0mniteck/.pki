@@ -1,9 +1,13 @@
 name: Fetch and Validate
 on:
   workflow_call:
+concurrency:
+  group: fetch
+  cancel-in-progress: true
 jobs:
   fetch:
     runs-on: ubuntu-latest
+    environment: release
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - name: Fetch and Validate PKI
