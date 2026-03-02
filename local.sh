@@ -111,7 +111,7 @@ rm -r -f $tmp/
 err() {
   if [[ "$FAIL" != "" ]]; then
   	return "local.sh:_err:_$FAIL"
-  elif [[ "$SUCCESS" == "" ]]
+  elif [[ "$SUCCESS" == "" ]]; then
     return "local.sh:_err:_$FAIL"
   else
   	return "local.sh:_PKI:_VALID"
