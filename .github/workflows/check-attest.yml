@@ -37,7 +37,7 @@ jobs:
         run: echo "${{ github.token }}" | gh auth login --with-token || exit 1
       - name: Run gh Attestation
         run: |
-          for I in $GITHUB_WORKSPACE/registry/* $GITHUB_WORKSPACE/*.* ; do
+          for I in $GITHUB_WORKSPACE/.github/workflows/* $GITHUB_WORKSPACE/registry/* $GITHUB_WORKSPACE/*.* ; do
             gh attestation verify $I --repo 0mniteck/.pki --source-ref refs/heads/main \
             --signer-workflow 0mniteck/.pki/.github/workflows/immutable.yml || exit 1;
             sleep 1 && echo "$I Attested"
