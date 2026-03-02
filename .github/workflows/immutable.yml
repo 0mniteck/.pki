@@ -1,11 +1,17 @@
 name: Immutable Release
 on:
   workflow_call:
+concurrency:
+  group: immutable
+  cancel-in-progress: true
 jobs:
   fetch-pki:
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@b5f60563b19d09835078da9f78a07b233af24dea #v0.0.9
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@c42175fbf15c6c88b6c86d5cd79606534ba5e02f #v0.0.10
   immutable-rel:
     runs-on: ubuntu-latest
+    environment:
+      name: release
+      url: https://0mniteck.github.io/release
     needs: fetch-pki
     steps:
       - name: Checkout v6
