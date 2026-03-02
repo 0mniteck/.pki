@@ -8,20 +8,26 @@ on:
       - '**.csv'
       - '**.ver'
       - 'registry/**'
+concurrency:
+  group: attestation
+  cancel-in-progress: true
 permissions:
   id-token: write
   contents: write
   attestations: write
 jobs:
   release-pki:
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@41a13f929187fb692c78957e8c6267d719c9681f # v0.0.9
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@bc4336713fd02a717357471197c15d6051c7b72b # v0.0.10
   immutable-rel:
+    runs-on: ubuntu-latest
+    environment:
+      name: release
+      url: https://0mniteck.github.io/release
     needs: release-pki
     permissions:
       id-token: write
       contents: read
       attestations: read
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout v6
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -33,7 +39,6 @@ jobs:
         run: |
           for I in $GITHUB_WORKSPACE/registry/* $GITHUB_WORKSPACE/*.* ; do
             gh attestation verify $I --repo 0mniteck/.pki --source-ref refs/heads/main \
-            --signer-workflow 0mniteck/.pki/.github/workflows/immutable.yml \
-            --signer-repo 0mniteck/.pki || exit 1;
+            --signer-workflow 0mniteck/.pki/.github/workflows/immutable.yml || exit 1;
             sleep 1 && echo "$I Attested"
           done;
