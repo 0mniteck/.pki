@@ -3,7 +3,7 @@ on:
   workflow_call:
 jobs:
   fetch-pki:
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@c5877c1c1d580b9339e6731d49248dc8c11027c4 #v0.0.6
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@6b5bd6fcd0dc40207e2de01232e3ba3ad8ea0a40 #v0.0.7
   immutable-rel:
     runs-on: ubuntu-latest
     needs: fetch-pki
@@ -45,7 +45,7 @@ jobs:
           "tag_name":"v0.0.${{ env.ver }}",
           "target_commitish":"main",
           "name":"v0.0.${{ env.ver }}",
-          "body":"# Automating release workflow.",
+          "body":"# DRAFT - Automated release workflow - DRAFT",
           "draft":true,
           "prerelease":false,
           "generate_release_notes":true,
@@ -75,7 +75,7 @@ jobs:
           "tag_name":"v0.0.${{ env.ver }}",
           "target_commitish":"main",
           "name":"v0.0.${{ env.ver }}",
-          "body":"## Attestations are attached below.",
+          "body":"## Attestable - Immutable - Ephemeral",
           "draft":false,
           "immutable":true,
           "prerelease":false,
