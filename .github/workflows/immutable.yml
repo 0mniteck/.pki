@@ -3,7 +3,7 @@ on:
   workflow_call:
 jobs:
   fetch-pki:
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@20c25a1e6812371e4a18defc1fa7c3cbf440361d #v0.0.8
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@b5f60563b19d09835078da9f78a07b233af24dea #v0.0.9
   immutable-rel:
     runs-on: ubuntu-latest
     needs: fetch-pki
@@ -18,21 +18,21 @@ jobs:
             subject-path: |
               .github/workflows/**
               registry/**
-              ./**
+              ./**.**
       - name: Fetch Attestation ID's
         id: fetch_attestation
         run: |
-          echo 1. ${{ steps.generate_attestation.outputs.bundle-path }} > runner_outputs.log
-          echo 2. ${{ steps.generate_attestation.outputs.attestation-url }} >> runner_outputs.log
-          echo 3. ${{ steps.generate_attestation.outputs.attestation-id }} >> runner_outputs.log
-          cat runner_outputs.log
+          echo 1. ${{ steps.generate_attestation.outputs.bundle-path }} > runner_output.log
+          echo 2. ${{ steps.generate_attestation.outputs.attestation-url }} >> runner_output.log
+          echo 3. ${{ steps.generate_attestation.outputs.attestation-id }} >> runner_output.log
+          cat runner_output.log
       - name: Download Attestations
         id: download_attestation
         run: | 
           mkdir -p attestations
           curl -L -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ github.token }}" \
-          ${{ steps.generate_attestation.outputs.attestation-url }}/download > attestations/Build-Attestation.json
+          ${{ steps.generate_attestation.outputs.attestation-url }}/download > attestations/build_attestation.json
           echo "ver=$(cat index.ver)" >> $GITHUB_ENV
       - name: Draft Release
         id: draft_release
@@ -63,8 +63,8 @@ jobs:
           repository: '0mniteck/.pki'
           milestone: "v0.0.${{ env.ver }}"
           assets: |
-            runner_outputs.log
-            attestations/Build-Attestation.json
+            runner_output.log
+            attestations/build_attestation.json
       - name: Publish Release
         run: |
           result=$(curl -L -X PATCH -H "Accept: application/vnd.github+json" \
