@@ -8,7 +8,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   fetch-pki:
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@80693813c6ccf0e98ddc6d2d18debd23b92fc21d #v0.0.11
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@80693813c6ccf0e98ddc6d2d18debd23b92fc21d #v0.0.12
   immutable-rel:
     runs-on: ubuntu-latest
     environment:
@@ -26,22 +26,24 @@ jobs:
             subject-path: |
               .github/workflows/**
               registry/**
-              ./**.**
+              index.**
+              local.sh
       - name: Fetch Attestation ID's
         id: fetch_attestation
         run: |
-          echo 1. ${{ steps.generate_attestation.outputs.bundle-path }} > runner_output.log
-          echo 2. ${{ steps.generate_attestation.outputs.attestation-url }} >> runner_output.log
-          echo 3. ${{ steps.generate_attestation.outputs.attestation-id }} >> runner_output.log
-          cat runner_output.log
+          mkdir -p attestations && pushd attestations > /dev/null
+          echo 1. ${{ steps.generate_attestation.outputs.bundle-path }} > Runner\ output\ \(log\)
+          echo 2. ${{ steps.generate_attestation.outputs.attestation-url }} >> Runner\ output\ \(log\)
+          echo 3. ${{ steps.generate_attestation.outputs.attestation-id }} >> Runner\ output\ \(log\)
+          cat Runner\ output\ \(log\) && popd > /dev/null
       - name: Download Attestations
         id: download_attestation
-        run: | 
-          mkdir -p attestations
+        run: |
+          pushd attestations > /dev/null
           curl -L -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ github.token }}" \
-          ${{ steps.generate_attestation.outputs.attestation-url }}/download > attestations/build_attestation.json
-          echo "ver=$(cat index.ver)" >> $GITHUB_ENV
+          ${{ steps.generate_attestation.outputs.attestation-url }}/download > Build\ attestation\ \(json\)
+          echo "ver=$(cat index.ver)" >> $GITHUB_ENV && popd > /dev/null
       - name: Draft Release
         id: draft_release
         run: |
@@ -71,8 +73,8 @@ jobs:
           repository: '0mniteck/.pki'
           milestone: "v0.0.${{ env.ver }}"
           assets: |
-            runner_output.log
-            attestations/build_attestation.json
+            attestations/Runner\ output\ \(log\)
+            attestations/Build\ attestation\ \(json\)
       - name: Publish Release
         run: |
           result=$(curl -L -X PATCH -H "Accept: application/vnd.github+json" \
