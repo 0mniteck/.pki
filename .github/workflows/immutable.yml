@@ -8,7 +8,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   fetch-pki:
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@80693813c6ccf0e98ddc6d2d18debd23b92fc21d #v0.0.12
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@98015afa8c407b517e3522d5ece89a45f862361b #v0.0.12
   immutable-rel:
     runs-on: ubuntu-latest
     environment:
@@ -17,9 +17,14 @@ jobs:
     needs: fetch-pki
     steps:
       - name: Checkout v6
-        id: checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-      - name: Generate Attestation for Build Provenance
+        with:
+          ssh-strict: true
+          ssh-user: git
+          clean: true
+          show-progress: true
+          persist-credentials: true
+      - name: Generate Attestation for Build Provenance v3
         id: generate_attestation
         uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f # v3
         with:
@@ -28,23 +33,23 @@ jobs:
               registry/**
               index.**
               local.sh
-      - name: Fetch Attestation ID's
+      - name: Fetch Attestation ID via API
         id: fetch_attestation
         run: |
           mkdir -p attestations && pushd attestations > /dev/null
           echo 1. ${{ steps.generate_attestation.outputs.bundle-path }} > Runner\ output\ \(log\)
           echo 2. ${{ steps.generate_attestation.outputs.attestation-url }} >> Runner\ output\ \(log\)
-          echo 3. ${{ steps.generate_attestation.outputs.attestation-id }} >> Runner\ output\ \(log\)
+          # echo 3. ${{ steps.generate_attestation.outputs.attestation-id }} >> Runner\ output\ \(log\)
           cat Runner\ output\ \(log\) && popd > /dev/null
-      - name: Download Attestations
+      - name: Download Attestation (json) via API
         id: download_attestation
         run: |
           pushd attestations > /dev/null
           curl -L -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ github.token }}" \
           ${{ steps.generate_attestation.outputs.attestation-url }}/download > Build\ attestation\ \(json\)
-          echo "ver=$(cat index.ver)" >> $GITHUB_ENV && popd > /dev/null
-      - name: Draft Release
+          popd > /dev/null && echo "ver=$(cat index.ver)" >> $GITHUB_ENV
+      - name: Draft Release via API
         id: draft_release
         run: |
           export -- response=$(curl -L -X POST -H "Accept: application/vnd.github+json" \
@@ -62,20 +67,20 @@ jobs:
           "make_latest":"false" 
           }' | jq .id || exit 1) || exit 1
           echo "responded=$response" >> $GITHUB_ENV
-      - name: Install GitReleaseManager
+      - name: Install GitReleaseManager - v4.3.3 - v0.20.0
         uses: gittools/actions/gitreleasemanager/setup@d96456f5d2fd78923086859f5328008482688611 # v4.3.3
         with:
-          versionSpec: '0.20.0'
+          versionSpec: "0.20.0"
       - name: Add assets to draft release
         uses: gittools/actions/gitreleasemanager/addasset@ee6b1e33085776d48cb0d657e9161ba6d367bc69 # v4.3.3
         with:
-          token: ${{ github.token }}
-          repository: '0mniteck/.pki'
+          token: "${{ github.token }}"
+          repository: "0mniteck/.pki"
           milestone: "v0.0.${{ env.ver }}"
           assets: |
             attestations/Runner\ output\ \(log\)
             attestations/Build\ attestation\ \(json\)
-      - name: Publish Release
+      - name: Publish Release via API
         run: |
           result=$(curl -L -X PATCH -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ github.token }}" \
