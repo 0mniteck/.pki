@@ -11,7 +11,7 @@ jobs:
           touch index.ver
           index_number=$(($(cat index.ver) + 1))
           echo $index_number > index.ver
-
+          set -x
           validate.pki() {
             curl -s --pinnedpubkey "sha256//$(<registry/$1.pubkey)" \
             --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://$1/ > /dev/null
