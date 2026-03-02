@@ -7,9 +7,8 @@ on:
     - cron: '0 0 * * *'
   push:
     paths:
-      - '**.csv'
-      - '**.ver'
       - 'registry/**'
+      - 'index.**'
 concurrency:
   group: attestation
   cancel-in-progress: true
@@ -19,7 +18,7 @@ permissions:
   attestations: write
 jobs:
   release-pki:
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@c5197e551410c73c9f0c6eb7e5523498b6247c47 # v0.0.11
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@99c4b8c6596bb01e3b1c84edd379dde96764b44c # v0.0.12
   immutable-rel:
     runs-on: ubuntu-latest
     environment:
@@ -39,7 +38,7 @@ jobs:
         run: echo "${{ github.token }}" | gh auth login --with-token || exit 1
       - name: Run gh Attestation
         run: |
-          for I in $GITHUB_WORKSPACE/.github/workflows/* $GITHUB_WORKSPACE/registry/* $GITHUB_WORKSPACE/*.* ; do
+          for I in $GITHUB_WORKSPACE/.github/workflows/* $GITHUB_WORKSPACE/registry/* $GITHUB_WORKSPACE/index.* $GITHUB_WORKSPACE/local.sh ; do
             gh attestation verify $I --repo 0mniteck/.pki --source-ref refs/heads/main \
             --signer-workflow 0mniteck/.pki/.github/workflows/immutable.yml || exit 1;
             sleep 1 && echo "$I Attested"
