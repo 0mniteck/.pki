@@ -11,7 +11,7 @@ jobs:
           touch index.ver
           index_number=$(($(cat index.ver) + 1))
           echo $index_number > index.ver
-          set -x
+          
           validate.pki() {
             curl -s --pinnedpubkey "sha256//$(<registry/$1.pubkey)" \
             --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://$1/ > /dev/null || return
@@ -36,7 +36,7 @@ jobs:
               echo "$1.pubkey expired"
               fetch.pki $1 || exit 1
             else
-              validate.pki $1 || fetch.pki $1 || exit 1
+              validate.pki $1 || echo "$1.pubkey invalid" && fetch.pki $1 || exit 1
             fi
           }
           
@@ -58,6 +58,6 @@ jobs:
             check.index || exit 1
             git config user.name 'github-actions[bot]'
             git config user.email 'github-actions[bot]@users.noreply.github.com'
-            git add -A && git commit -m "Index number $(cat index.ver) - $(date '+%m/%d/%y at %H:%M')"
+            git add -A && git commit -m "Index number $(cat index.ver) - $(date 'on +%m/%d/%y at %H:%M')"
             git push origin HEAD:main
           popd && echo DONE
