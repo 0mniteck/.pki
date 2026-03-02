@@ -3,7 +3,7 @@ on:
   workflow_call:
 jobs:
   fetch-pki:
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@6c78e4c2f757561026a1bfc2e06fd90170604f81 #v0.0.6
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@07089e606400b6931386f57fd873eefa78d52aa1 #v0.0.6
   immutable-rel:
     runs-on: ubuntu-latest
     needs: fetch-pki
