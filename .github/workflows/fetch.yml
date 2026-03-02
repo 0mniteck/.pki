@@ -19,13 +19,13 @@ jobs:
           }
           
           fetch.pki() { # $1 = domain/FQDN
-            pushd registry
+            pushd registry > /dev/null
               openssl s_client -servername $1 -connect $1:443 < /dev/null | sed -n "/-----BEGIN/,/-----END/p" > $1.pem && \
               openssl x509 -in $1.pem -pubkey -noout > $1.pubkey.pem && openssl x509 -in $1.pem -enddate -noout > $1.exp &&\
               openssl asn1parse -noout -inform pem -in $1.pubkey.pem -out $1.pubkey.der && \
               openssl dgst -sha256 -binary $1.pubkey.der | openssl base64 > $1.pubkey && \
               rm -f *.pem *.der || exit 1
-            popd
+            popd > /dev/null
             validate.pki $1 || exit 1
           }
           
@@ -34,9 +34,9 @@ jobs:
             date=$(date +%s)
             if [[ "$dater" -le "$date" ]]; then
               echo "$1.pubkey expired"
-              fetch.pki $1 || exit 1
+              fetch.pki $1 > /dev/null || exit 1
             else
-              validate.pki $1 || echo "$1.pubkey invalid" && fetch.pki $1 || exit 1
+              validate.pki $1 || fetch.pki $1 > /dev/null || exit 1
             fi
           }
           
@@ -44,7 +44,7 @@ jobs:
             if [[ -f "registry/$1.pubkey" ]]; then
               check.csv $1 || exit 1
             else
-              fetch.pki $1 || exit 1
+              fetch.pki $1 > /dev/null || exit 1
             fi
           }
           
@@ -54,10 +54,10 @@ jobs:
             done
           }
           
-          pushd $GITHUB_WORKSPACE
+          pushd $GITHUB_WORKSPACE > /dev/null
             check.index || exit 1
             git config user.name 'github-actions[bot]'
             git config user.email 'github-actions[bot]@users.noreply.github.com'
-            git add -A && git commit -m "Index number $(cat index.ver) - $(date 'on +%m/%d/%y at %H:%M')"
+            git add -A && git commit -m "Index number $(cat index.ver) - $(date '+on %m/%d/%y at %H:%M')"
             git push origin HEAD:main
-          popd && echo DONE
+          popd > /dev/null && echo DONE
