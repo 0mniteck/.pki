@@ -1,4 +1,6 @@
 name: Immutable Release
+run-name: Immutable Release
+description: GitHub Action to manage the immutable/attestable release cycle of 0mniteck/.pki
 on:
   workflow_call:
 concurrency:
@@ -6,12 +8,12 @@ concurrency:
   cancel-in-progress: true
 jobs:
   fetch-pki:
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@c42175fbf15c6c88b6c86d5cd79606534ba5e02f #v0.0.10
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@80693813c6ccf0e98ddc6d2d18debd23b92fc21d #v0.0.11
   immutable-rel:
     runs-on: ubuntu-latest
     environment:
       name: release
-      url: https://0mniteck.github.io/release
+      url: https://pki.omniteck.com
     needs: fetch-pki
     steps:
       - name: Checkout v6
