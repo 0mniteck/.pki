@@ -18,7 +18,7 @@ permissions:
   attestations: write
 jobs:
   release-pki:
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@99c4b8c6596bb01e3b1c84edd379dde96764b44c # v0.0.12
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@755d82902fd938dd6a5b34945644e2dae375a20c # v0.0.12
   immutable-rel:
     runs-on: ubuntu-latest
     environment:
@@ -32,14 +32,19 @@ jobs:
     steps:
       - name: Checkout v6
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-      - name: Install gh CLI
-        run: sudo apt-get -qq update && sudo apt-get -qq install gh
-      - name: Authenticate with GitHub CLI
+        with:
+          ssh-strict: true
+          ssh-user: git
+          clean: true
+          show-progress: true
+          persist-credentials: true
+      - name: Authenticate with gh auth login - GitHub CLI 2.86
         run: echo "${{ github.token }}" | gh auth login --with-token || exit 1
-      - name: Run gh Attestation
+      - name: Run gh attestation verify - GitHub CLI 2.86
         run: |
           for I in $GITHUB_WORKSPACE/.github/workflows/* $GITHUB_WORKSPACE/registry/* $GITHUB_WORKSPACE/index.* $GITHUB_WORKSPACE/local.sh ; do
             gh attestation verify $I --repo 0mniteck/.pki --source-ref refs/heads/main \
             --signer-workflow 0mniteck/.pki/.github/workflows/immutable.yml || exit 1;
             sleep 1 && echo "$I Attested"
           done;
+          echo DONE
