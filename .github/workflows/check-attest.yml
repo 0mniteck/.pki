@@ -18,7 +18,7 @@ permissions:
   attestations: write
 jobs:
   release-pki:
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@7774aeb8606b6028d9ca592ec25206671022fdff # v0.0.12
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@7aad8b3d5f6c9a2dce79e9bf12b1a7ce77298f51 # v0.0.12
   immutable-rel:
     runs-on: ubuntu-latest
     environment:
