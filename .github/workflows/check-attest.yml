@@ -18,7 +18,7 @@ permissions:
   attestations: write
 jobs:
   release-pki:
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@d8a5a9e02b1d9cecb1c7e1d46106805650b3221f # v0.0.13
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@5ab0231429600cbd0751ba486f6d238bf058ee69 # v0.0.13
   immutable-rel:
     runs-on: ubuntu-latest
     environment:
@@ -38,8 +38,6 @@ jobs:
           clean: true
           show-progress: true
           persist-credentials: true
-      - name: Authenticate with gh auth login
-        run: echo "${{ github.token }}" | gh auth login --with-token || exit 1
       - name: Run gh attestation verify - GitHub CLI 2.50+
         run: |
           for I in $GITHUB_WORKSPACE/.github/workflows/* $GITHUB_WORKSPACE/registry/* $GITHUB_WORKSPACE/index.* $GITHUB_WORKSPACE/local.sh ; do
