@@ -59,11 +59,11 @@ jobs:
           "tag_name":"v0.0.${{ env.ver }}",
           "target_commitish":"main",
           "name":"v0.0.${{ env.ver }}",
-          "body":"# DRAFT - Automated release workflow - DRAFT\n# TEST\n## ",
+          "body":"# DRAFT - Automated release workflow - DRAFT",
           "draft":true,
           "immutable":false,
           "prerelease":false,
-          "generate_release_notes":false,
+          "generate_release_notes":true,
           "make_latest":"false" 
           }' | jq .id || exit 1) || exit 1
           echo "responded=$response" >> $GITHUB_ENV
@@ -89,7 +89,7 @@ jobs:
           "tag_name":"v0.0.${{ env.ver }}",
           "target_commitish":"main",
           "name":"v0.0.${{ env.ver }}",
-          "body":"## Attestable - Immutable - Ephemeral\n> #### Attestation Created - v0.0.${{ env.ver }} Immutable Tag\n> - <a href=${{ steps.generate_attestation.outputs.attestation-url }} >${{ steps.generate_attestation.outputs.attestation-url }}</a>\n## ",
+          "body":"## Attestable - Immutable - Ephemeral\n> #### Attestation Created - v0.0.${{ env.ver }} Immutable Tag\n> - <a href=${{ steps.generate_attestation.outputs.attestation-url }} >${{ steps.generate_attestation.outputs.attestation-url }}</a>",
           "draft":false,
           "immutable":true,
           "prerelease":false,
