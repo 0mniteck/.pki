@@ -1,6 +1,7 @@
 name: Deploy Jekyll
 on:
   workflow_dispatch:
+  workflow_call:
 permissions:
   contents: read
   pages: write
