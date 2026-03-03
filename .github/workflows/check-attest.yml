@@ -62,3 +62,7 @@ jobs:
     name: Refresh Github Pages
     uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@13a2c53b7477903cc3ccbddf478646d3d50899ca # v0.0.18
     needs: read-me
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
