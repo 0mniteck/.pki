@@ -110,15 +110,18 @@ check.index "$@" || FAIL+=":check.index:$@"
 rm -r -f $tmp/
 err() {
   if [[ "$FAIL" != "" ]]; then
-  	return "local.sh:_err:_$FAIL"
+  	echo "local.sh:_err:_$FAIL"
+    return 1
   elif [[ "$SUCCESS" == "" ]]; then
-    return "local.sh:_err:_$FAIL"
+    echo "local.sh:_err:_$FAIL"
+    return 1
   else
-  	return "local.sh:_PKI:_VALID"
+  	echo "local.sh:_PKI:_VALID"
+    return 0
   fi
 }
 export -- PKI_DONE=$(err)
-if [[ "$PKI_DONE" == *err* ]]; then
+if [[ "$PKI_DONE" == "1" ]]; then
   echo $PKI_DONE
   exit 1
 fi
