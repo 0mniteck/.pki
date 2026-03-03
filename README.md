@@ -9,7 +9,7 @@ with know domains and their expiries adding into the `registry/` from the list s
 
 #### fetch and validate index registry + attest with sigstore + release immutably
 
-#### [Github Workflow](https://github.com/0mniteck/.pki/blob/main/.github/workflows/action.yml) - <sub><sub>[![Check Attestation](https://github.com/0mniteck/.pki/actions/workflows/check-attest.yml/badge.svg)](https://github.com/0mniteck/.pki/actions/workflows/action.yml)</sub></sub>
+#### [Github Workflow](https://github.com/0mniteck/.pki/blob/main/.github/workflows/action.yml) - <sub><sub>[![Release](https://github.com/0mniteck/.pki/actions/workflows/action.yml/badge.svg)](https://github.com/0mniteck/.pki/actions/workflows/action.yml)</sub></sub>
 
 > #### Attestation Created - v0.0.23 Immutable Tag
 > - [https://github.com/0mniteck/.pki/attestations/20341720](https://github.com/0mniteck/.pki/attestations/20341720)
