@@ -4,9 +4,9 @@ description: GitHub Action to manage the immutable/attestable release cycle of 0
 on:
   workflow_call:
     inputs:
-      attested_id: 
+      attested_url: 
         required: true
-        description: 'id number of attestation'
+        description: 'url of attestation'
         type: string
 concurrency:
   group: rel-tag
@@ -33,10 +33,9 @@ jobs:
             VER=$(($(cat index.ver) - 1 ))
             echo $VER
             sed -i "s/$(echo $(grep Created README.md))/> #### Attestation Created - v0.0.$VER Immutable Tag/" README.md
-            INP="> - [https://github.com/0mniteck/.pki/attestations/${{ inputs.attested_id }}](https://github.com/0mniteck/.pki/attestations/${{ inputs.attested_id }})"
+            INP="> - [${{ inputs.attested_url }}](${{ inputs.attested_url }})"
             sed -i "$(( $(grep -n Created README.md | cut -d':' -f1) + 1))d" README.md
             sed -i "$(( $(grep -n Created README.md | cut -d':' -f1) + 1))i $INP" README.md
-            sed -i "s/$(echo $(grep Created README.md))/> #### Attestation Created - v0.0.$(cat index.ver) Immutable Tag/" README.md
             git config user.name 'github-actions[bot]'
             git config user.email 'github-actions[bot]@users.noreply.github.com'
             git add -A && git commit -m "v0.0.$VER - $(date '+on %m/%d/%y at %H:%M UTC')"
