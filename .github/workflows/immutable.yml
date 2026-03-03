@@ -40,6 +40,8 @@ jobs:
           echo 1. ${{ steps.generate_attestation.outputs.bundle-path }} > Runner\ output\ \(log\)
           echo 2. ${{ steps.generate_attestation.outputs.attestation-url }} >> Runner\ output\ \(log\)
           cat Runner\ output\ \(log\) && popd > /dev/null
+        env:
+          URLL: ${{ steps.generate_attestation.outputs.attestation-url }}
       - name: Download Attestation (json) via API
         id: download_attestation
         run: |
@@ -99,4 +101,4 @@ jobs:
           }') || exit 1
           if [[ "$result" == *null* ]]; then exit 1; fi;
     outputs:
-      URLL: ${{ steps.generate_attestation.outputs.attestation-url }}
+      URLL: ${{ env.URLL }}
