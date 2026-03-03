@@ -66,7 +66,7 @@ jobs:
           "make_latest":"false" 
           }' || exit 1) || exit 1
           responded_id=$(echo $response | jq .id)
-          responded_body=$(echo $response | jq .body)
+          responded_body=$(echo $response | jq .body | cut -d'"' -f2)
           echo "responded=$responded_id" >> $GITHUB_ENV
           echo "response=$responded_body" >> $GITHUB_ENV
       - name: Install GitReleaseManager - v4.3.3 - v0.20.0
