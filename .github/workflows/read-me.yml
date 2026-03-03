@@ -1,6 +1,5 @@
-name: Add Release Tag To README
-run-name: Add Release Tag To README
-description: GitHub Action to manage the immutable/attestable release cycle of 0mniteck/.pki
+name: Publish README.md
+run-name: Publish README.md
 on:
   workflow_call:
     inputs:
@@ -9,10 +8,10 @@ on:
         description: 'url of attestation'
         type: string
 concurrency:
-  group: rel-tag
+  group: release
   cancel-in-progress: true
 jobs:
-  release-tag:
+  publish-readme:
     runs-on: ubuntu-latest
     environment:
       name: release
@@ -30,7 +29,6 @@ jobs:
         run: |
           pushd $GITHUB_WORKSPACE > /dev/null
             git fetch && git pull origin main
-            echo "GITHUB_REF is $GITHUB_REF in $GITHUB_WORKSPACE"
             VER=$(($(cat index.ver) - 1 ))
             sed -i "s/$(echo $(grep Created README.md))/> #### Attestation Created - v0.0.$VER Immutable Tag/" README.md
             INP="> - [${{ inputs.attested_url }}](${{ inputs.attested_url }})"
@@ -38,6 +36,6 @@ jobs:
             sed -i "$(( $(grep -n Created README.md | cut -d':' -f1) + 1))i $INP" README.md
             git config user.name 'github-actions[bot]'
             git config user.email 'github-actions[bot]@users.noreply.github.com'
-            git add -A && git commit -m "v0.0.$VER - $(date '+on %m/%d/%y at %H:%M UTC')"
+            git add -A && git commit -m "Released v0.0.$VER - $(date '+on %m/%d/%y at %H:%M UTC')"
             git push origin HEAD:main
           popd > /dev/null && echo DONE
