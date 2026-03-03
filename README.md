@@ -8,53 +8,41 @@ with know domains and their expiries adding into the `registry/` from the list s
 #### fetch and validate index registry + attest with sigstore + immutable releases
 [![Check Attestation](https://github.com/0mniteck/.pki/actions/workflows/check-attest.yml/badge.svg)](https://github.com/0mniteck/.pki/actions/workflows/check-attest.yml)
 > [Github Workflow](.github/workflows/check-attest.yml)
-> #### <h3>Attestation Created</h3>
-> <ul><li><a href="https://github.com/0mniteck/.pki/attestations/19776406">https://github.com/0mniteck/.pki/attestations/19776406</a>
-> </li></ul>
-> #### 02/25/2026 - # v0.0.3 Immutable Tag
+> #### Attestation Created
+> <a href="https://github.com/0mniteck/.pki/attestations/20201178">https://github.com/0mniteck/.pki/attestations/20201178</a>
+> 
+> #### 03/02/2026 - # v0.0.12 Immutable Tag
 >
 
 #### client side validation of `registry/` against expiry, attested pki, and liveness
-> [local.sh](local.sh) # WIP
+> [local.sh](local.sh) # WIP - gh attestation verify (Ubuntu v2.46) - (needs v2.50+) - skipping for now
 
-#### add attestation and liveness checks at the project level script
+#### add local.sh to the project level script
 ```
-validate.with.pki() { # \$1 = domain/FQDN, # \$2 = filename, # \$3 = full_url
-  attest.with.gh() {
-	pkexec bash -c \"apt-get -qq update && \
-				 apt-get install gh\"
-    echo \"Attesting \$1.pubkey\"
-	pushd .pki/ > /dev/null
-  for I in /registry/*; do
-	  gh attestation verify $I --repo 0mniteck/.pki || exit 1;
-    echo \"$1.pubkey Attested\"
-  done;
-  }
-  fetch.with.pki() {
-    curl -s --pinnedpubkey \"sha256//\$(<.pki/registry/\$1.pubkey)\" \
-    --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://\$3 > \$2 || exit 1
-  }
-  attest.with.gh \$1 || exit 1
-  popd > /dev/null
-  curl -s --pinnedpubkey \"sha256//\$(<.pki/registry/\$1.pubkey)\" \
-  --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://\$1 > /dev/null || exit 1
-  fetch.with.pki \$1 \$2 \$3 || exit 1
-  echo \"\$1.pubkey is valid, fetched \$2.\"
+validate.with.pki() { # \$1 = full_url.TDL/.../[file]
+    chmod +x .pki/local.sh
+    .pki/local.sh \$1 || exit 1
 }
 ```
 
-#### **for example fetch this file after verifying attestation is valid**
+#### **for example fetch `secretservice` bin file after verifying pki is valid**
 ```
 if [[ \"\$SKIP_LOGIN\" == \"\" ]]; then
   mkdir -p $docker_data/.docker && mkdir -p $home/$snap_path/.docker && wait 
   if [[ \"\$(which docker-credential-secretservice)\" == \"\" ]]; then
-    validate.with.pki github.com \"\$cred_helper_name\" \"\$cred_helper\" || exit 1
+    validate.with.pki \"\$cred_helper\" || exit 1
     echo \"\$cred_helper_sha  \$cred_helper_name\" | sha512sum -c || exit 1
     mkdir -p $home/bin && mv $cred_helper_name $home/bin/docker-credential-secretservice
   fi
+
+  echo '{
+  \"credsStore\": \"secretservice\"
+}' > $home/$snap_path/.docker/config.json
+
+fi
 ```
 
-#### add .ssh/config host and ssh keys for `git@.pki:0mniteck/.pki.git` to each projects **`.identity`** file
+#### add .pki to `.ssh/config` hosts
 ```
 if [[ \"\$ssh_conf\" != *.pki* ]]; then
   echo \"
@@ -65,7 +53,8 @@ Host .pki
 fi
 ```
 
-#### add read only deploy keys ecdsa_sk and RSA 4096 (attended/unattended)
+### add read only ssh keys to the `deploy keys` ecdsa_sk/RSA_4096 (attended/unattended)
+#### add ssh keys for `git@.pki:0mniteck/.pki.git` to each projects **`.identity`** file
 ```
 cat > $HOME/$PKI_ID_FILE << EOF_
 -----BEGIN OPENSSH PRIVATE KEY-----
@@ -82,7 +71,7 @@ YOUR PUBKEY
 EOF__
 ```
 
-#### Lastly add submodule to `.gitconfig` of project and `git submodules init`
+#### Lastly add submodule to `.gitmodules` of each project and `git submodule add git@.pki:0mniteck/.pki.git`
 ```
 [submodule ".pki"]
 	path = .pki
