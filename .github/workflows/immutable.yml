@@ -104,5 +104,3 @@ jobs:
           "make_latest":"true"
           }') || exit 1
           if [[ "$result" == *null* ]]; then exit 1; fi;
-    outputs:
-      URLL: ${{ env.URLL }}
