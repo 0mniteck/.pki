@@ -10,7 +10,7 @@ on:
       - 'registry/**'
       - 'index.**'
 concurrency:
-  group: attestation
+  group: attestation-main
   cancel-in-progress: true
 permissions:
   id-token: write
@@ -19,6 +19,8 @@ permissions:
 jobs:
   release-pki:
     name: Release PKI
+    concurrency:
+      group: attestation
     uses: 0mniteck/.pki/.github/workflows/immutable.yml@c799ee8634a3b7ca0376912a08b2313045ab4f6d # v0.0.18
   immutable-rel:
     runs-on: ubuntu-latest
@@ -30,6 +32,8 @@ jobs:
       id-token: write
       contents: read
       attestations: read
+    concurrency:
+      group: attestation
     steps:
       - name: Checkout v6
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -52,6 +56,8 @@ jobs:
   read-me:
     name: Update Readme
     uses: 0mniteck/.pki/.github/workflows/readme.yml@31c599591db3f3a10ff6ee7a51a61deccfa33ff1 # v0.0.18
+    concurrency:
+      group: attestation
     needs: release-pki
     permissions:
       id-token: write
@@ -61,6 +67,8 @@ jobs:
   gh-pages:
     name: Refresh Github Pages
     uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@13a2c53b7477903cc3ccbddf478646d3d50899ca # v0.0.18
+    concurrency:
+      group: attestation
     needs: read-me
     permissions:
       contents: read
