@@ -1,23 +1,24 @@
 # .pki
-New project for collecting and pinning widely used public keys for mutual auth in https curl requests
-(as a stop gap measure only after an ssh connection is established)
 
-Adding it to other projects as a submodule. Github workflows will update, validate, and attest to this repo
+`.github/workflows` for attesting and pinning widely used public keys for mutual auth in https curl requests
+(as a stop gap measure, only after an ssh connection has been established)
+
+Add it to other projects as a submodule. Github workflows will update, validate, and attest to this repo
 with know domains and their expiries adding into the `registry/` from the list stored in an `index.csv`
+## 
 
-#### fetch and validate index registry + attest with sigstore + immutable releases
-[![Check Attestation](https://github.com/0mniteck/.pki/actions/workflows/check-attest.yml/badge.svg)](https://github.com/0mniteck/.pki/actions/workflows/check-attest.yml)
-> [Github Workflow](.github/workflows/check-attest.yml)
-> #### Attestation Created
-> <a href="https://github.com/0mniteck/.pki/attestations/20201178">https://github.com/0mniteck/.pki/attestations/20201178</a>
-> 
-> #### 03/02/2026 - # v0.0.12 Immutable Tag
->
+#### fetch and validate index registry + attest with sigstore + release immutably
 
-#### client side validation of `registry/` against expiry, attested pki, and liveness
-> [local.sh](local.sh) # WIP - gh attestation verify (Ubuntu v2.46) - (needs v2.50+) - skipping for now
+#### [Github Workflow](.github/workflows/check-attest.yml) - <sub><sub>[![Check Attestation](https://github.com/0mniteck/.pki/actions/workflows/check-attest.yml/badge.svg)](https://github.com/0mniteck/.pki/actions/workflows/check-attest.yml)</sub></sub>
 
-#### add local.sh to the project level script
+> #### Attestation Created - v0.0.13 Immutable Tag
+> <a href="https://github.com/0mniteck/.pki/attestations/20244863">https://github.com/0mniteck/.pki/attestations/20244863</a>
+
+## 
+#### client side validation of `registry/` against expiry, liveness, and remote/ref
+> [local.sh](local.sh) # WIP - gh attestation verify (Ubuntu v2.46) - (Needs v2.50+) - skipping for now...
+
+#### add function for local.sh to run at the project level script
 ```
 validate.with.pki() { # \$1 = full_url.TDL/.../[file]
     chmod +x .pki/local.sh
@@ -71,7 +72,7 @@ YOUR PUBKEY
 EOF__
 ```
 
-#### Lastly add submodule to `.gitmodules` of each project and `git submodule add git@.pki:0mniteck/.pki.git`
+#### lastly add submodule to `.gitmodules` of each project and `git submodule add git@.pki:0mniteck/.pki.git`
 ```
 [submodule ".pki"]
 	path = .pki
