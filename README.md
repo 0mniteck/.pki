@@ -13,8 +13,8 @@ with know domains and their expiries adding into the `registry/` from the list s
 
 > #### Attestation Created - v0.0.13 Immutable Tag
 > <a href="https://github.com/0mniteck/.pki/attestations/20244863">https://github.com/0mniteck/.pki/attestations/20244863</a>
-
 ## 
+
 #### client side validation of `registry/` against expiry, liveness, and remote/ref
 > [local.sh](local.sh) # WIP - gh attestation verify (Ubuntu v2.46) - (Needs v2.50+) - skipping for now...
 
