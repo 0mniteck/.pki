@@ -29,6 +29,7 @@ jobs:
     needs: fetch-pki
     uses: 0mniteck/.pki/.github/workflows/immutable.yml@4c466cc3a4d39633dc4b99bac6ab0e825e583776 # v0.0.22
   attested-rel:
+    name: Attest PKI
     runs-on: ubuntu-latest
     environment:
       name: release
