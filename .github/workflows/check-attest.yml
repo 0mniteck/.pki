@@ -21,7 +21,7 @@ jobs:
     name: Release PKI
     concurrency:
       group: attestation
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@c799ee8634a3b7ca0376912a08b2313045ab4f6d # v0.0.18
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@b2b90ec581440f7f16925e681cbcae9ed4aa63df # v0.0.18
   immutable-rel:
     runs-on: ubuntu-latest
     environment:
