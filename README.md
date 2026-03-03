@@ -11,8 +11,9 @@ with know domains and their expiries adding into the `registry/` from the list s
 
 #### [Github Workflow](https://github.com/0mniteck/.pki/blob/main/.github/workflows/check-attest.yml) - <sub><sub>[![Check Attestation](https://github.com/0mniteck/.pki/actions/workflows/check-attest.yml/badge.svg)](https://github.com/0mniteck/.pki/actions/workflows/check-attest.yml)</sub></sub>
 
-> #### Attestation Created - v0.0.16 Immutable Tag
-> - <a href=https://github.com/0mniteck/.pki/attestations/20254429 >https://github.com/0mniteck/.pki/attestations/20254429</a>
+> #### Attestation Created - v0.0.17 Immutable Tag
+> - [https://github.com/0mniteck/.pki/attestations/20256035](https://github.com/0mniteck/.pki/attestations/20256035)
+##
 
 #### client side validation of `registry/` against expiry, liveness, and remote/ref
 > [local.sh](https://github.com/0mniteck/.pki/blob/main/local.sh) # WIP - gh attestation verify (Ubuntu v2.46) - (Needs v2.50+) - skipping for now...
