@@ -67,6 +67,7 @@ jobs:
           "make_latest":"false" 
           }' | jq .id || exit 1) || exit 1
           echo "responded=$response" >> $GITHUB_ENV
+          ls -la attestations/
       - name: Install GitReleaseManager - v4.3.3 - v0.20.0
         uses: gittools/actions/gitreleasemanager/setup@d96456f5d2fd78923086859f5328008482688611 # v4.3.3
         with:
@@ -78,8 +79,8 @@ jobs:
           repository: "0mniteck/.pki"
           milestone: "v0.0.${{ env.ver }}"
           assets: |
-            attestations/Runner\ output\ \(log\)
-            attestations/Build\ attestation\ \(json\)
+            attestations/'Runner output (log)'
+            attestations/'Build attestation (json)'
       - name: Publish Release via API
         run: |
           result=$(curl -L -X PATCH -H "Accept: application/vnd.github+json" \
