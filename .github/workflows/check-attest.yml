@@ -19,7 +19,7 @@ permissions:
 jobs:
   release-pki:
     name: Release PKI
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@a5399a0a0bbd2fd33ac81e1e16734820b3c7c4e8 # v0.0.18
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@c799ee8634a3b7ca0376912a08b2313045ab4f6d # v0.0.18
   immutable-rel:
     runs-on: ubuntu-latest
     environment:
