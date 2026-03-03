@@ -3,6 +3,9 @@ run-name: Immutable Release
 description: GitHub Action to manage the immutable/attestable release cycle of 0mniteck/.pki
 on:
   workflow_call:
+    outputs:
+      URL: 
+        value: ${{ jobs.immutable-rel.outputs.URL }}
 concurrency:
   group: immutable
   cancel-in-progress: true
@@ -15,6 +18,8 @@ jobs:
       name: release
       url: https://pki.omniteck.com
     needs: fetch-pki
+    outputs:
+      URL: ${{ steps.fetch_attestation.outputs.URLL }}
     steps:
       - name: Checkout v6
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -40,8 +45,7 @@ jobs:
           echo 1. ${{ steps.generate_attestation.outputs.bundle-path }} > Runner\ output\ \(log\)
           echo 2. ${{ steps.generate_attestation.outputs.attestation-url }} >> Runner\ output\ \(log\)
           cat Runner\ output\ \(log\) && popd > /dev/null
-        env:
-          URLL: ${{ steps.generate_attestation.outputs.attestation-url }}
+          echo "URLL=${{ steps.generate_attestation.outputs.attestation-url }} >> $GITHUB_OUTPUT
       - name: Download Attestation (json) via API
         id: download_attestation
         run: |
