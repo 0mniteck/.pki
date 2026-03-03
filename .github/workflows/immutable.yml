@@ -59,7 +59,7 @@ jobs:
           "tag_name":"v0.0.${{ env.ver }}",
           "target_commitish":"main",
           "name":"v0.0.${{ env.ver }}",
-          "body":"# DRAFT - Automated release workflow - DRAFT",
+          "body":"# DRAFT - Automated release workflow - DRAFT\n# TEST\n## ",
           "draft":true,
           "immutable":false,
           "prerelease":false,
@@ -89,10 +89,7 @@ jobs:
           "tag_name":"v0.0.${{ env.ver }}",
           "target_commitish":"main",
           "name":"v0.0.${{ env.ver }}",
-          "body":"## Attestable - Immutable - Ephemeral
-          > #### Attestation Created - v0.0.${{ env.ver }} Immutable Tag
-          > <a href=${{ steps.generate_attestation.outputs.attestation-url }} >${{ steps.generate_attestation.outputs.attestation-url }}</a>
-          ## ",
+          "body":"## Attestable - Immutable - Ephemeral\n> #### Attestation Created - v0.0.${{ env.ver }} Immutable Tag\n> - <a href=${{ steps.generate_attestation.outputs.attestation-url }} >${{ steps.generate_attestation.outputs.attestation-url }}</a>\n## ",
           "draft":false,
           "immutable":true,
           "prerelease":false,
