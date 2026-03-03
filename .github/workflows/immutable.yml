@@ -79,8 +79,8 @@ jobs:
           repository: "0mniteck/.pki"
           milestone: "v0.0.${{ env.ver }}"
           assets: |
-            attestations/'Runner output (log)'
-            attestations/'Build attestation (json)'
+            "./attestations/Runner output (log)"
+            "./attestations/Build attestation (json)"
       - name: Publish Release via API
         run: |
           result=$(curl -L -X PATCH -H "Accept: application/vnd.github+json" \
