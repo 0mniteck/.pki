@@ -60,5 +60,5 @@ jobs:
       attested_url: "${{ needs.release-pki.outputs.URL }}"
   gh-pages:
     name: Refresh Github Pages
-    uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@8cd9475ba65db5aed7266044c4b4e9dfbc1090da # v0.0.18
+    uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@13a2c53b7477903cc3ccbddf478646d3d50899ca # v0.0.18
     needs: read-me
