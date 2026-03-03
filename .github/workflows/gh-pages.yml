@@ -1,4 +1,5 @@
 name: Deploy GH-Pages
+run-name: Deploy GH-Pages
 on:
   workflow_call:
 permissions:
