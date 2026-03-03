@@ -59,14 +59,16 @@ jobs:
           "tag_name":"v0.0.${{ env.ver }}",
           "target_commitish":"main",
           "name":"v0.0.${{ env.ver }}",
-          "body":"# DRAFT - Automated release workflow - DRAFT",
           "draft":true,
           "immutable":false,
           "prerelease":false,
           "generate_release_notes":true,
           "make_latest":"false" 
-          }' | jq .id || exit 1) || exit 1
-          echo "responded=$response" >> $GITHUB_ENV
+          }' || exit 1) || exit 1
+          responded_id=$(echo $response | jq .id)
+          responded_body=$(echo $response | jq .body)
+          echo "responded=$responded_id" >> $GITHUB_ENV
+          echo "response=$responded_body" >> $GITHUB_ENV
       - name: Install GitReleaseManager - v4.3.3 - v0.20.0
         uses: gittools/actions/gitreleasemanager/setup@d96456f5d2fd78923086859f5328008482688611 # v4.3.3
         with:
@@ -89,11 +91,10 @@ jobs:
           "tag_name":"v0.0.${{ env.ver }}",
           "target_commitish":"main",
           "name":"v0.0.${{ env.ver }}",
-          "body":"## Attestable - Immutable - Ephemeral\n> #### Attestation Created - v0.0.${{ env.ver }} Immutable Tag\n> - <a href=${{ steps.generate_attestation.outputs.attestation-url }} >${{ steps.generate_attestation.outputs.attestation-url }}</a>",
+          "body":"## Attestable - Immutable - Ephemeral\n> #### Attestation Created - v0.0.${{ env.ver }} Immutable Tag\n> - <a href=${{ steps.generate_attestation.outputs.attestation-url }} >${{ steps.generate_attestation.outputs.attestation-url }}</a>\n${{ env.response }}",
           "draft":false,
           "immutable":true,
           "prerelease":false,
-          "generate_release_notes":true,
           "make_latest":"true"
           }') || exit 1
-          if [[ "$result" == "null" ]]; then exit 1; fi;
+          if [[ "$result" == *null* ]]; then exit 1; fi;
