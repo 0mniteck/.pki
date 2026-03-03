@@ -2,7 +2,7 @@ name: Check Attestation
 run-name: Check Attestation
 description: GitHub Action to manage the immutable/attestable release cycle of 0mniteck/.pki
 on:
-  workflow_dispatch:
+  workflow_dispatch:   
   schedule:
     - cron: '0 0 * * *'
   push:
@@ -18,7 +18,8 @@ permissions:
   attestations: write
 jobs:
   release-pki:
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@0368c65b8f0898706b80ecd0610bade5d10a20d7 # v0.0.17
+    name: Release PKI
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@a5399a0a0bbd2fd33ac81e1e16734820b3c7c4e8 # v0.0.18
   immutable-rel:
     runs-on: ubuntu-latest
     environment:
@@ -48,3 +49,9 @@ jobs:
             sleep 1 && echo "$I Attested"
           done;
           echo DONE
+  read-me:
+    name: Update Readme
+    uses: 0mniteck/.pki/.github/workflows/readme.yml@480afa813c40f94539671a37a7f6d31aca2ae221 # v0.0.18
+    needs: release-pki
+    with:
+      attested_url: "${{ needs.release-pki.outputs.URL }}"
