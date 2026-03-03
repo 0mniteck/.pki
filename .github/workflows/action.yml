@@ -1,5 +1,5 @@
-name: Check Attestation
-run-name: Check Attestation
+name: Release
+run-name: Release
 description: GitHub Action to manage the immutable/attestable release cycle of 0mniteck/.pki
 on:
   workflow_dispatch:   
@@ -10,30 +10,35 @@ on:
       - 'registry/**'
       - 'index.**'
 concurrency:
-  group: attestation-main
+  group: release-main
   cancel-in-progress: true
 permissions:
   id-token: write
   contents: write
   attestations: write
 jobs:
+  fetch-pki:
+    name: Fetch PKI
+    concurrency:
+      group: release
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@35819fcfadde5fc18bbd1c9d42a623b7ef78b4e1 #v0.0.22
   release-pki:
     name: Release PKI
     concurrency:
-      group: attestation
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@b2b90ec581440f7f16925e681cbcae9ed4aa63df # v0.0.18
-  immutable-rel:
+      group: release
+    needs: fetch-pki
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@4c466cc3a4d39633dc4b99bac6ab0e825e583776 # v0.0.22
+  attested-rel:
     runs-on: ubuntu-latest
     environment:
       name: release
-      url: https://pki.omniteck.com
     needs: release-pki
     permissions:
       id-token: write
       contents: read
       attestations: read
     concurrency:
-      group: attestation
+      group: release
     steps:
       - name: Checkout v6
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -54,21 +59,23 @@ jobs:
           done;
           echo DONE
   read-me:
-    name: Update Readme
-    uses: 0mniteck/.pki/.github/workflows/readme.yml@31c599591db3f3a10ff6ee7a51a61deccfa33ff1 # v0.0.18
+    name: Publish Readme
+    uses: 0mniteck/.pki/.github/workflows/read-me.yml@29fd7ce1b8f060a415f076df972306e64f5078a0 # v0.0.22
     concurrency:
-      group: attestation
-    needs: release-pki
+      group: release
+    needs:
+      - attested-rel
+      - release-pki
     permissions:
       id-token: write
       contents: write
     with:
       attested_url: "${{ needs.release-pki.outputs.URL }}"
   gh-pages:
-    name: Refresh Github Pages
-    uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@a97425e1ead24f7799e570935264907b9241d4d3 # v0.0.21
+    name: Release Github Pages
+    uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@d7a8fd5ef7125529216957435eaf78c013a260be # v0.0.22
     concurrency:
-      group: attestation
+      group: release
     needs: read-me
     permissions:
       contents: read
