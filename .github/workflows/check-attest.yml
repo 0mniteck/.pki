@@ -39,6 +39,8 @@ jobs:
           show-progress: true
           persist-credentials: true
       - name: Run gh attestation verify - GitHub CLI 2.50+
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           for I in $GITHUB_WORKSPACE/.github/workflows/* $GITHUB_WORKSPACE/registry/* $GITHUB_WORKSPACE/index.* $GITHUB_WORKSPACE/local.sh ; do
             gh attestation verify $I --repo 0mniteck/.pki --source-ref refs/heads/main \
