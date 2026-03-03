@@ -53,5 +53,8 @@ jobs:
     name: Update Readme
     uses: 0mniteck/.pki/.github/workflows/readme.yml@480afa813c40f94539671a37a7f6d31aca2ae221 # v0.0.18
     needs: release-pki
+    permissions:
+      id-token: write
+      contents: write
     with:
       attested_url: "${{ needs.release-pki.outputs.URL }}"
