@@ -35,7 +35,7 @@ fetch.pki() { # $1 = domain/FQDN
 
 invalidate.pki() { # $1 = domain/FQDN
   rm -f $local/$1.pubkey $local/$1.exp $tmp/$1.pubkey $tmp/$1.exp
-  fetch.pki $1 || FAIL+=:local.invalid.pki:$1 	
+  fetch.pki $1 > /dev/null || FAIL+=:local.invalid.pki:$1 	
 }
 
 check.liveness.pki() { # $1 = domain/FQDN
@@ -44,9 +44,9 @@ check.liveness.pki() { # $1 = domain/FQDN
 }
 
 check.against.pki() { # $1 = domain/FQDN
-  curl_run1=$(curl -o $tmp/$1.pubkey -s --pinnedpubkey "sha256//1FtgkXeU53bUTaObUogizKNIqs/ZGaEo1k2AwG30xts=" \
+  curl_run1=$(curl -o $tmp/$1.pubkey -s --pinnedpubkey "sha256//$(<$registry/raw.githubusercontent.com.pubkey)" \
   --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://raw.githubusercontent.com/0mniteck/.pki/refs/heads/main/registry/$1.pubkey)
-  curl_run2=$(curl -o $tmp/$1.exp -s --pinnedpubkey "sha256//1FtgkXeU53bUTaObUogizKNIqs/ZGaEo1k2AwG30xts=" \
+  curl_run2=$(curl -o $tmp/$1.exp -s --pinnedpubkey "sha256//$(<$registry/raw.githubusercontent.com.pubkey)" \
   --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://raw.githubusercontent.com/0mniteck/.pki/refs/heads/main/registry/$1.exp)
   diff $tmp/$1.pubkey $remote/$1.pubkey || FAIL+=:local.invalidate.pki:$1
   diff $remote/$1.pubkey $local/$1.pubkey || FAIL+=:local.invalidate.pki:$1
@@ -107,7 +107,6 @@ check.index() {
 }
 
 check.index "$@" || FAIL+=":check.index:$@"
-rm -r -f $tmp/
 err() {
   if [[ "$FAIL" != "" ]]; then
   	echo "local.sh:_err:_$FAIL"
@@ -122,6 +121,10 @@ err() {
 }
 export -- PKI_DONE=$(err)
 if [[ "$PKI_DONE" == "1" ]]; then
-  echo $PKI_DONE
+  echo $FAIL
+  ls -la $local && rm -r -f $local
+  ls -la $tmp && rm -r -f $tmp
   exit 1
+else
+  rm -r -f $tmp
 fi
