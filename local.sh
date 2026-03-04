@@ -83,7 +83,7 @@ check.csv() { # $1 = domain/FQDN
   dateq=$(date -d "$(cat $local/$1.exp | cut -d'=' -f2)" +%s)
   if [[ "$dateq" -le "$date" ]]; then
     invalidate.pki $1 || declare -g -- FAIL+=:local.invalidate.pki:$1
-  fi 
+  fi
 }
 
 check.pki() { # $1 = domain/FQDN
@@ -102,18 +102,18 @@ check.index() {
   for i in $(cat .pki/index.csv | tr ',' '\n' | cat); do
     fetch.pki $i || declare -g -- FAIL+=:fetch.pki:$i
     check.pki $i || declare -g -- FAIL+=:check.pki:$i                 # Exists/Expired
-  	# check.attest.pki $i || declare -g -- FAIL+=:check.attest.pki:$i # gh attestation verify
-  	check.against.pki $i || declare -g -- FAIL+=:check.against.pki:$i # Direct/Full Match
-    check.liveness.pki $i | declare -g -- SUCCESS+=:check.liveness.pki:$i || declare -g -- FAIL+=:check.liveness.pki:$i # Conectivity Check
+    # check.attest.pki $i || declare -g -- FAIL+=:check.attest.pki:$i # gh attestation verify
+    check.against.pki $i || declare -g -- FAIL+=:check.against.pki:$i # Direct/Full Match
+    check.liveness.pki $i && declare -g -- SUCCESS+=:check.liveness.pki:$i || declare -g -- FAIL+=:check.liveness.pki:$i # Conectivity Check
   done
   url=https://$1
   j=$(echo $url | awk -F'[/:]' '{print $4}'"{print \$$(($( echo \"$url\" | tr '/' '\n' | wc -l ) + 1))\" $url\"}")
   k=$(echo $j | wc -w)         # WORD_COUNT
   l=$(echo $j | cut -d' ' -f1) # FQDN
-  m=$(echo $j | cut -d' ' -f2) # FILE_NAME 
+  m=$(echo $j | cut -d' ' -f2) # FILE_NAME
   n=$(echo $j | cut -d' ' -f3) # FULL_URL
   if [[ "$k" -ge "3" ]]; then
-    fetch.with.pki $l $m $n | declare -g -- SUCCESS+=:fetch.with.pki:$n || declare -g -- FAIL+=:fetch.with.pki:$n
+    fetch.with.pki $l $m $n && declare -g -- SUCCESS+=:fetch.with.pki:$n || declare -g -- FAIL+=:fetch.with.pki:$n
   fi
 }
 
