@@ -44,9 +44,9 @@ check.liveness.pki() { # $1 = domain/FQDN
 }
 
 check.against.pki() { # $1 = domain/FQDN
-  curl_run1=$(curl -o $tmp/$1.pubkey -s --pinnedpubkey "sha256//$(<$registry/raw.githubusercontent.com.pubkey)" \
+  curl_run1=$(curl -o $tmp/$1.pubkey -s --pinnedpubkey "sha256//$(<$remote/raw.githubusercontent.com.pubkey)" \
   --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://raw.githubusercontent.com/0mniteck/.pki/refs/heads/main/registry/$1.pubkey)
-  curl_run2=$(curl -o $tmp/$1.exp -s --pinnedpubkey "sha256//$(<$registry/raw.githubusercontent.com.pubkey)" \
+  curl_run2=$(curl -o $tmp/$1.exp -s --pinnedpubkey "sha256//$(<$remote/raw.githubusercontent.com.pubkey)" \
   --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://raw.githubusercontent.com/0mniteck/.pki/refs/heads/main/registry/$1.exp)
   diff $tmp/$1.pubkey $remote/$1.pubkey || FAIL+=:local.invalidate.pki:$1
   diff $remote/$1.pubkey $local/$1.pubkey || FAIL+=:local.invalidate.pki:$1
