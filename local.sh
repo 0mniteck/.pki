@@ -4,9 +4,9 @@
 # Shant Tchatalbachian - GPL v3 LICENSE included
 ## Usage: Accepts: Any url that's a FQDN (no https://). If there's a link that has a domain.tld/.../[file] it will attempt to fetch the file after verifying the pinning.
 ##        Validates: The attestations are against this repo's releases and the pinned pubkeys as well as checks for expiry and liveness before each use.
-##        Returns: $PKI_DONE & If you provided a url/file it returns the file to the current directory with a visible exit 1 on failure and debug
+##        Returns: $PKI_DONE & If you provided a url/file it returns the file to the current directory with a visible exit 1 on failure and debug.
 ##
-## Requirements: apt-get -qq update && apt-get -qq install gh
+## Requirements(gh v2.50+): apt-get -qq update && apt-get -qq install gh
 ## Recommended: fetch over secure gateway, or over git@ssh_sk(security_key)
 
 run_as=$(id -u -n)
@@ -15,16 +15,16 @@ run_home=/home/$run_as
 local=$run_home/.pki/registry
 remote=./.pki/registry
 tmp=$run_home/tmp
-mkdir -p $local || FAIL+=:mkdir.local.pki
-mkdir -p $tmp || FAIL+=:mkdir.tmp.pki
+mkdir -p $local || FAIL+=:mkdir.$local.pki
+mkdir -p $tmp || FAIL+=:mkdir.$tmp.pki
 
 fetch.with.pki() { # $1 = domain/FQDN, # $2 = filename-or-/dev/null, # $3 = full_url or blank
   if [[ "$1" == "github.com" ]]; then
     curl -s -L --pinnedpubkey "sha256//$(<$local/$1.pubkey);sha256//$(<$local/release-assets.githubusercontent.com.pubkey)" \
-    --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure $3 > $2 || FAIL+=:fetch.with.pki:$3
+    --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure $3 > $2 || declare -- FAIL+=:fetch.with.pki:$3
   else
     curl -s --pinnedpubkey "sha256//$(<$local/$1.pubkey)" \
-    --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure $3 > $2 || FAIL+=:fetch.with.pki:$3
+    --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure $3 > $2 || declare -- FAIL+=:fetch.with.pki:$3
   fi
 }
 
@@ -34,18 +34,18 @@ fetch.pki() { # $1 = domain/FQDN
     openssl x509 -in $1.pem -pubkey -noout > $1.pubkey.pem && openssl x509 -in $1.pem -enddate -noout > $1.exp && \
     openssl asn1parse -noout -inform pem -in $1.pubkey.pem -out $1.pubkey.der && \
     openssl dgst -sha256 -binary $1.pubkey.der | openssl base64 > $1.pubkey && \
-    rm -f *.pem *.der && echo "Successfully fetched pubkey for $1" || FAIL+=:local.fetch.pki:$1
+    rm -f *.pem *.der && echo "Successfully fetched pubkey for $1" || declare -- FAIL+=:local.fetch.pki:$1
   popd > /dev/null
 }
 
 invalidate.pki() { # $1 = domain/FQDN
   rm -f $local/$1.pubkey $local/$1.exp $tmp/$1.pubkey $tmp/$1.exp
-  fetch.pki $1 > /dev/null || FAIL+=:local.invalid.pki:$1 	
+  fetch.pki $1 > /dev/null || declare -- FAIL+=:local.invalid.pki:$1 	
 }
 
 check.liveness.pki() { # $1 = domain/FQDN
   curl -s --pinnedpubkey "sha256//$(<$local/$1.pubkey)" \
-  --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://$1 > /dev/null || FAIL+=:check.liveness.pki:$1 	
+  --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://$1 > /dev/null || declare -- FAIL+=:check.liveness.pki:$1 	
 }
 
 check.against.pki() { # $1 = domain/FQDN
@@ -53,14 +53,14 @@ check.against.pki() { # $1 = domain/FQDN
   --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://raw.githubusercontent.com/0mniteck/.pki/refs/heads/main/registry/$1.pubkey)
   curl_run2=$(curl -o $tmp/$1.exp -s --pinnedpubkey "sha256//$(<$remote/raw.githubusercontent.com.pubkey)" \
   --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://raw.githubusercontent.com/0mniteck/.pki/refs/heads/main/registry/$1.exp)
-  diff $tmp/$1.pubkey $remote/$1.pubkey || FAIL+=:local.invalidate.pki:$1
-  diff $remote/$1.pubkey $local/$1.pubkey || FAIL+=:local.invalidate.pki:$1
-  diff $local/$1.pubkey $tmp/$1.pubkey || FAIL+=:local.invalidate.pki:$1
+  diff $tmp/$1.pubkey $remote/$1.pubkey || declare -- FAIL+=:local.invalidate.pki:$1
+  diff $remote/$1.pubkey $local/$1.pubkey || declare -- FAIL+=:local.invalidate.pki:$1
+  diff $local/$1.pubkey $tmp/$1.pubkey || declare -- FAIL+=:local.invalidate.pki:$1
 }
 
 check.attest.pki() { # $1 = domain/FQDN
   pushd $remote/ > /dev/null
-    gh attestation verify $1 --repo 0mniteck/.pki || FAIL+=:check.attest.pki:$1
+    gh attestation verify $1.pubkey --repo 0mniteck/.pki || declare -- FAIL+=:check.attest.pki:$1
     echo "$remote/$1.pubkey Attested"
   popd > /dev/null
   pushd $local/ > /dev/null
@@ -73,32 +73,32 @@ check.csv() { # $1 = domain/FQDN
   date=$(date +%s)
   dater=$(date -d "$(cat $remote/$1.exp | cut -d'=' -f2)" +%s)
   if [[ "$dater" -le "$date" ]]; then
-    FAIL+=:remote.invalidate.pki:$1
+    declare -- FAIL+=:remote.invalidate.pki:$1
   fi
   dateq=$(date -d "$(cat $local/$1.exp | cut -d'=' -f2)" +%s)
   if [[ "$dateq" -le "$date" ]]; then
-    invalidate.pki $1 || FAIL+=:local.invalidate.pki:$1
+    invalidate.pki $1 || declare -- FAIL+=:local.invalidate.pki:$1
   fi 
 }
 
 check.pki() { # $1 = domain/FQDN
-if [[ -f "$remote/$1.pubkey" ]]; then
-  if [[ -f "$local/$1.pubkey" ]]; then
-    check.csv $1 || FAIL+=:local.check.csv:$1
+  if [[ -f "$remote/$1.pubkey" ]]; then
+    if [[ -f "$local/$1.pubkey" ]]; then
+      check.csv $1 || declare -- FAIL+=:local.check.csv:$1
+    else
+      invalidate.pki $1 > /dev/null || declare -- FAIL+=:local.invalidate.pki:$1
+    fi
   else
-    invalidate.pki $1 || FAIL+=:local.invalidate.pki:$1
+    declare -- FAIL+=:remote.invalidate.pki:$1
   fi
-else
-  FAIL+=:remote.invalidate.pki:$1
-fi
 }
 
 check.index() {
   for i in $(cat .pki/index.csv | tr ',' '\n' | cat); do
-    check.pki $i || FAIL+=:check.pki:$i                                                    # Exists/Expired
-  	# check.attest.pki $i || FAIL+=:check.attest.pki:$i                                      # Attestation
-  	check.against.pki $i || FAIL+=:check.against.pki:$i                                    # Direct/Full Match
-    check.liveness.pki $i | SUCCESS=:check.liveness.pki:$1 || FAIL+=:check.liveness.pki:$i # Conectivity Check
+    check.pki $i || declare -- FAIL+=:check.pki:$i                 # Exists/Expired
+  	# check.attest.pki $i || declare -- FAIL+=:check.attest.pki:$i # gh attestation verify
+  	check.against.pki $i || declare -- FAIL+=:check.against.pki:$i # Direct/Full Match
+    check.liveness.pki $i | declare -- SUCCESS+=:check.liveness.pki:$1 || declare -- FAIL+=:check.liveness.pki:$i # Conectivity Check
   done
   url=https://$1
   j=$(echo $url | awk -F'[/:]' '{print $4}'"{print \$$(($( echo \"$url\" | tr '/' '\n' | wc -l ) + 1))\" $url\"}")
@@ -107,26 +107,26 @@ check.index() {
   m=$(echo $j | cut -d' ' -f2) # FILE_NAME 
   n=$(echo $j | cut -d' ' -f3) # FULL_URL
   if [[ "$k" -ge "3" ]]; then
-    fetch.with.pki $l $m $n | SUCCESS+=:fetch.with.pki:$1 || FAIL+=:fetch.with.pki:$1
+    fetch.with.pki $l $m $n | declare -- SUCCESS+=:fetch.with.pki:$1 || declare -- FAIL+=:fetch.with.pki:$1
   fi
 }
 
 check.index "$@" || FAIL+=":check.index:$@"
+
 err() {
   if [[ "$FAIL" != "" ]]; then
   	echo "local.sh:_err:_$FAIL"
-    return 1
   elif [[ "$SUCCESS" == "" ]]; then
-    echo "local.sh:_err:_$FAIL"
-    return 1
+    echo "local.sh:_err:"
   else
   	echo "local.sh:_PKI:_VALID"
-    return 0
   fi
 }
+
 export -- PKI_DONE=$(err)
-if [[ "$PKI_DONE" == "1" ]]; then
+if [[ "$PKI_DONE" == *err* ]]; then
   echo $FAIL
+  echo $PKI_DONE
   ls -la $local && rm -r -f $local
   ls -la $tmp && rm -r -f $tmp
   exit 1
