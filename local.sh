@@ -34,7 +34,7 @@ fetch.pki() { # $1 = domain/FQDN
     openssl x509 -in $1.pem -pubkey -noout > $1.pubkey.pem && openssl x509 -in $1.pem -enddate -noout > $1.exp && \
     openssl asn1parse -noout -inform pem -in $1.pubkey.pem -out $1.pubkey.der && \
     openssl dgst -sha256 -binary $1.pubkey.der | openssl base64 > $1.pubkey && \
-    rm -f *.pem *.der && echo "Successfully fetched pubkey for $1" || declare -g -- FAIL+=:local.fetch.pki:$1
+    rm -f *.pem *.der && declare -g -- SUCCESS+=:local.fetch.pki:$1 || declare -g -- FAIL+=:local.fetch.pki:$1
   popd > /dev/null
 }
 
@@ -131,11 +131,11 @@ err() {
 
 PKI_DONE=$(err)
 if [[ "$PKI_DONE" == *err* ]]; then
-  echo SUCCESS:_$SUCCESS
-  echo FAIL:_$FAIL
-  echo PKI_DONE:_$PKI_DONE
-  ls -la $local && rm -r -f $local
-  ls -la $tmp && rm -r -f $tmp
+  echo PKI_DONE:_$PKI_DONE && echo
+  # echo SUCCESS:_$SUCCESS
+  # echo FAIL:_$FAIL
+  # ls -la $local && rm -r -f $local
+  # ls -la $tmp && rm -r -f $tmp
   exit 1
 else
   exit 0
