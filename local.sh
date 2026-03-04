@@ -19,8 +19,13 @@ mkdir -p $local || FAIL+=:mkdir.local.pki
 mkdir -p $tmp || FAIL+=:mkdir.tmp.pki
 
 fetch.with.pki() { # $1 = domain/FQDN, # $2 = filename-or-/dev/null, # $3 = full_url or blank
-  curl -s --pinnedpubkey "sha256//$(<$local/$1.pubkey)" \
-  --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure $3 > $2 || FAIL+=:fetch.with.pki:$3
+  if [[ "$1" == "github.com" ]]; then
+    curl -s -L --pinnedpubkey "sha256//$(<$local/$1.pubkey);sha256//$(<$local/release-assets.githubusercontent.com.pubkey)" \
+    --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure $3 > $2 || FAIL+=:fetch.with.pki:$3
+  else
+    curl -s --pinnedpubkey "sha256//$(<$local/$1.pubkey)" \
+    --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure $3 > $2 || FAIL+=:fetch.with.pki:$3
+  fi
 }
 
 fetch.pki() { # $1 = domain/FQDN
