@@ -27,13 +27,13 @@ jobs:
           
           validate.pki() { # $1 = domain/FQDN
             curl -s --pinnedpubkey "sha256//$(<registry/$1.pubkey)" \
-            --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://$1/ > /dev/null || return
+            --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://$1 > /dev/null || return
             echo "Successfully fetched pubkey and checked validity for $1.pubkey"
           }
           
           fetch.pki() { # $1 = domain/FQDN
             pushd registry > /dev/null
-              openssl s_client -servername $1 -connect $1:443 < /dev/null | sed -n "/-----BEGIN/,/-----END/p" > $1.pem && \
+              openssl s_client -verify 2 -servername $1 -connect $1:443 < /dev/null 2> /dev/null | sed -n "/-----BEGIN/,/-----END/p" > $1.pem && \
               openssl x509 -in $1.pem -pubkey -noout > $1.pubkey.pem && openssl x509 -in $1.pem -enddate -noout > $1.exp &&\
               openssl asn1parse -noout -inform pem -in $1.pubkey.pem -out $1.pubkey.der && \
               openssl dgst -sha256 -binary $1.pubkey.der | openssl base64 > $1.pubkey && \
@@ -43,13 +43,13 @@ jobs:
           }
           
           check.csv() { # $1 = domain/FQDN
-            dater=$(date -d "$(cat registry/$1.exp | cut -d'=' -f2)" +%s)
             date=$(date +%s)
+            dater=$(date -d "$(cat registry/$1.exp | cut -d'=' -f2)" +%s)
             if [[ "$dater" -le "$date" ]]; then
               echo "$1.pubkey expired"
-              fetch.pki $1 > /dev/null || exit 1
+              fetch.pki $1 || exit 1
             else
-              validate.pki $1 || fetch.pki $1 > /dev/null || exit 1
+              validate.pki $1 || fetch.pki $1 || exit 1
             fi
           }
           
@@ -57,7 +57,7 @@ jobs:
             if [[ -f "registry/$1.pubkey" ]]; then
               check.csv $1 || exit 1
             else
-              fetch.pki $1 > /dev/null || exit 1
+              fetch.pki $1 || exit 1
             fi
           }
           
