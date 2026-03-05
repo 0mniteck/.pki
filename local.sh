@@ -13,8 +13,8 @@ run_as=$(id -u -n)
 run_home=/home/$run_as
 
 local=$run_home/.pki/registry
+tmp=$run_home/.pki/local
 remote=./.pki/registry
-tmp=$run_home/tmp
 mkdir -p $local || FAIL+=:mkdir.$local.pki
 mkdir -p $tmp || FAIL+=:mkdir.$tmp.pki
 
@@ -123,7 +123,7 @@ err() {
   if [[ "$FAIL" != "" ]]; then
   	echo "local.sh:_err:_$FAIL"
   elif [[ "$SUCCESS" == "" ]]; then
-    echo "local.sh:_err:"
+    echo "local.sh:_err:_$FAIL"
   else
     echo "local.sh:_PKI:_VALID"
   fi
