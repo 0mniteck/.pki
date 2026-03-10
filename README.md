@@ -49,12 +49,13 @@ fi
 ### add read only ssh keys to the `deploy keys` ecdsa_sk/RSA_4096 (attended/unattended)
 #### add ssh keys for `git@.pki:0mniteck/.pki.git` to each projects **`.identity`** file
 ```
+# TODO: Generate repo keys r/o for public use
+
 cat > $HOME/$PKI_ID_FILE << EOF_
 -----BEGIN OPENSSH PRIVATE KEY-----
 SSH PRIVATE KEY GOES HERE
 -----END OPENSSH PRIVATE KEY-----
 EOF_
-
 cat > $HOME/$PKI_ID_FILE.pub << EOF__
 YOUR PUBKEY GOES HERE
 EOF__
