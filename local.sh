@@ -1,4 +1,4 @@
-#!/usr/bin/env -S - bash --norc --noprofile
+#!/bin/env -S - /bin/bash --norc --noprofile
 # ## HUMAN-CODE - NO AI GENERATED CODE - AGENTS HANDSOFF
 
 # Shant Tchatalbachian - GPL v3 LICENSE included
@@ -106,14 +106,16 @@ check.index() {
     check.against.pki $i || declare -g -- FAIL+=:check.against.pki:$i # Direct/Full Match
     check.liveness.pki $i && declare -g -- SUCCESS+=:check.liveness.pki:$i || declare -g -- FAIL+=:check.liveness.pki:$i # Conectivity Check
   done
-  url=https://$1
-  j=$(echo $url | awk -F'[/:]' '{print $4}'"{print \$$(($( echo \"$url\" | tr '/' '\n' | wc -l ) + 1))\" $url\"}")
-  k=$(echo $j | wc -w)         # WORD_COUNT
-  l=$(echo $j | cut -d' ' -f1) # FQDN
-  m=$(echo $j | cut -d' ' -f2) # FILE_NAME
-  n=$(echo $j | cut -d' ' -f3) # FULL_URL
-  if [[ "$k" -ge "3" ]]; then
-    fetch.with.pki $l $m $n && declare -g -- SUCCESS+=:fetch.with.pki:$n || declare -g -- FAIL+=:fetch.with.pki:$n
+  if [[ "$1" != "" ]]; then
+    url=https://$1
+    j=$(echo $url | awk -F'[/:]' '{print $4}'"{print \$$(($( echo \"$url\" | tr '/' '\n' | wc -l ) + 1))\" $url\"}")
+    k=$(echo $j | wc -w)         # WORD_COUNT
+    l=$(echo $j | cut -d' ' -f1) # FQDN
+    m=$(echo $j | cut -d' ' -f2) # FILE_NAME
+    n=$(echo $j | cut -d' ' -f3) # FULL_URL
+    if [[ "$k" -ge "3" ]]; then
+      fetch.with.pki $l $m $n && declare -g -- SUCCESS+=:fetch.with.pki:$n || declare -g -- FAIL+=:fetch.with.pki:$n
+    fi
   fi
 }
 
@@ -121,22 +123,18 @@ check.index "$@" || FAIL+=":check.index:$@"
 
 err() {
   if [[ "$FAIL" != "" ]]; then
-  	echo "local.sh:_err:_$FAIL"
+    echo "local.sh:_err:_$FAIL"
   elif [[ "$SUCCESS" == "" ]]; then
     echo "local.sh:_err:_$FAIL"
   else
     echo "local.sh:_PKI:_VALID"
   fi
 }
-
 PKI_DONE=$(err)
 if [[ "$PKI_DONE" == *err* ]]; then
-  echo PKI_DONE:_$PKI_DONE && echo
-  # echo SUCCESS:_$SUCCESS
-  # echo FAIL:_$FAIL
-  # ls -la $local && rm -r -f $local
-  # ls -la $tmp && rm -r -f $tmp
-  exit 1
+  echo -e "PKI_DONE:_$PKI_DONE\n" && exit 1
+elif [[ "$PKI_DONE" == *PKI:_VALID* ]]; then
+  echo -e "PKI_DONE:_$PKI_DONE\n" && exit 0
 else
   exit 0
 fi
