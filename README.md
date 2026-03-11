@@ -4,7 +4,7 @@
 (as a stop gap measure, only after an ssh connection has been established)
 
 Add it to other projects as a submodule. Github workflows will update, validate, and attest to this repo
-with know domains and their expiries adding into the `registry/` from the list stored in `index.csv` every 12 hours.
+with know domains and their expiries adding into the `registry/` from the list stored in `index.csv` every 6 hours.
 ## 
 
 #### fetch and validate index registry + attest with sigstore + release immutably
