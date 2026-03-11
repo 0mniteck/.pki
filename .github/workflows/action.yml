@@ -4,7 +4,7 @@ description: GitHub Action to manage the immutable/attestable release cycle of 0
 on:
   workflow_dispatch:   
   schedule:
-    - cron: '0 0/12 * * *'
+    - cron: '0 0/6 * * *'
   push:
     paths:
       - 'registry/**'
