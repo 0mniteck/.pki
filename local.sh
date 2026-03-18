@@ -134,7 +134,7 @@ PKI_DONE=$(err)
 if [[ "$PKI_DONE" == *err* ]]; then
   echo -e "PKI_DONE:_$PKI_DONE\n" && exit 1
 elif [[ "$PKI_DONE" == *PKI:_VALID* ]]; then
-  echo -e "PKI_DONE:_$PKI_DONE\n" && exit 0
+  echo "PKI_DONE:_$PKI_DONE" && exit 0
 else
   exit 0
 fi
