@@ -56,9 +56,9 @@ check.against.pki() { # $1 = domain/FQDN
   --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://raw.githubusercontent.com/0mniteck/.pki/refs/heads/main/registry/$1.pubkey)
   curl_run2=$(curl -o $tmp/$1.exp -s --pinnedpubkey "sha256//$(<$remote/raw.githubusercontent.com.pubkey)" \
   --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://raw.githubusercontent.com/0mniteck/.pki/refs/heads/main/registry/$1.exp)
-  diff $tmp/$1.pubkey $remote/$1.pubkey || declare -g -- FAIL+=:local.invalidate.pki:$1
-  diff $remote/$1.pubkey $local/$1.pubkey || declare -g -- FAIL+=:local.invalidate.pki:$1
-  diff $local/$1.pubkey $tmp/$1.pubkey || declare -g -- FAIL+=:local.invalidate.pki:$1
+  diff $tmp/$1.pubkey $remote/$1.pubkey || declare -g -- FAIL+=:mismatch.invalidate.pki:$1
+  diff $remote/$1.pubkey $local/$1.pubkey || declare -g -- FAIL+=:mismatch.invalidate.pki:$1
+  diff $local/$1.pubkey $tmp/$1.pubkey || declare -g -- FAIL+=:mismatch.invalidate.pki:$1
 }
 
 check.attest.pki() { # $1 = domain/FQDN ## NEEDS gh v2.50+ (Ubuntu v2.46)
@@ -91,10 +91,10 @@ check.pki() { # $1 = domain/FQDN
     if [[ -f "$local/$1.pubkey" ]]; then
       check.csv $1 || declare -g -- FAIL+=:local.check.csv:$1
     else
-      invalidate.pki $1 || declare -g -- FAIL+=:local.invalidate.pki:$1
+      invalidate.pki $1 || declare -g -- FAIL+=:local.missing.pki:$1
     fi
   else
-    declare -g -- FAIL+=:remote.invalidate.pki:$1
+    declare -g -- FAIL+=:remote.missing.pki:$1
   fi
 }
 
