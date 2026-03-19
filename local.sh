@@ -132,7 +132,22 @@ err() {
 }
 PKI_DONE=$(err)
 if [[ "$PKI_DONE" == *err* ]]; then
-  echo -e "PKI_DONE:_$PKI_DONE\n" && exit 1
+  echo -e "PKI_DONE:_$PKI_DONE\n"
+  if [[ "$PKI_DONE" == *mismatch* ]]; then
+    gh auth login
+    curl -L \
+    -X POST \
+    -H "Accept: application/vnd.github+json" \
+    -H "Authorization: Bearer $(gh auth token)" \
+    -H "X-GitHub-Api-Version: 2026-03-10" \
+    https://api.github.com/repos/0mniteck/.pki/dispatches \
+    -d '{"event_type":"Global_Fetch"}'
+    gh auth logout
+    sleep 5m
+    git submodule update --init --remote --merge
+    exec $PWD/$0 $@
+  fi
+  exit 1
 elif [[ "$PKI_DONE" == *PKI:_VALID* ]]; then
   echo "PKI_DONE:_$PKI_DONE" && exit 0
 else
