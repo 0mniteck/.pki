@@ -119,7 +119,7 @@ check.index() {
   fi
 }
 
-check.index "$@" || FAIL+=":check.index:$@"
+check.index "$1" || FAIL+=":check.index:$1"
 
 err() {
   if [[ "$FAIL" != "" ]]; then
@@ -131,21 +131,90 @@ err() {
   fi
 }
 PKI_DONE=$(err)
+
 if [[ "$PKI_DONE" == *err* ]]; then
   echo -e "PKI_DONE:_$PKI_DONE\n"
-  if [[ "$PKI_DONE" == *mismatch* ]]; then
-    gh auth login
-    curl -L \
-    -X POST \
+  if [[ "$PKI_DONE" == *mismatch* && "$2" != "" && "$_RE_EXEC" != "true" ]]; then
+    ID=$(echo $2 | cut -d':' -f1)
+    echo -n "Attempting to dispatch workflow: Global_Fetch..."
+    LOGIN=$(curl -L -X POST \
+    -H "Accept: application/json" \
+    -H "X-GitHub-Api-Version: 2026-03-10" \
+    https://github.com/login/device/code?client_id=$ID)
+    dc[1]=$(echo $LOGIN | jq .device_code | cut -d'"' -f2)
+    dc[2]=$(echo $LOGIN | jq .user_code | cut -d'"' -f2)
+    dc[3]=$(echo $LOGIN | jq .verification_uri | cut -d'"' -f2)
+    dc[4]=$(echo $LOGIN | jq .expires_in | cut -d'"' -f2)
+    dc[5]=$(echo $LOGIN | jq .interval | cut -d'"' -f2)
+    echo "Submit User Code: ${dc[2]} To: ${dc[3]} Within: ${dc[4]}s" && sleep 30
+    
+    UNPAIRED=true; I=1;
+    while $UNPAIRED; do
+      PAIR=$(curl -L -X POST \
+      -H "Accept: application/json" \
+      -H "X-GitHub-Api-Version: 2026-03-10" \
+      https://github.com/login/oauth/access_token\
+?client_id=$ID&device_code=${dc[1]}&grant_type=\
+urn:ietf:params:oauth:grant-type:device_code)
+      df[1]=$(echo $PAIR | jq .access_token | cut -d'"' -f2)
+      df[2]=$(echo $PAIR | jq .token_type | cut -d'"' -f2)
+      df[3]=$(echo $PAIR | jq .scope | cut -d'"' -f2)
+      df[4]=$(echo $PAIR | jq .error | cut -d'"' -f2)
+      if [["${df[4]}" == "authorization_pending"]]; then
+        sleep $((${dc[5]} + 1))
+      elif [["${df[4]}" != ""]]; then
+        sleep $((${dc[5]} + 1))
+        echo "Error: ${df[4]}"
+        I=$(($I + 1))
+        if [[ "$I" -ge 5 ]]; then
+          UNPAIRED=false
+        fi
+      elif [["${df[1]}" != ""]]; then
+        echo "Device Flow Complete!"
+        ACCESS_TOKEN=${df[1]}
+        UNPAIRED=false
+      else
+        echo "Unknown Error!"
+        UNPAIRED=false
+      fi
+    done
+    sleep 5
+    
+    DISPATCH=$(curl -L -s -o /dev/null -w "%{http_code}\n" -X POST \
     -H "Accept: application/vnd.github+json" \
-    -H "Authorization: Bearer $(gh auth token)" \
+    -H "Authorization: Bearer $ACCESS_TOKEN" \
     -H "X-GitHub-Api-Version: 2026-03-10" \
     https://api.github.com/repos/0mniteck/.pki/dispatches \
-    -d '{"event_type":"Global_Fetch"}'
-    gh auth logout
+    -d '{"event_type":"Global_Fetch"}')
+    if [[ "$DISPATCH" == "204" ]]; then
+      echo "Successful Repository Dispatch!"
+    elif [[ "$DISPATCH" == "422" ]]; then
+      echo "Error Invalid!"
+    else
+      echo "Unknown Error: $DISPATCH"
+    fi
+    sleep 10
+    
+    ACCESS=$(echo "'"{'"'access_token'":"'$ACCESS_TOKEN'"'}"'")
+    DELETE=$(curl -L -s -o /dev/null -w "%{http_code}\n" -X DELETE \
+    -H "Accept: application/vnd.github+json" \
+    -u "$DEVICEFLOW_AUTH" \
+    -H "X-GitHub-Api-Version: 2026-03-10" \
+    https://api.github.com/applications/$ID/token \
+    -d $ACCESS )
+    if [[ "$DELETE" == "204" ]]; then
+      echo "Successfully Revoked Access!"
+    elif [[ "$DELETE" == "422" ]]; then
+      echo "Error Invalid!"
+    else
+      echo "Unknown Error: $DELETE"
+    fi
     sleep 5m
+    read -p "Workflow Run Complete: Continue to git submodule update..."
     git submodule update --init --remote --merge
-    exec $PWD/$0 $@
+    echo "Re-executing $PWD/.pki/$0 $1 $2"
+    export -- _RE_EXEC=true
+    exec $PWD/.pki/$0 $1 $2
   fi
   exit 1
 elif [[ "$PKI_DONE" == *PKI:_VALID* ]]; then
