@@ -11,7 +11,6 @@
 
 run_as=$(id -u -n)
 run_home=/home/$run_as
-
 local=$run_home/.pki/registry
 tmp=$run_home/.pki/local
 remote=./.pki/registry
