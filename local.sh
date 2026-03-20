@@ -136,6 +136,7 @@ if [[ "$PKI_DONE" == *err* ]]; then
   echo -e "PKI_DONE:_$PKI_DONE\n"
   if [[ "$PKI_DONE" == *mismatch* && "$2" != "" && "$_RE_EXEC" != "true" ]]; then
     ID=$(echo $2 | cut -d':' -f1)
+    
     echo -n "Attempting to dispatch workflow: Global_Fetch..."
     LOGIN=$(curl -L -X POST \
     -H "Accept: application/json" \
@@ -157,9 +158,8 @@ if [[ "$PKI_DONE" == *err* ]]; then
 ?client_id=$ID&device_code=${dc[1]}&grant_type=\
 urn:ietf:params:oauth:grant-type:device_code)
       df[1]=$(echo $PAIR | jq .access_token | cut -d'"' -f2)
-      df[2]=$(echo $PAIR | jq .token_type | cut -d'"' -f2)
-      df[3]=$(echo $PAIR | jq .scope | cut -d'"' -f2)
       df[4]=$(echo $PAIR | jq .error | cut -d'"' -f2)
+      
       if [["${df[4]}" == "authorization_pending"]]; then
         sleep $((${dc[5]} + 1))
       elif [["${df[4]}" != ""]]; then
@@ -193,9 +193,24 @@ urn:ietf:params:oauth:grant-type:device_code)
     else
       echo "Unknown Error: $DISPATCH"
     fi
-    sleep 10
+    sleep 5
     
     ACCESS=$(echo "'"{'"'access_token'":"'$ACCESS_TOKEN'"'}"'")
+    REVOKE=$(curl -L -s -o /dev/null -w "%{http_code}\n" -X DELETE \
+    -H "Accept: application/vnd.github+json" \
+    -u "$DEVICEFLOW_AUTH" \
+    -H "X-GitHub-Api-Version: 2026-03-10" \
+    https://api.github.com/applications/$ID/grant \
+    -d $ACCESS )
+    if [[ "$REVOKE" == "204" ]]; then
+      echo "Successfully Revoked Access!"
+    elif [[ "$REVOKE" == "422" ]]; then
+      echo "Error Invalid!"
+    else
+      echo "Unknown Error: $REVOKE"
+    fi
+    sleep 5
+    
     DELETE=$(curl -L -s -o /dev/null -w "%{http_code}\n" -X DELETE \
     -H "Accept: application/vnd.github+json" \
     -u "$DEVICEFLOW_AUTH" \
@@ -203,13 +218,14 @@ urn:ietf:params:oauth:grant-type:device_code)
     https://api.github.com/applications/$ID/token \
     -d $ACCESS )
     if [[ "$DELETE" == "204" ]]; then
-      echo "Successfully Revoked Access!"
+      echo "Successfully Removed Access!"
     elif [[ "$DELETE" == "422" ]]; then
       echo "Error Invalid!"
     else
       echo "Unknown Error: $DELETE"
     fi
-    sleep 5m
+    
+    echo "Waiting for workflow run: ETA 5min" && sleep 5m
     read -p "Workflow Run Complete: Continue to git submodule update..."
     git submodule update --init --remote --merge
     echo "Re-executing $PWD/.pki/$0 $1 $2"
