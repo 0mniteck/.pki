@@ -19,9 +19,10 @@ with know domains and their expiries adding into the `registry/` from the list s
 > [local.sh](https://github.com/0mniteck/.pki/blob/main/local.sh) # WIP - gh attestation verify (Ubuntu v2.46) - (Needs v2.50+) - skipping for now...
 
 #### call function from local.sh to run validation in each project level script
+$DEVICEFLOW_AUTH is an optional github app permission to run a repository_dispatch event to trigger an update in the workflow
 ```
 validate.with.pki() { # $1 = full_url.TDL/.../[file] or blank to only verify
-    chmod +x .pki/local.sh && ./.pki/local.sh $1 || exit 1
+    chmod +x .pki/local.sh && ./.pki/local.sh $1 $DEVICEFLOW_AUTH || exit 1
 }
 ```
 
