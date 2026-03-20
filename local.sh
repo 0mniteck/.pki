@@ -159,7 +159,6 @@ if [[ "$PKI_DONE" == *err* ]]; then
 urn:ietf:params:oauth:grant-type:device_code)
       df[1]=$(echo $PAIR | jq .access_token | cut -d'"' -f2)
       df[4]=$(echo $PAIR | jq .error | cut -d'"' -f2)
-      
       if [["${df[4]}" == "authorization_pending"]]; then
         sleep $((${dc[5]} + 1))
       elif [["${df[4]}" != ""]]; then
