@@ -136,9 +136,9 @@ if [[ "$PKI_DONE" == *err* ]]; then
   echo -e "PKI_DONE:_$PKI_DONE\n"
   if [[ "$PKI_DONE" == *mismatch* && "$2" != "" && "$_RE_EXEC" != "true" ]]; then
     ID=$(echo $2 | cut -d':' -f1)
-    
+    VERIFY() {echo --pinnedpubkey\ "sha256//$(<$local/$1.pubkey)"\ --tlsv1.3\ --proto\ -all,+https\ --remove-on-error\ --no-insecure}
     echo -n "Attempting to dispatch workflow: Global_Fetch..."
-    LOGIN=$(curl -L -X POST \
+    LOGIN=$(curl -L -X POST $(VERIFY github.com) \
     -H "Accept: application/json" \
     -H "X-GitHub-Api-Version: 2026-03-10" \
     https://github.com/login/device/code?client_id=$ID)
@@ -151,7 +151,7 @@ if [[ "$PKI_DONE" == *err* ]]; then
     
     UNPAIRED=true; I=1;
     while $UNPAIRED; do
-      PAIR=$(curl -L -X POST \
+      PAIR=$(curl -L -X POST $(VERIFY github.com) \
       -H "Accept: application/json" \
       -H "X-GitHub-Api-Version: 2026-03-10" \
       https://github.com/login/oauth/access_token\
@@ -179,7 +179,8 @@ urn:ietf:params:oauth:grant-type:device_code)
     done
     sleep 5
     
-    DISPATCH=$(curl -L -s -o /dev/null -w "%{http_code}\n" -X POST \
+    DISPATCH=$(curl -L -s -o /dev/null -w "%{http_code}\n" \
+    -X POST $(VERIFY api.github.com) \
     -H "Accept: application/vnd.github+json" \
     -H "Authorization: Bearer $ACCESS_TOKEN" \
     -H "X-GitHub-Api-Version: 2026-03-10" \
@@ -195,9 +196,9 @@ urn:ietf:params:oauth:grant-type:device_code)
     sleep 5
     
     ACCESS=$(echo "'"{'"'access_token'":"'$ACCESS_TOKEN'"'}"'")
-    REVOKE=$(curl -L -s -o /dev/null -w "%{http_code}\n" -X DELETE \
-    -H "Accept: application/vnd.github+json" \
-    -u "$DEVICEFLOW_AUTH" \
+    REVOKE=$(curl -L -s -o /dev/null -w "%{http_code}\n" \
+    -X DELETE $(VERIFY api.github.com) \
+    -H "Accept: application/vnd.github+json" -u "$2" \
     -H "X-GitHub-Api-Version: 2026-03-10" \
     https://api.github.com/applications/$ID/grant \
     -d $ACCESS )
