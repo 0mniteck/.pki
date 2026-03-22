@@ -135,7 +135,9 @@ if [[ "$PKI_DONE" == *err* ]]; then
   echo -e "PKI_DONE:_$PKI_DONE\n"
   if [[ "$PKI_DONE" == *mismatch* && "$2" != "" && "$_RE_EXEC" != "true" ]]; then
     ID=$(echo $2 | cut -d':' -f1)
-    VERIFY() {echo --pinnedpubkey\ "sha256//$(<$local/$1.pubkey)"\ --tlsv1.3\ --proto\ -all,+https\ --remove-on-error\ --no-insecure}
+    VERIFY() {
+    echo --pinnedpubkey\ "sha256//$(<$local/$1.pubkey)"\ --tlsv1.3\ --proto\ -all,+https\ --remove-on-error\ --no-insecure
+    }
     echo -n "Attempting to dispatch workflow: Global_Fetch..."
     LOGIN=$(curl -L -X POST $(VERIFY github.com) \
     -H "Accept: application/json" \
