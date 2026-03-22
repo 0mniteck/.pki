@@ -166,8 +166,8 @@ urn:ietf:params:oauth:grant-type:device_code)
         sleep $((${dc[5]} + 1))
         echo "Error: ${df[4]}"
         I=$(($I + 1))
-        if [[ "$I" -ge 5 ]]; then
-          UNPAIRED=false
+        if [[ "$I" -gt 5 ]]; then
+          # UNPAIRED=false
         fi
       elif [[ "${df[1]}" != "" ]]; then
         sleep $((${dc[5]} + 1))
