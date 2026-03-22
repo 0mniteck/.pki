@@ -155,9 +155,7 @@ if [[ "$PKI_DONE" == *err* ]]; then
       PAIR=$(curl -L -s -X POST $(VERIFY github.com) \
       -H "Accept: application/json" \
       -H "X-GitHub-Api-Version: 2026-03-10" \
-      https://github.com/login/oauth/access_token\
-?client_id=$ID&device_code=${dc[1]}&grant_type=\
-urn:ietf:params:oauth:grant-type:device_code)
+      https://github.com/login/oauth/access_token?client_id=${ID}&device_code=${dc[1]}&grant_type=urn:ietf:params:oauth:grant-type:device_code)
       df[1]=$(echo $PAIR | jq .access_token | cut -d'"' -f2)
       df[4]=$(echo $PAIR | jq .error | cut -d'"' -f2)
       if [[ "${df[4]}" == "authorization_pending" ]]; then
