@@ -11,8 +11,8 @@ with know domains and their expiries adding into the `registry/` from the list s
 
 #### [Github Workflow](https://github.com/0mniteck/.pki/blob/main/.github/workflows/action.yml) - <sub><sub>[![Release](https://github.com/0mniteck/.pki/actions/workflows/action.yml/badge.svg)](https://github.com/0mniteck/.pki/actions/workflows/action.yml)</sub></sub>
 
-> #### Attestation Created - v0.0.88 Immutable Tag
-> - [https://github.com/0mniteck/.pki/attestations/22055721](https://github.com/0mniteck/.pki/attestations/22055721)
+> #### Attestation Created - v0.0.89 Immutable Tag
+> - [https://github.com/0mniteck/.pki/attestations/22065024](https://github.com/0mniteck/.pki/attestations/22065024)
 ##
 
 #### client side validation of `registry/` against expiry, liveness, and remote/ref
