@@ -148,7 +148,7 @@ if [[ "$PKI_DONE" == *err* ]]; then
     dc[3]=$(echo $LOGIN | jq .verification_uri | cut -d'"' -f2)
     dc[4]=$(echo $LOGIN | jq .expires_in | cut -d'"' -f2)
     dc[5]=$(echo $LOGIN | jq .interval | cut -d'"' -f2)
-    echo "Submit User Code: ${dc[2]} To: ${dc[3]} Within: ${dc[4]}s" && sleep 30
+    echo "Used Client ID: $ID Submit User Code: ${dc[2]} To: ${dc[3]} Within: ${dc[4]}s" && sleep 30
     
     UNPAIRED=true; I=1;
     while $UNPAIRED; do
@@ -160,25 +160,32 @@ if [[ "$PKI_DONE" == *err* ]]; then
 urn:ietf:params:oauth:grant-type:device_code)
       df[1]=$(echo $PAIR | jq .access_token | cut -d'"' -f2)
       df[4]=$(echo $PAIR | jq .error | cut -d'"' -f2)
-      if [["${df[4]}" == "authorization_pending"]]; then
+      if [[ "${df[4]}" == "authorization_pending" ]]; then
         sleep $((${dc[5]} + 1))
-      elif [["${df[4]}" != ""]]; then
+      elif [[ "${df[4]}" != "" ]]; then
         sleep $((${dc[5]} + 1))
         echo "Error: ${df[4]}"
         I=$(($I + 1))
         if [[ "$I" -ge 5 ]]; then
           UNPAIRED=false
         fi
-      elif [["${df[1]}" != ""]]; then
+      elif [[ "${df[1]}" != "" ]]; then
+        sleep $((${dc[5]} + 1))
         echo "Device Flow Complete!"
         ACCESS_TOKEN=${df[1]}
         UNPAIRED=false
       else
+        sleep $((${dc[5]} + 1))
         echo "Unknown Error!"
-        UNPAIRED=false
+        # UNPAIRED=false
       fi
     done
     sleep 5
+
+    if [[ "$ACCESS_TOKEN" == "" ]]; then
+      echo "NO ACCESS TOKEN!"
+      exit 1
+    fi
     
     DISPATCH=$(curl -L -s -o /dev/null -w "%{http_code}\n" \
     -X POST $(VERIFY api.github.com) \
