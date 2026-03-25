@@ -134,15 +134,16 @@ PKI_DONE=$(err)
 if [[ "$PKI_DONE" == *err* ]]; then
   echo -e "PKI_DONE:_$PKI_DONE\n"
   if [[ "$PKI_DONE" == *mismatch* && "$2" != "" && "$_RE_EXEC" != "true" ]]; then
-    ID=$(echo $2 | cut -d':' -f1)
+    ID=$(echo $2 | cut -d':' -f1); KEY=$(echo $2 | cut -d':' -f2); DEVFLOW=$(echo \"$ID\":\"$KEY\")
     VERIFY() {
     echo --pinnedpubkey\ "sha256//$(<$local/$1.pubkey)"\ --tlsv1.3\ --proto\ -all,+https\ --remove-on-error\ --no-insecure
     }
-    echo -n "Attempting to dispatch workflow: Global_Fetch..."
+    
+    echo "Attempting to dispatch workflow: Global_Fetch..."
     LOGIN=$(curl -L -s -X POST $(VERIFY github.com) \
     -H "Accept: application/json" \
     -H "X-GitHub-Api-Version: 2026-03-10" \
-    https://github.com/login/device/code?client_id=$ID)
+    https://github.com/login/device/code?client_id=${ID})
     dc[1]=$(echo $LOGIN | jq .device_code | cut -d'"' -f2)
     dc[2]=$(echo $LOGIN | jq .user_code | cut -d'"' -f2)
     dc[3]=$(echo $LOGIN | jq .verification_uri | cut -d'"' -f2)
@@ -205,7 +206,8 @@ if [[ "$PKI_DONE" == *err* ]]; then
     ACCESS=$(echo "'"{'"'access_token'":"'$ACCESS_TOKEN'"'}"'")
     REVOKE=$(curl -L -s -o /dev/null -w "%{http_code}\n" \
     -X DELETE $(VERIFY api.github.com) \
-    -H "Accept: application/vnd.github+json" -u "$2" \
+    -H "Accept: application/vnd.github+json" \
+    -u $DEVFLOW \
     -H "X-GitHub-Api-Version: 2026-03-10" \
     https://api.github.com/applications/$ID/grant \
     -d $ACCESS )
