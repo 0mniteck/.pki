@@ -19,8 +19,6 @@ permissions:
   id-token: write
   contents: write
   attestations: write
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 jobs:
   fetch-pki:
     name: Fetch PKI
@@ -32,7 +30,7 @@ jobs:
     concurrency:
       group: release
     needs: fetch-pki
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@fb515869bf73016eed9f9ea660a98fe5a8b99c5f # v0.0.27
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@07c9eaf3eaa6e231105b1a07d9add847e07db353 # v0.0.100
   attested-rel:
     name: Attest PKI
     runs-on: ubuntu-latest
@@ -79,7 +77,7 @@ jobs:
       attested_url: "${{ needs.release-pki.outputs.URL }}"
   gh-pages:
     name: Release Github Pages
-    uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@d7a8fd5ef7125529216957435eaf78c013a260be # v0.0.27
+    uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@ef7b94205b6f88fe77ed3074e2fb5073b76f804b # v0.0.100
     concurrency:
       group: release
     needs: read-me
