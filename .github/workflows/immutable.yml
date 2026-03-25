@@ -72,10 +72,14 @@ jobs:
           echo "response=$responded_body" >> $GITHUB_ENV
       - name: Install GitReleaseManager - v4.3.3 - v0.20.0
         uses: gittools/actions/gitreleasemanager/setup@d96456f5d2fd78923086859f5328008482688611 # v4.3.3
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
         with:
           versionSpec: "0.20.0"
       - name: Add assets to draft release
         uses: gittools/actions/gitreleasemanager/addasset@ee6b1e33085776d48cb0d657e9161ba6d367bc69 # v4.3.3
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
         with:
           token: "${{ github.token }}"
           repository: "0mniteck/.pki"
