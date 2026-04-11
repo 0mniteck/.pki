@@ -12,7 +12,7 @@ jobs:
       name: release
     steps:
       - name: Checkout v6
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ssh-strict: true
           ssh-user: git
@@ -24,25 +24,33 @@ jobs:
           touch index.ver
           index_number=$(($(cat index.ver) + 1))
           echo $index_number > index.ver
+          enforce_doh="--disable --doh-cert-status --doh-url https://one.one.one.one/dns-query --resolve one.one.one.one:443:1.1.1.1"
+          common_tls="--tlsv1.3 --proto -all,+https --remove-on-error --no-insecure -s"
           
-          validate.pki() { # $1 = domain/FQDN
-            curl -s --pinnedpubkey "sha256//$(<registry/$1.pubkey)" \
-            --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://$1 > /dev/null || return
-            echo "Successfully fetched pubkey and checked validity for $1.pubkey"
+          validate.pki() { # $1 = domain/FQDN/IDN
+            curl $enforce_doh --pinnedpubkey "sha256//$(<registry/$1.pubkey)" \
+            $common_tls https://$1 > /dev/null || return
+            echo "Successfully fetched and checked validity for $1.pubkey"
+            if [[ -f "registry/$1.dnssec" ]]; then
+              echo " --> +dnssec"; fi;
+            return 0
           }
           
-          fetch.pki() { # $1 = domain/FQDN
+          fetch.pki() { # $1 = domain/FQDN/IDN
             pushd registry > /dev/null
-              openssl s_client -verify 2 -servername $1 -connect $1:443 < /dev/null 2> /dev/null | sed -n "/-----BEGIN/,/-----END/p" > $1.pem && \
-              openssl x509 -in $1.pem -pubkey -noout > $1.pubkey.pem && openssl x509 -in $1.pem -enddate -noout > $1.exp &&\
+              curl $enforce_doh $common_tls -w %{certs} https://$1 | sed --sandbox -n "/-----BEGIN/,/-----END/p;/-----END/q" > $1.pem && \
+              openssl x509 -in $1.pem -pubkey -noout > $1.pubkey.pem && openssl x509 -in $1.pem -enddate -noout > $1.exp && \
               openssl asn1parse -noout -inform pem -in $1.pubkey.pem -out $1.pubkey.der && \
               openssl dgst -sha256 -binary $1.pubkey.der | openssl base64 > $1.pubkey && \
-              rm -f *.pem *.der || exit 1
+              rm -f *.pem *.der $1.dnssec && declare -g -- SUCCESS+=:local.fetch.pki:$1 || exit 1
+              dig="$(dig -r +https +do +domain=$1 +idn +yaml @one.one.one.one -q $1 -t SIG)"
+              if [[ "$(echo $dig | grep -o 'qr rd ra ad')" == "qr rd ra ad" ]]; then
+                echo -e $dig > $1.dnssec; fi;
             popd > /dev/null
             validate.pki $1 || exit 1
           }
           
-          check.csv() { # $1 = domain/FQDN
+          check.csv() { # $1 = domain/FQDN/IDN
             date=$(date +%s)
             dater=$(date -d "$(cat registry/$1.exp | cut -d'=' -f2)" +%s)
             if [[ "$dater" -le "$date" ]]; then
@@ -53,7 +61,7 @@ jobs:
             fi
           }
           
-          check.pki() { # $1 = domain/FQDN
+          check.pki() { # $1 = domain/FQDN/IDN
             if [[ -f "registry/$1.pubkey" ]]; then
               check.csv $1 || exit 1
             else
