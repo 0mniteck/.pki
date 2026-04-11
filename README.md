@@ -1,13 +1,13 @@
 # .pki
 
 `.github/workflows` for attesting and pinning widely used public keys for mutual auth in https curl requests
-(as a stop gap measure, only after an ssh connection has been established)
+(as a stop gap measure, only after an initial ssh-sk connection has been established, along with DoH and DNSSEC)
 
 Add it to other projects as a submodule. Github workflows will update, validate, and attest to this repo
 with know domains and their expiries adding into the `registry/` from the list stored in `index.csv` every 6 hours.
 ## 
 
-#### fetch and validate index registry + attest with sigstore + release immutably
+#### fetch and validate index registry + attest with sigstore + release immutably anywhere from a repo_dispatch api call.
 
 #### [Github Workflow](https://github.com/0mniteck/.pki/blob/main/.github/workflows/action.yml) - <sub><sub>[![Release](https://github.com/0mniteck/.pki/actions/workflows/action.yml/badge.svg)](https://github.com/0mniteck/.pki/actions/workflows/action.yml)</sub></sub>
 
@@ -15,14 +15,14 @@ with know domains and their expiries adding into the `registry/` from the list s
 > - [https://github.com/0mniteck/.pki/attestations/24136733](https://github.com/0mniteck/.pki/attestations/24136733)
 ##
 
-#### client side validation of `registry/` against expiry, liveness, and remote/ref
+#### client side validation of `registry/` against expiry, liveness, and remote/ref, using DoH+DNSEC(if available)
 > [local.sh](https://github.com/0mniteck/.pki/blob/main/local.sh) # WIP - gh attestation verify (Ubuntu v2.46) - (Needs v2.50+) - skipping for now...
 
 #### call function from local.sh to run validation in each project level script
-$DEVICEFLOW_AUTH is an optional github app permission to run a repository_dispatch event to trigger an update in the workflow
+$CLIENT_ID is an optional github app ID to run a repository_dispatch event to trigger an manual run of the workflow
 ```
 validate.with.pki() { # $1 = full_url.TDL/.../[file] or blank to only verify
-    chmod +x .pki/local.sh && ./.pki/local.sh $1 $DEVICEFLOW_AUTH || exit 1
+  chmod +x .pki/local.sh && ./.pki/local.sh $1 $CLIENT_ID || exit 1
 }
 ```
 
