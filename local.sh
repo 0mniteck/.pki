@@ -3,11 +3,10 @@
 
 # Shant Tchatalbachian - GPL v3 LICENSE included
 ## Usage: Accepts: Any url that's a FQDN/IDN (no https://). If there's a link that has a domain.tld/.../[file] it will attempt to fetch the file after verifying the pinning.
-##        Validates: Repo attestations for pinned pubkeys as well as checks for expiry and liveness over 1.1.1.1 DoH
+##        Validates: Repo checks attestations for pinned pubkeys as well as checks for expiry and liveness over 1.1.1.1 DoH and optionally checks dnssec.
 ##        Returns: $PKI_DONE & If you provided a url/file it returns the file to the current directory with a visible exit 1 on failure and debug.
 ##
-## Requirements(gh v2.50+): apt-get -qq update && apt-get -qq install gh
-## Recommended: fetch over secure gateway, or over git@ssh_sk(security_key)
+## Future Requirements(gh v2.50+): apt-get -qq update && apt-get -qq install gh
 
 run_as=$(id -u -n)
 run_home=/home/$run_as
