@@ -191,14 +191,12 @@ if [[ "$PKI_DONE" == *err* ]]; then
     sleep 5
 
     if [[ "$ACCESS_TOKEN" == "" ]]; then
-      echo "NO ACCESS TOKEN!"
-      exit 1
+      echo "NO ACCESS TOKEN!" && exit 1
     else
-      echo -e "\nAccess Token: $ACCESS_TOKEN\nStarting Dispatch: Global_Fetch at $(date)\n"
+      echo -e "\nStarting Dispatch: Global_Fetch at $(date)\n"
     fi
 
-    DISPATCH=$(curl -L -s $enforce_doh \
-      -o /dev/null -w "%{http_code}\n" \
+    DISPATCH=$(curl -L $enforce_doh \
       -X POST $(VERIFY api.github.com) \
       -H "Accept: application/vnd.github+json" \
       -H "Authorization: Bearer $ACCESS_TOKEN" \
@@ -217,7 +215,6 @@ if [[ "$PKI_DONE" == *err* ]]; then
     sleep 5
 
     CREDS=$(echo "'"{'"'credentials'":["'$ACCESS_TOKEN'"]'}"'")
-    echo "Staring Oauth Token Revocation: $CREDS"
     REVOKE=$(curl -L -s $enforce_doh \
       -o /dev/null -w "%{http_code}\n" \
       -X POST $(VERIFY api.github.com) \
@@ -229,7 +226,7 @@ if [[ "$PKI_DONE" == *err* ]]; then
     if [[ "$REVOKE" == "202" ]]; then
       echo "Successfully Revoked Access!"
     elif [[ "$REVOKE" == "403" ]]; then
-      echo "Successfully Revoked Access to $CREDS"
+      echo "Successfully Revoked Access to $ACCESS_TOKEN"
     elif [[ "$REVOKE" == "422" ]]; then
       echo "Error Invalid or Spammed!"
     elif [[ "$REVOKE" == "500" ]]; then
@@ -237,7 +234,6 @@ if [[ "$PKI_DONE" == *err* ]]; then
     else
       echo "Unknown Revoke Error: $REVOKE For: $CREDS"
     fi
-    sleep 5
 
     echo "Waiting for workflow run: ETA 5min..." && sleep 5m
     read -p "Workflow Run Complete: Continue to git submodule update..."
