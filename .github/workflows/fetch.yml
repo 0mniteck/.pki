@@ -43,7 +43,7 @@ jobs:
               openssl asn1parse -noout -inform pem -in $1.pubkey.pem -out $1.pubkey.der && \
               openssl dgst -sha256 -binary $1.pubkey.der | openssl base64 > $1.pubkey && \
               rm -f *.pem *.der $1.dnssec && declare -g -- SUCCESS+=:local.fetch.pki:$1 || exit 1
-              dig="$(dig -r +https +do +domain=$1 +idn +yaml @one.one.one.one -q $1 -t SIG)"
+              dig="$(dig -r +https +do +domain=$1 +yaml @one.one.one.one -q $1 -t SIG)"
               if [[ "$(echo $dig | grep -o 'qr rd ra ad')" == "qr rd ra ad" ]]; then
                 echo -e $dig > $1.dnssec; fi;
             popd > /dev/null
