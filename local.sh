@@ -139,18 +139,18 @@ if [[ "$PKI_DONE" == *err* ]]; then
     echo --pinnedpubkey\ "sha256//$(<$local/$1.pubkey)"\ --tlsv1.3\ --proto\ -all,+https\ --remove-on-error\ --no-insecure
     }
 
-    echo -e "\nAttempting to dispatch workflow: Global_Fetch...\nLogin to github.com using ephemeral device flow with Client ID: $2 \n"
+    echo -e "\nAttempting to dispatch workflow: Global_Fetch...\nLogin to github.com using ephemeral device flow.\n"
     LOGIN=$(curl -L -s $enforce_doh \
       -X POST $(VERIFY github.com) \
       -H "Accept: application/json" \
       -G --data-urlencode "client_id"=$2 \
       https://github.com/login/device/code )
-    dc[1]=$(echo $LOGIN | jq .device_code | cut -d'"' -f2)
-    dc[2]=$(echo $LOGIN | jq .user_code | cut -d'"' -f2)
-    dc[3]=$(echo $LOGIN | jq .verification_uri | cut -d'"' -f2)
-    dc[4]=$(echo $LOGIN | jq .expires_in | cut -d'"' -f2)
-    dc[5]=$(echo $LOGIN | jq .interval | cut -d'"' -f2)
-    echo "Used Client ID: $2 Submit User Code: ${dc[2]} To: ${dc[3]} Within: ${dc[4]}s" && sleep 1m
+    dc[1]=$(echo $LOGIN | jq -r .device_code)
+    dc[2]=$(echo $LOGIN | jq -r .user_code)
+    dc[3]=$(echo $LOGIN | jq -r .verification_uri)
+    dc[4]=$(echo $LOGIN | jq -r .expires_in)
+    dc[5]=$(echo $LOGIN | jq -r .interval)
+    echo "Used Client ID: $2 Submit User Code: ${dc[2]} To: ${dc[3]} Within: ${dc[4]}s" && sleep 30s
 
     UNPAIRED=true; I=1;
     while $UNPAIRED; do
@@ -160,27 +160,32 @@ if [[ "$PKI_DONE" == *err* ]]; then
         -G --data-urlencode "client_id"=$2 --data-urlencode "device_code"=${dc[1]} \
         --data-urlencode "grant_type"="urn:ietf:params:oauth:grant-type:device_code" \
         https://github.com/login/oauth/access_token )
-      df[1]=$(echo $PAIR | jq .access_token | cut -d'"' -f2)
-      df[4]=$(echo $PAIR | jq .error | cut -d'"' -f2)
-      if [[ "${df[4]}" == "authorization_pending" ]]; then
+      df[1]=$(echo $PAIR | jq -r .access_token)
+      df[2]=$(echo $PAIR | jq -r .error)
+      if [[ "${df[2]}" == "authorization_pending" ]]; then
         sleep $((${dc[5]} + 1))
-      elif [[ "${df[4]}" != "" ]]; then
+        echo -en "\rAuthorization still pending...\033[K"
+      elif [[ "${df[2]}" != "" && "${df[2]}" != *null* ]]; then
         sleep $((${dc[5]} + 1))
-        echo "Error: ${df[4]}"
+        echo "Oauth Error: ${df[2]}"
         I=$(($I + 1))
         if [[ "$I" -gt 5 ]]; then
           wait
-          # UNPAIRED=false
+          UNPAIRED=false
         fi
       elif [[ "${df[1]}" != "" ]]; then
         sleep $((${dc[5]} + 1))
-        echo "Device Flow Complete!"
+        echo "Device Flow Auth Complete!"
         ACCESS_TOKEN=${df[1]}
         UNPAIRED=false
       else
         sleep $((${dc[5]} + 1))
-        echo "Unknown Error!"
-        # UNPAIRED=false
+        echo "Unknown Oauth Error!"
+        I=$(($I + 1))
+        if [[ "$I" -gt 5 ]]; then
+          wait
+          UNPAIRED=false
+        fi
       fi
     done
     sleep 5
@@ -188,6 +193,8 @@ if [[ "$PKI_DONE" == *err* ]]; then
     if [[ "$ACCESS_TOKEN" == "" ]]; then
       echo "NO ACCESS TOKEN!"
       exit 1
+    else
+      echo -e "\nAccess Token: $ACCESS_TOKEN\nStarting Dispatch: Global_Fetch at $(date)\n"
     fi
 
     DISPATCH=$(curl -L -s $enforce_doh \
@@ -197,7 +204,7 @@ if [[ "$PKI_DONE" == *err* ]]; then
       -H "Authorization: Bearer $ACCESS_TOKEN" \
       -H "X-GitHub-Api-Version: 2026-03-10" \
       https://api.github.com/repos/0mniteck/.pki/dispatches \
-      -d '{"event_type":"Global_Fetch"}')
+      -d '{"event_type":"Global_Fetch"}' )
     if [[ "$DISPATCH" == "204" ]]; then
       echo "Successful Repository Dispatch!"
     elif [[ "$DISPATCH" == "404" ]]; then
@@ -205,11 +212,12 @@ if [[ "$PKI_DONE" == *err* ]]; then
     elif [[ "$DISPATCH" == "422" ]]; then
       echo "Error Invalid!"
     else
-      echo "Unknown Error: $DISPATCH"
+      echo "Unknown Dispatch Error: $DISPATCH"
     fi
     sleep 5
 
     CREDS=$(echo "'"{'"'credentials'":["'$ACCESS_TOKEN'"]'}"'")
+    echo "Staring Oauth Token Revocation: $CREDS"
     REVOKE=$(curl -L -s $enforce_doh \
       -o /dev/null -w "%{http_code}\n" \
       -X POST $(VERIFY api.github.com) \
@@ -227,7 +235,7 @@ if [[ "$PKI_DONE" == *err* ]]; then
     elif [[ "$REVOKE" == "500" ]]; then
       echo "Internal Error!"
     else
-      echo "Unknown Error: $REVOKE"
+      echo "Unknown Revoke Error: $REVOKE For: $CREDS"
     fi
     sleep 5
 
