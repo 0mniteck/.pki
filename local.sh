@@ -139,7 +139,7 @@ if [[ "$PKI_DONE" == *err* ]]; then
     echo --pinnedpubkey\ "sha256//$(<$local/$1.pubkey)"\ --tlsv1.3\ --proto\ -all,+https\ --remove-on-error\ --no-insecure
     }
 
-    echo -e "\nAttempting to dispatch workflow: Global_Fetch...\nLogin to github.com using ephemeral device flow.\n"
+    echo -e "Attempting to dispatch workflow: Global_Fetch...\nLogin to github.com using ephemeral device flow.\n"
     LOGIN=$(curl -L -s $enforce_doh \
       -X POST $(VERIFY github.com) \
       -H "Accept: application/json" \
@@ -193,7 +193,7 @@ if [[ "$PKI_DONE" == *err* ]]; then
     if [[ "$ACCESS_TOKEN" == "" ]]; then
       echo "NO ACCESS TOKEN!" && exit 1
     else
-      echo -e "\nStarting Dispatch: Global_Fetch at $(date)\n"
+      echo -e "\nStarting Dispatch: Global_Fetch at $(date)"
     fi
 
     DISPATCH=$(curl -L -s $enforce_doh \
@@ -205,7 +205,7 @@ if [[ "$PKI_DONE" == *err* ]]; then
       https://api.github.com/repos/0mniteck/.pki/dispatches \
       -d '{"event_type":"Global_Fetch"}' )
     if [[ "$DISPATCH" == "204" ]]; then
-      echo "Successful Repository Dispatch!"
+      echo -e "Successful Repository Dispatch!\n"
     elif [[ "$DISPATCH" == "404" ]]; then
       echo "Error Not Found!"
     elif [[ "$DISPATCH" == "422" ]]; then
@@ -233,7 +233,7 @@ if [[ "$PKI_DONE" == *err* ]]; then
       echo "Unknown Revoke Error: $REVOKE For: $CREDS"
     fi
 
-    echo "Waiting for workflow run: ETA 5min..." && sleep 5m
+    echo -e "\nWaiting for workflow run: ETA 5min..." && sleep 5m
     read -p "Workflow Run Complete: Continue to git submodule update..."
     git submodule update --init --remote --merge
     echo "Re-executing $PWD/.pki/$0 $1 $2"
