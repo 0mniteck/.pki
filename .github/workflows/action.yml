@@ -24,7 +24,7 @@ jobs:
     name: Fetch PKI
     concurrency:
       group: release
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@34c23835352a51c9c6ce67732b9603d2861b3b11 # v0.0.27
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@2a1c852379f4659362d6c7a7a80aa8b2b0edb38b # v0.0.173
   release-pki:
     name: Release PKI
     concurrency:
@@ -45,14 +45,14 @@ jobs:
       group: release
     steps:
       - name: Checkout v6
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ssh-strict: true
           ssh-user: git
           clean: true
           show-progress: true
           persist-credentials: true
-      - name: Run gh attestation verify - GitHub CLI 2.50+
+      - name: Run gh attestation verify
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
