@@ -14,16 +14,16 @@ run_home=/home/$run_as
 local=$run_home/.pki/registry
 tmp=$run_home/.pki/local
 remote=./.pki/registry
-enforce_doh="--doh-cert-status --doh-url https://one.one.one.one/dns-query --resolve one.one.one.one:443:1.1.1.1"
+enforce_doh="--disable --doh-cert-status --doh-url https://one.one.one.one/dns-query --resolve one.one.one.one:443:1.1.1.1"
 mkdir -p $local || FAIL+=:mkdir.$local.pki
 mkdir -p $tmp || FAIL+=:mkdir.$tmp.pki
 
 fetch.with.pki() { # $1 = domain/FQDN, # $2 = filename-or-/dev/null, # $3 = full_url or blank
   if [[ "$1" == "github.com" ]]; then
-    curl -s -L $enforce_doh --pinnedpubkey "sha256//$(<$local/$1.pubkey);sha256//$(<$local/release-assets.githubusercontent.com.pubkey)" \
+    curl $enforce_doh -s -L --pinnedpubkey "sha256//$(<$local/$1.pubkey);sha256//$(<$local/release-assets.githubusercontent.com.pubkey)" \
     --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure $3 > $2 || declare -g -- FAIL+=:fetch.with.pki:$3
   else
-    curl -s $enforce_doh --pinnedpubkey "sha256//$(<$local/$1.pubkey)" \
+    curl $enforce_doh -s --pinnedpubkey "sha256//$(<$local/$1.pubkey)" \
     --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure $3 > $2 || declare -g -- FAIL+=:fetch.with.pki:$3
   fi
 }
@@ -47,14 +47,14 @@ invalidate.pki() { # $1 = domain/FQDN
 }
 
 check.liveness.pki() { # $1 = domain/FQDN
-  curl -s $enforce_doh --pinnedpubkey "sha256//$(<$local/$1.pubkey)" \
+  curl $enforce_doh -s --pinnedpubkey "sha256//$(<$local/$1.pubkey)" \
   --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://$1 > /dev/null || declare -g -- FAIL+=:check.liveness.pki:$1 	
 }
 
 check.against.pki() { # $1 = domain/FQDN
-  curl_run1=$(curl -o $tmp/$1.pubkey -s $enforce_doh --pinnedpubkey "sha256//$(<$remote/raw.githubusercontent.com.pubkey)" \
+  curl_run1=$(curl -o $tmp/$1.pubkey $enforce_doh -s --pinnedpubkey "sha256//$(<$remote/raw.githubusercontent.com.pubkey)" \
   --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://raw.githubusercontent.com/0mniteck/.pki/refs/heads/main/registry/$1.pubkey)
-  curl_run2=$(curl -o $tmp/$1.exp -s $enforce_doh --pinnedpubkey "sha256//$(<$remote/raw.githubusercontent.com.pubkey)" \
+  curl_run2=$(curl -o $tmp/$1.exp $enforce_doh -s --pinnedpubkey "sha256//$(<$remote/raw.githubusercontent.com.pubkey)" \
   --tlsv1.3 --proto -all,+https --remove-on-error --no-insecure https://raw.githubusercontent.com/0mniteck/.pki/refs/heads/main/registry/$1.exp)
   diff $tmp/$1.pubkey $remote/$1.pubkey || declare -g -- FAIL+=:mismatch.invalidate.pki:$1
   diff $remote/$1.pubkey $local/$1.pubkey || declare -g -- FAIL+=:mismatch.invalidate.pki:$1
@@ -140,10 +140,10 @@ if [[ "$PKI_DONE" == *err* ]]; then
     }
 
     echo -e "Attempting to dispatch workflow: Global_Fetch...\nLogin to github.com using ephemeral device flow.\n"
-    LOGIN=$(curl -L -s $enforce_doh \
+    LOGIN=$(curl $enforce_doh -s \
       -X POST $(VERIFY github.com) \
       -H "Accept: application/json" \
-      -G --data-urlencode "client_id"=$2 \
+      --url-query "client_id"=$2 \
       https://github.com/login/device/code )
     dc[1]=$(echo $LOGIN | jq -r .device_code)
     dc[2]=$(echo $LOGIN | jq -r .user_code)
@@ -154,11 +154,11 @@ if [[ "$PKI_DONE" == *err* ]]; then
 
     UNPAIRED=true; I=1;
     while $UNPAIRED; do
-      PAIR=$(curl -L -s $enforce_doh \
+      PAIR=$(curl $enforce_doh -s \
         -X POST $(VERIFY github.com) \
         -H "Accept: application/json" \
-        -G --data-urlencode "client_id"=$2 --data-urlencode "device_code"=${dc[1]} \
-        --data-urlencode "grant_type"="urn:ietf:params:oauth:grant-type:device_code" \
+        --url-query "client_id"=$2 --url-query "device_code"=${dc[1]} \
+        --url-query "grant_type"="urn:ietf:params:oauth:grant-type:device_code" \
         https://github.com/login/oauth/access_token )
       df[1]=$(echo $PAIR | jq -r .access_token)
       df[2]=$(echo $PAIR | jq -r .error)
@@ -196,7 +196,7 @@ if [[ "$PKI_DONE" == *err* ]]; then
       echo -e "\nStarting Dispatch: Global_Fetch at $(date)"
     fi
 
-    DISPATCH=$(curl -L -s $enforce_doh \
+    DISPATCH=$(curl $enforce_doh -s \
       -o /dev/null -w "%{http_code}\n" \
       -X POST $(VERIFY api.github.com) \
       -H "Accept: application/vnd.github+json" \
@@ -216,7 +216,7 @@ if [[ "$PKI_DONE" == *err* ]]; then
     sleep 5
 
     CREDS=$(echo {'"'credentials'":["'$ACCESS_TOKEN'"]'} | jq -c)
-    REVOKE=$(curl -L -s $enforce_doh \
+    REVOKE=$(curl $enforce_doh -s \
       -o /dev/null -w "%{http_code}\n" \
       -X POST $(VERIFY api.github.com) \
       -H "Accept: application/vnd.github+json" \
