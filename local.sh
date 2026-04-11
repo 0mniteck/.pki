@@ -135,29 +135,31 @@ PKI_DONE=$(err)
 if [[ "$PKI_DONE" == *err* ]]; then
   echo -e "PKI_DONE:_$PKI_DONE\n"
   if [[ "$PKI_DONE" == *mismatch* && "$2" != "" && "$_RE_EXEC" != "true" ]]; then
-    ID=$(echo $2 | cut -d':' -f1); KEY=$(echo $2 | cut -d':' -f2); DEVFLOW=$(echo \"$ID\":\"$KEY\")
     VERIFY() {
     echo --pinnedpubkey\ "sha256//$(<$local/$1.pubkey)"\ --tlsv1.3\ --proto\ -all,+https\ --remove-on-error\ --no-insecure
     }
-    
-    echo "Attempting to dispatch workflow: Global_Fetch..."
-    LOGIN=$(curl -L -s $enforce_doh -X POST $(VERIFY github.com) \
-    -H "Accept: application/json" \
-    -H "X-GitHub-Api-Version: 2026-03-10" \
-    https://github.com/login/device/code?client_id=${ID})
+
+    echo -e "\nAttempting to dispatch workflow: Global_Fetch...\nLogin to github.com using ephemeral device flow with Client ID: $2 \n"
+    LOGIN=$(curl -L -s $enforce_doh \
+      -X POST $(VERIFY github.com) \
+      -H "Accept: application/json" \
+      --data-urlencode "client_id"=$2 \
+      https://github.com/login/device/code )
     dc[1]=$(echo $LOGIN | jq .device_code | cut -d'"' -f2)
     dc[2]=$(echo $LOGIN | jq .user_code | cut -d'"' -f2)
     dc[3]=$(echo $LOGIN | jq .verification_uri | cut -d'"' -f2)
     dc[4]=$(echo $LOGIN | jq .expires_in | cut -d'"' -f2)
     dc[5]=$(echo $LOGIN | jq .interval | cut -d'"' -f2)
-    echo "Used Client ID: $ID Submit User Code: ${dc[2]} To: ${dc[3]} Within: ${dc[4]}s" && sleep 30
-    
+    echo "Used Client ID: $2 Submit User Code: ${dc[2]} To: ${dc[3]} Within: ${dc[4]}s" && sleep 1m
+
     UNPAIRED=true; I=1;
     while $UNPAIRED; do
-      PAIR=$(curl -L -s $enforce_doh -X POST $(VERIFY github.com) \
-      -H "Accept: application/json" \
-      -H "X-GitHub-Api-Version: 2026-03-10" \
-      https://github.com/login/oauth/access_token?client_id=${ID}&device_code=${dc[1]}&grant_type=urn:ietf:params:oauth:grant-type:device_code)
+      PAIR=$(curl -L -s $enforce_doh \
+        -X POST $(VERIFY github.com) \
+        -H "Accept: application/json" \
+        --data-urlencode "client_id"=$2 --data-urlencode "device_code"=${dc[1]} \
+        --data-urlencode "grant_type"="urn:ietf:params:oauth:grant-type:device_code" \
+        https://github.com/login/oauth/access_token )
       df[1]=$(echo $PAIR | jq .access_token | cut -d'"' -f2)
       df[4]=$(echo $PAIR | jq .error | cut -d'"' -f2)
       if [[ "${df[4]}" == "authorization_pending" ]]; then
@@ -187,46 +189,54 @@ if [[ "$PKI_DONE" == *err* ]]; then
       echo "NO ACCESS TOKEN!"
       exit 1
     fi
-    
-    DISPATCH=$(curl -L -s $enforce_doh -o /dev/null -w "%{http_code}\n" \
-    -X POST $(VERIFY api.github.com) \
-    -H "Accept: application/vnd.github+json" \
-    -H "Authorization: Bearer $ACCESS_TOKEN" \
-    -H "X-GitHub-Api-Version: 2026-03-10" \
-    https://api.github.com/repos/0mniteck/.pki/dispatches \
+
+    DISPATCH=$(curl -L -s $enforce_doh \
+      -o /dev/null -w "%{http_code}\n" \
+      -X POST $(VERIFY api.github.com) \
+      -H "Accept: application/vnd.github+json" \
+      -H "Authorization: Bearer $ACCESS_TOKEN" \
+      -H "X-GitHub-Api-Version: 2026-03-10" \
+      https://api.github.com/repos/0mniteck/.pki/dispatches \
     -d '{"event_type":"Global_Fetch"}')
     if [[ "$DISPATCH" == "204" ]]; then
       echo "Successful Repository Dispatch!"
+    elif [[ "$DISPATCH" == "404" ]]; then
+      echo "Error Not Found!"
     elif [[ "$DISPATCH" == "422" ]]; then
       echo "Error Invalid!"
     else
       echo "Unknown Error: $DISPATCH"
     fi
     sleep 5
-    
-    ACCESS=$(echo "'"{'"'access_token'":"'$ACCESS_TOKEN'"'}"'")
-    REVOKE=$(curl -L -s $enforce_doh -o /dev/null -w "%{http_code}\n" \
-    -X DELETE $(VERIFY api.github.com) \
-    -H "Accept: application/vnd.github+json" \
-    -u $DEVFLOW \
-    -H "X-GitHub-Api-Version: 2026-03-10" \
-    https://api.github.com/applications/$ID/grant \
-    -d $ACCESS )
-    if [[ "$REVOKE" == "204" ]]; then
+
+    CREDS=$(echo "'"{'"'credentials'":["'$ACCESS_TOKEN'"]'}"'")
+    REVOKE=$(curl -L -s $enforce_doh \
+      -o /dev/null -w "%{http_code}\n" \
+      -X POST $(VERIFY api.github.com) \
+      -H "Accept: application/vnd.github+json" \
+      -H "Authorization: Bearer $ACCESS_TOKEN" \
+      -H "X-GitHub-Api-Version: 2026-03-10" \
+      https://api.github.com/credentials/revoke \
+      -d $CREDS )
+    if [[ "$REVOKE" == "202" ]]; then
       echo "Successfully Revoked Access!"
+    elif [[ "$REVOKE" == "403" ]]; then
+      echo "Successfully Revoked Access to $CREDS"
     elif [[ "$REVOKE" == "422" ]]; then
-      echo "Error Invalid!"
+      echo "Error Invalid or Spammed!"
+    elif [[ "$REVOKE" == "500" ]]; then
+      echo "Internal Error!"
     else
       echo "Unknown Error: $REVOKE"
     fi
     sleep 5
-    
-    echo "Waiting for workflow run: ETA 5min" && sleep 5m
+
+    echo "Waiting for workflow run: ETA 5min..." && sleep 5m
     read -p "Workflow Run Complete: Continue to git submodule update..."
     git submodule update --init --remote --merge
     echo "Re-executing $PWD/.pki/$0 $1 $2"
     export -- _RE_EXEC=true
-    exec $PWD/.pki/$0 $1 $2
+    exec $0 $1 $2
   fi
   exit 1
 elif [[ "$PKI_DONE" == *PKI:_VALID* ]]; then
