@@ -196,7 +196,8 @@ if [[ "$PKI_DONE" == *err* ]]; then
       echo -e "\nStarting Dispatch: Global_Fetch at $(date)\n"
     fi
 
-    DISPATCH=$(curl -L $enforce_doh \
+    DISPATCH=$(curl -L -s $enforce_doh \
+      -o /dev/null -w "%{http_code}\n" \
       -X POST $(VERIFY api.github.com) \
       -H "Accept: application/vnd.github+json" \
       -H "Authorization: Bearer $ACCESS_TOKEN" \
@@ -214,18 +215,15 @@ if [[ "$PKI_DONE" == *err* ]]; then
     fi
     sleep 5
 
-    CREDS=$(echo "'"{'"'credentials'":["'$ACCESS_TOKEN'"]'}"'")
+    CREDS=$(echo {'"'credentials'":["'$ACCESS_TOKEN'"]'} | jq -c)
     REVOKE=$(curl -L -s $enforce_doh \
       -o /dev/null -w "%{http_code}\n" \
       -X POST $(VERIFY api.github.com) \
       -H "Accept: application/vnd.github+json" \
-      -H "Authorization: Bearer $ACCESS_TOKEN" \
       -H "X-GitHub-Api-Version: 2026-03-10" \
       https://api.github.com/credentials/revoke \
-      -d $CREDS )
+      -d "$CREDS" )
     if [[ "$REVOKE" == "202" ]]; then
-      echo "Successfully Revoked Access!"
-    elif [[ "$REVOKE" == "403" ]]; then
       echo "Successfully Revoked Access to $ACCESS_TOKEN"
     elif [[ "$REVOKE" == "422" ]]; then
       echo "Error Invalid or Spammed!"
