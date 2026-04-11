@@ -143,7 +143,7 @@ if [[ "$PKI_DONE" == *err* ]]; then
     LOGIN=$(curl -L -s $enforce_doh \
       -X POST $(VERIFY github.com) \
       -H "Accept: application/json" \
-      --data-urlencode "client_id"=$2 \
+      -G --data-urlencode "client_id"=$2 \
       https://github.com/login/device/code )
     dc[1]=$(echo $LOGIN | jq .device_code | cut -d'"' -f2)
     dc[2]=$(echo $LOGIN | jq .user_code | cut -d'"' -f2)
@@ -157,7 +157,7 @@ if [[ "$PKI_DONE" == *err* ]]; then
       PAIR=$(curl -L -s $enforce_doh \
         -X POST $(VERIFY github.com) \
         -H "Accept: application/json" \
-        --data-urlencode "client_id"=$2 --data-urlencode "device_code"=${dc[1]} \
+        -G --data-urlencode "client_id"=$2 --data-urlencode "device_code"=${dc[1]} \
         --data-urlencode "grant_type"="urn:ietf:params:oauth:grant-type:device_code" \
         https://github.com/login/oauth/access_token )
       df[1]=$(echo $PAIR | jq .access_token | cut -d'"' -f2)
@@ -197,7 +197,7 @@ if [[ "$PKI_DONE" == *err* ]]; then
       -H "Authorization: Bearer $ACCESS_TOKEN" \
       -H "X-GitHub-Api-Version: 2026-03-10" \
       https://api.github.com/repos/0mniteck/.pki/dispatches \
-    -d '{"event_type":"Global_Fetch"}')
+      -d '{"event_type":"Global_Fetch"}')
     if [[ "$DISPATCH" == "204" ]]; then
       echo "Successful Repository Dispatch!"
     elif [[ "$DISPATCH" == "404" ]]; then
