@@ -17,7 +17,7 @@ jobs:
       URL: ${{ steps.fetch_attestation.outputs.URL }}
     permissions:
       id-token: write
-      contents: read
+      contents: write
       attestations: write
       artifact-metadata: write
     steps:
