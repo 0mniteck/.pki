@@ -7,8 +7,8 @@ branding:
 inputs:
   source:
     description: 'Directory where the source files reside.'
-    required: false
-    default: ./
+    required: true
+    default: './  --config <(echo -en "title: Cayman theme\ndescription: Cayman is a clean, responsive theme for 0mniteck Pages.\nshow_downloads: true\ngoogle_analytics:\ntheme: jekyll-theme-cayman\n") '
   destination:
     description: 'Output directory of the build. Although it can be nested inside the source, it cannot be the same as the source directory.'
     required: true
