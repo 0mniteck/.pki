@@ -41,6 +41,7 @@ jobs:
             registry/**
             index.**
             local.sh
+          token: ${{github.token}}
       - name: Fetch Attestation ID via API
         id: fetch_attestation
         run: |
