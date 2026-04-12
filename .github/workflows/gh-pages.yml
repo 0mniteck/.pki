@@ -23,15 +23,13 @@ jobs:
           clean: true
           show-progress: true
           persist-credentials: true
-      - name: Git Pull
+      - name: Git fetch
         run: |
-          pushd $GITHUB_WORKSPACE > /dev/null
-            git fetch && git pull origin main
-          popd > /dev/null
+          git fetch && git pull origin main
       - name: Setup Github Pages v6
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - name: Build with Jekyll Securely
-        uses: ./.github/actions/action.yaml@0531552404769a4291f1086e57b504fb3722d705 #v0.0.175
+        uses: ./.github/actions/action.yaml@b429e2b2f7cf4e391d49748b68f1d928639f8795 #v0.0.175
         with:
           destination: './_site\ \$(echo --config \<\(echo -en "title: Cayman theme\ndescription: Cayman is a clean, responsive theme for 0mniteck Pages.\nshow_downloads: true\ngoogle_analytics:\ntheme: jekyll-theme-cayman\n"\) '
           token: ${{github.token}}
