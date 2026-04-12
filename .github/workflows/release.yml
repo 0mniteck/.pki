@@ -24,13 +24,13 @@ jobs:
     name: Fetch PKI
     concurrency:
       group: release
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@c83fee7684f9f08a5e285d828d003503e7941a28 # v0.0.174
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@a521d31be8c5f7d0fe5823b9d744961778227bef # v0.0.175
   release-pki:
     name: Release PKI
     concurrency:
       group: release
     needs: fetch-pki
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@df6ba251973a7f4cbac999fc587418f95fc600f9 # v0.0.174
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@81dae864372f2d81ae909754adc5364ec6b62dae # v0.0.175
   attested-rel:
     name: Attest PKI
     runs-on: ubuntu-latest
@@ -64,7 +64,7 @@ jobs:
           echo DONE
   read-me:
     name: Publish Readme
-    uses: 0mniteck/.pki/.github/workflows/read-me.yml@d93d7d2d338710aa0f92bf1a17a1220362ad69a4 # v0.0.174
+    uses: 0mniteck/.pki/.github/workflows/read-me.yml@07391225a26d0824b2b745bf0e235046eec06f74 # v0.0.175
     concurrency:
       group: release
     needs:
@@ -77,7 +77,7 @@ jobs:
       attested_url: "${{ needs.release-pki.outputs.URL }}"
   gh-pages:
     name: Release Github Pages
-    uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@2d143fe6a86c15ee955c0ba8de4672c3c9d46e81 # v0.0.175
+    uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@0b5f8b14c22758de72ff74fa007f86e1f6649898 # v0.0.175
     concurrency:
       group: release
     needs: read-me
