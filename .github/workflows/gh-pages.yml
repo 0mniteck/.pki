@@ -30,11 +30,11 @@ jobs:
           popd > /dev/null
       - name: Setup Github Pages v6
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
-      - name: Build with Jekyll v1.0.13
-        uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1.0.13
+      - name: Build with Jekyll Securely
+        uses: ./.github/actions/action.yaml@0531552404769a4291f1086e57b504fb3722d705 #v0.0.175
         with:
-          source: ./
           destination: ./_site
+          token: ${{github.token}}
       - name: Upload Pages Artifact v5
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
   push-page:
@@ -44,6 +44,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     needs: release-page
     steps:
-      - name: Deploy to GitHub Pages v4.0.5
+      - name: Deploy to GitHub Pages v5
         id: deployment
         uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+        with:
+          path: ./_site
