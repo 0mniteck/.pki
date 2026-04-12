@@ -32,7 +32,7 @@ jobs:
         id: generate_attestation
         uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
         with:
-            subject-path: |
+            subject-path:
               .github/workflows/**
               registry/**
               index.**
