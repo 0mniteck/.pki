@@ -8,11 +8,11 @@ inputs:
   source:
     description: 'Directory where the source files reside.'
     required: true
-    default: './  --config <(echo -en "title: Cayman theme\ndescription: Cayman is a clean, responsive theme for 0mniteck Pages.\nshow_downloads: true\ngoogle_analytics:\ntheme: jekyll-theme-cayman\n") '
+    default: './'
   destination:
     description: 'Output directory of the build. Although it can be nested inside the source, it cannot be the same as the source directory.'
     required: true
-    default: ./_site
+    default: './_site\ \$(echo --config \<\(echo -en "title: Cayman theme\ndescription: Cayman is a clean, responsive theme for 0mniteck Pages.\nshow_downloads: true\ngoogle_analytics:\ntheme: jekyll-theme-cayman\n"\)'
   future:
     description: 'Publishes posts with a future date. When set to true, the build is made with the --future option which overrides the future option that may be set in a Jekyll configuration file.'
     required: false
@@ -32,3 +32,5 @@ inputs:
 runs:
   using: docker
   image: docker://ghcr.io/actions/jekyll-build-pages:6791ebfd912185ed59bfb5fb102664fa872496b79f87ff8b9cfba292a7345041 #v1.0.13
+  args:
+    - 
