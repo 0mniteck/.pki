@@ -19,6 +19,7 @@ permissions:
   id-token: write
   contents: write
   attestations: write
+  artifact-metadata: write
 jobs:
   fetch-pki:
     name: Fetch PKI
