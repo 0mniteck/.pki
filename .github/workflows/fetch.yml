@@ -21,6 +21,7 @@ jobs:
           persist-credentials: true
       - name: Fetch and Validate PKI
         run: |
+          git fetch && git pull origin main
           touch index.ver
           index_number=$(($(cat index.ver) + 1))
           echo $index_number > index.ver
@@ -44,6 +45,7 @@ jobs:
               openssl dgst -sha256 -binary $1.pubkey.der | openssl base64 > $1.pubkey && \
               rm -f *.pem *.der $1.dnssec && declare -g -- SUCCESS+=:local.fetch.pki:$1 || exit 1
               dig="$(dig -r +https +do +domain=$1 +yaml @one.one.one.one -q $1 -t SIG)"
+              echo "$1 TEST:" && cat <(echo -e $dig)
               if [[ "$(echo $dig | grep -o 'qr rd ra ad')" == "qr rd ra ad" ]]; then
                 echo -e $dig > $1.dnssec; fi;
             popd > /dev/null
