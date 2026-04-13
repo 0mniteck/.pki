@@ -37,11 +37,7 @@ jobs:
         id: generate_attestation
         uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
         with:
-          subject-path: |
-            .github/workflows/**
-            registry/**
-            index.**
-            local.sh
+          subject-path: '${{github.workspace}}/registry/**'
           github-token: ${{github.token}}
       - name: Fetch Attestation ID via API
         id: fetch_attestation
