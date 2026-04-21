@@ -1,8 +1,8 @@
 - type: MESSAGE
   message:
     type: RECURSIVE_RESPONSE
-    query_time: !!timestamp 2026-04-21T18:22:31.180Z
-    response_time: !!timestamp 2026-04-21T18:22:31.185Z
+    query_time: !!timestamp 2026-04-21T19:08:40.565Z
+    response_time: !!timestamp 2026-04-21T19:08:40.583Z
     message_size: 367b
     socket_family: INET
     socket_protocol: TCP
@@ -13,7 +13,7 @@
     response_message_data:
       opcode: QUERY
       status: NOERROR
-      id: 27582
+      id: 60418
       flags: qr rd ra ad
       QUESTION: 1
       ANSWER: 0
@@ -28,6 +28,6 @@
         - 'one.one.one.one. IN SIG'
       AUTHORITY_SECTION:
         - 'one.one.one. 1800 IN SOA dorthy.ns.cloudflare.com. dns.cloudflare.com. 2402221842 10000 2400 604800 1800'
-        - 'one.one.one. 1800 IN RRSIG SOA 13 3 1800 20260422192231 20260420172231 34505 one.one.one. GDl+IeFLjMo5J9cufbdzquV1b9RL3hSw6pBYoXmHwtaW4UPwRVV2kxwc 9N8uC43p7ql0fbrmBoEkuAEVlRDiJw=='
+        - 'one.one.one. 1800 IN RRSIG SOA 13 3 1800 20260422200840 20260420180840 34505 one.one.one. Hyj+B/AaxAo2VoJQ0ktCUC5XGYBYJtl6sF5+F+tZlXjSOxPMZz4e1KPe 7ZNmT1zQizfsalE51nqFBchvaSJI7w=='
         - 'one.one.one.one. 1800 IN NSEC \000.one.one.one.one. A HINFO MX TXT AAAA LOC SRV NAPTR CERT SSHFP RRSIG NSEC TLSA SMIMEA HIP OPENPGPKEY SVCB HTTPS URI CAA'
-        - 'one.one.one.one. 1800 IN RRSIG NSEC 13 4 1800 20260422192231 20260420172231 34505 one.one.one. KoGDVE11VXefWv126wTRzYJnSUv477e34QWv1qMbKzccN+NeDE9g4Mfl LM0fapyUeGISCNMxpRt2qozRMbAvxg=='
+        - 'one.one.one.one. 1800 IN RRSIG NSEC 13 4 1800 20260422200840 20260420180840 34505 one.one.one. axBnNqjzTdH3cSj8e7Kt3TOt+H4wUgZpGzjAjHu5LzieWx3QDXvMkNwX nT2ROd3/W/8pWkh5XZ7oZ64jZVhb4A=='

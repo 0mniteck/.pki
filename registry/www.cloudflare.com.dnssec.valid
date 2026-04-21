@@ -1,8 +1,8 @@
 - type: MESSAGE
   message:
     type: RECURSIVE_RESPONSE
-    query_time: !!timestamp 2026-04-21T18:22:32.714Z
-    response_time: !!timestamp 2026-04-21T18:22:32.718Z
+    query_time: !!timestamp 2026-04-21T19:08:43.176Z
+    response_time: !!timestamp 2026-04-21T19:08:43.199Z
     message_size: 371b
     socket_family: INET
     socket_protocol: TCP
@@ -13,7 +13,7 @@
     response_message_data:
       opcode: QUERY
       status: NOERROR
-      id: 49070
+      id: 14187
       flags: qr rd ra ad
       QUESTION: 1
       ANSWER: 0
@@ -28,6 +28,6 @@
         - 'www.cloudflare.com. IN SIG'
       AUTHORITY_SECTION:
         - 'www.cloudflare.com. 1800 IN SOA jule.ns.cloudflare.com. dns.cloudflare.com. 2402280690 10000 2400 604800 1800'
-        - 'www.cloudflare.com. 1800 IN RRSIG SOA 13 3 1800 20260422192232 20260420172232 34505 www.cloudflare.com. mKzIdlXBMXvL2uiLnDvfWUnyixkZjq1m/zlfB8HkuwyQ8FTEomCgoVnY jBMc+lQCI4YthWwJMPy1edL1CI0Ibw=='
+        - 'www.cloudflare.com. 1800 IN RRSIG SOA 13 3 1800 20260422200843 20260420180843 34505 www.cloudflare.com. 1uqTUul5ze7PPBWLAavPULcRDPQ/D8dk+UV5GGWm7vR1YRb7annpUuLX ro2Frcc4omZLxdqEa9plgdAUA+NGXA=='
         - 'www.cloudflare.com. 1800 IN NSEC \000.www.cloudflare.com. A NS SOA HINFO MX TXT AAAA LOC SRV NAPTR CERT SSHFP RRSIG NSEC DNSKEY TLSA SMIMEA HIP CDS CDNSKEY OPENPGPKEY SVCB HTTPS URI CAA'
-        - 'www.cloudflare.com. 1800 IN RRSIG NSEC 13 3 1800 20260422192232 20260420172232 34505 www.cloudflare.com. Lpux+JljxTwp8iahnHrZtkqsavNTC88e0Su7J7hOU7rbfG19goIYJS60 jDHcxsMPcddA9CIcAuTZBPA7vUw2tA=='
+        - 'www.cloudflare.com. 1800 IN RRSIG NSEC 13 3 1800 20260422200843 20260420180843 34505 www.cloudflare.com. hhrfEOi4Nu5u8xC2/Rc/cqLd8amp+UmJGRhH8DOxXD715g2gd30eHQpw SEIZJMH01+/ixa7polyyaI1/F1IBjQ=='
