@@ -20,10 +20,10 @@ mkdir -p $tmp || FAIL+=:mkdir.$tmp.pki
 
 fetch.with.pki() { # $1 = domain/FQDN/IDN, # $2 = filename-or-/dev/null, # $3 = full_url or blank
   if [[ "$1" == "github.com" ]]; then
-    curl $enforce_doh -L --pinnedpubkey "sha256//$(<$local/$1.pubkey);sha256//$(<$local/release-assets.githubusercontent.com.pubkey)" \
+    curl $enforce_doh -L --pinnedpubkey "sha256//$(cat $local/$1.pubkey | cut -d' ' -f1);sha256//$(cat $local/release-assets.githubusercontent.com.pubkey | cut -d' ' -f1)" \
     $common_tls $3 > $2 || declare -g -- FAIL+=:fetch.with.pki:$3
   else
-    curl $enforce_doh --pinnedpubkey "sha256//$(<$local/$1.pubkey)" \
+    curl $enforce_doh --pinnedpubkey "sha256//$(cat $local/$1.pubkey | cut -d' ' -f1)" \
     $common_tls $3 > $2 || declare -g -- FAIL+=:fetch.with.pki:$3
   fi
 }
@@ -34,10 +34,12 @@ fetch.pki() { # $1 = domain/FQDN/IDN
     openssl x509 -in $1.pem -pubkey -noout > $1.pubkey.pem && openssl x509 -in $1.pem -enddate -noout > $1.exp && \
     openssl asn1parse -noout -inform pem -in $1.pubkey.pem -out $1.pubkey.der && \
     openssl dgst -sha256 -binary $1.pubkey.der | openssl base64 > $1.pubkey && \
-    rm -f *.pem *.der $1.dnssec && declare -g -- SUCCESS+=:local.fetch.pki:$1 || declare -g -- FAIL+=:local.fetch.pki:$1
-    dig="$(dig -r +https +do +domain=$1 +idn +yaml @one.one.one.one -q $1 -t SIG)"
-    if [[ "$(echo $dig | grep -o 'qr rd ra ad')" == "qr rd ra ad" ]]; then
-      echo -e $dig > $1.dnssec; fi;
+    declare -g -- SUCCESS+=:local.fetch.pki:$1 || declare -g -- FAIL+=:local.fetch.pki:$1
+    rm -f *.pem *.der $1.dnssec* && touch $1.dnssec
+    dig -r +https +do +domain=$1 +yaml @one.one.one.one -q $1 -t SIG > $1.dnssec
+    if [[ "$(cat $1.dnssec | grep -o 'qr rd ra ad')" == "qr rd ra ad" ]]; then
+      cp $1.dnssec $1.dnssec.valid; fi;
+    rm -r $1.dnssec
   popd > /dev/null
 }
 
@@ -50,14 +52,14 @@ invalidate.pki() { # $1 = domain/FQDN/IDN
 }
 
 check.liveness.pki() { # $1 = domain/FQDN/IDN
-  curl $enforce_doh --pinnedpubkey "sha256//$(<$local/$1.pubkey)" \
+  curl $enforce_doh --pinnedpubkey "sha256//$(cat $local/$1.pubkey | cut -d' ' -f1)" \
   $common_tls https://$1 > /dev/null || declare -g -- FAIL+=:check.liveness.pki:$1 	
 }
 
 check.against.pki() { # $1 = domain/FQDN/IDN
-  curl_run1=$(curl $enforce_doh -o $tmp/$1.pubkey --pinnedpubkey "sha256//$(<$remote/raw.githubusercontent.com.pubkey)" \
+  curl_run1=$(curl $enforce_doh -o $tmp/$1.pubkey --pinnedpubkey "sha256//$(cat $remote/raw.githubusercontent.com.pubkey | cut -d' ' -f1)" \
   $common_tls https://raw.githubusercontent.com/0mniteck/.pki/refs/heads/main/registry/$1.pubkey)
-  curl_run2=$(curl $enforce_doh -o $tmp/$1.exp --pinnedpubkey "sha256//$(<$remote/raw.githubusercontent.com.pubkey)" \
+  curl_run2=$(curl $enforce_doh -o $tmp/$1.exp --pinnedpubkey "sha256//$(cat $remote/raw.githubusercontent.com.pubkey | cut -d' ' -f1)" \
   $common_tls https://raw.githubusercontent.com/0mniteck/.pki/refs/heads/main/registry/$1.exp)
   diff $tmp/$1.pubkey $remote/$1.pubkey || declare -g -- FAIL+=:mismatch.invalidate.pki:$1
   diff $remote/$1.pubkey $local/$1.pubkey || declare -g -- FAIL+=:mismatch.invalidate.pki:$1
@@ -139,7 +141,7 @@ if [[ "$PKI_DONE" == *err* ]]; then
   echo -e "PKI_DONE:_$PKI_DONE\n"
   if [[ "$PKI_DONE" == *mismatch* && "$2" != "" && "$_RE_EXEC" != "true" ]]; then
     VERIFY() { # $1 = domain/FQDN/IDN
-      echo "--pinnedpubkey \"sha256//$(<$local/$1.pubkey)\" $common_tls"
+      echo "--pinnedpubkey \"sha256//$(cat $local/$1.pubkey | cut -d' ' -f1)\" $common_tls"
     }
 
     echo -e "Attempting to dispatch workflow: Global_Fetch...\nLogin to github.com using ephemeral device flow.\n"
