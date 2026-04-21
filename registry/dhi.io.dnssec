@@ -1,0 +1,33 @@
+- type: MESSAGE
+  message:
+    type: RECURSIVE_RESPONSE
+    query_time: !!timestamp 2026-04-21T15:51:48.102Z
+    response_time: !!timestamp 2026-04-21T15:51:48.226Z
+    message_size: 549b
+    socket_family: INET
+    socket_protocol: TCP
+    response_address: "1.1.1.1"
+    response_port: 443
+    query_address: "0.0.0.0"
+    query_port: 0
+    response_message_data:
+      opcode: QUERY
+      status: NOERROR
+      id: 11707
+      flags: qr rd ra
+      QUESTION: 1
+      ANSWER: 0
+      AUTHORITY: 4
+      ADDITIONAL: 1
+      OPT_PSEUDOSECTION:
+        EDNS:
+          version: 0
+          flags: do
+          udp: 1232
+      QUESTION_SECTION:
+        - 'dhi.io. IN SIG'
+      AUTHORITY_SECTION:
+        - 'dhi.io. 300 IN SOA ns-cloud-e1.googledomains.com. cloud-dns-hostmaster.google.com. 1 21600 3600 259200 300'
+        - 'dhi.io. 300 IN RRSIG SOA 8 2 21600 20260510140508 20260418140508 2133 dhi.io. WLsvmMPyBvS+EWdzoc/4gfCK1kOpdt0NMpopZezbvkgs5jwgj3CM9tMR Y0pvuAdmv77T5kiyufZC9lfj2Xyk3TtqdocVkZ7OnwC51Y4RjvwnUr5A ZIv7+pCBdMe2DJe2v5j1xfSZzM4ZhyX718Ii0SrjUBOIW5d2bHEOEcKO f5g='
+        - '0j77lp3htivst53ssqg1n6krh3fi40ua.dhi.io. 300 IN NSEC3 1 0 1 74E880591811FE99 0J77LP3HTIVST53SSQG1N6KRH3FI40UA A NS SOA AAAA RRSIG DNSKEY NSEC3PARAM CDS'
+        - '0j77lp3htivst53ssqg1n6krh3fi40ua.dhi.io. 300 IN RRSIG NSEC3 8 3 300 20260510140508 20260418140508 2133 dhi.io. Dg09FFRwioGuwrlVdcd6lzVNk6t5gVaYPa8G6uHbjOeQcvvTN3BREUz8 122hZy2ssl73HWWhOJP1atoFt0QIH8438xYGlKxwaOK15OuvyqjNJRz7 UuwEjUFN0bdoyRLfwbfNy/Qnwwe/UydvLD/K17Mk1DDa8DsXUbca9odl Skw='

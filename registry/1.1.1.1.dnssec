@@ -1,0 +1,33 @@
+- type: MESSAGE
+  message:
+    type: RECURSIVE_RESPONSE
+    query_time: !!timestamp 2026-04-21T15:51:47.011Z
+    response_time: !!timestamp 2026-04-21T15:51:47.019Z
+    message_size: 709b
+    socket_family: INET
+    socket_protocol: TCP
+    response_address: "1.0.0.1"
+    response_port: 443
+    query_address: "0.0.0.0"
+    query_port: 0
+    response_message_data:
+      opcode: QUERY
+      status: NXDOMAIN
+      id: 408
+      flags: qr rd ra ad
+      QUESTION: 1
+      ANSWER: 0
+      AUTHORITY: 4
+      ADDITIONAL: 1
+      OPT_PSEUDOSECTION:
+        EDNS:
+          version: 0
+          flags: do
+          udp: 1232
+      QUESTION_SECTION:
+        - '1.1.1.1. IN SIG'
+      AUTHORITY_SECTION:
+        - '. 86400 IN SOA a.root-servers.net. nstld.verisign-grs.com. 2026042100 1800 900 604800 86400'
+        - '. 86400 IN RRSIG SOA 8 0 86400 20260504050000 20260421040000 54393 . FNotX08xTWvs9XCJTEge3HvU79OHmrj1KmkVX77KtqcymvlG3Pprnc7i Sxi3pXqrAWYVGnAp5YduB3c4oRRVIUvCwXEc2pjclq6Onqryg5YeM2v0 j+0WqU3y4DTNupsLFSouLB4QFMD/IklmvHGjGMDtafVZy9T03aTcdz75 4V8VuhI7y0zEfkb4d0JuktRk0mfV/Dupt4WKBszzkxNRemI/ujy69YpX 4O9DRBUs+A0C4eeSBs9rSUR1LaYJdom9uRs2myPP881UzL1MFfoRwLds GOv3dWmD1qIoGr+osOhtaZ59lP5oTHY5tTceQBcGj3zqxCJaV/GN384g jP5ojQ=='
+        - '. 86400 IN NSEC aaa. NS SOA RRSIG NSEC DNSKEY ZONEMD'
+        - '. 86400 IN RRSIG NSEC 8 0 86400 20260504050000 20260421040000 54393 . FdUlV5KWVpgcNBsRFhMzBp7MkAwq84METelH8C7E1qTCowfzn+bYXTWl vlW/I5ZxC3K1he6Wi3WGBJAMvDaA4K3mv5Ql0YG4a8v/+NHK2TJf6rYP vRLcyrwfGC3IHTtpVCfFaCyqvChwKEZ8ybti4W3xQTx1kuTirU4vgzAa HGWFCJHhfTXlIJ73eNYY8ZFdoCg9cCCvHFbpCUAGuLtX/b/IISTRiiDI xf0wy+CA8D5micr+LQmdfWBin0NTPy+6lslK/qaJR1it5MBLz9D6ES8m OpMSfbT1r0a5iaTtUoMeTpMC7aZU7cBOuTNMZbVSE1GxOYw+Po3UGPeD Cxy/tQ=='
