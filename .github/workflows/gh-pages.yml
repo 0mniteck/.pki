@@ -17,15 +17,9 @@ jobs:
     steps:
       - name: Checkout v6
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          ssh-strict: true
-          ssh-user: git
-          clean: true
-          show-progress: false
-          persist-credentials: true
       - name: Git fetch
-        run: |
-          git fetch && git pull origin main
+        id: git_fetch
+        run: git fetch && git pull origin main && echo Fetched
       - name: Setup Github Pages v6
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - name: Build with Jekyll Securely
@@ -39,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: release
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{steps.deployment.outputs.page_url}}
     needs: release-page
     steps:
       - name: Deploy to GitHub Pages v5
