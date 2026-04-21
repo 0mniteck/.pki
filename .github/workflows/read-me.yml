@@ -30,12 +30,12 @@ jobs:
           git fetch && git pull origin main && echo Fetched
       - name: Update Readme
         run: |
-          pushd $GITHUB_WORKSPACE > /dev/null
+          pushd ${{github.workspace}} > /dev/null
             VER=$(cat index.ver)
             sed -i "s/$(echo $(grep Created README.md))/> #### Attestation Created - v0.0.$VER Immutable Tag/" README.md
-            INP="> - [${{ inputs.attested_url }}](${{ inputs.attested_url }})"
-            sed -i "$(( $(grep -n Created README.md | cut -d':' -f1) + 1))d" README.md
-            sed -i "$(( $(grep -n Created README.md | cut -d':' -f1) + 1))i $INP" README.md
+            INP="> - [${{inputs.attested_url}}](${{inputs.attested_url}})"
+            sed -i "$(($(grep -n Created README.md | cut -d':' -f1) + 1))d" README.md
+            sed -i "$(($(grep -n Created README.md | cut -d':' -f1) + 1))i $INP" README.md
             git config user.name 'github-actions[bot]'
             git config user.email 'github-actions[bot]@users.noreply.github.com'
             git add -A && git commit -m "Released v0.0.$VER - $(date '+on %m/%d/%y at %H:%M UTC')"
