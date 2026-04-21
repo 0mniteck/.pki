@@ -1,1 +1,33 @@
-null
+- type: MESSAGE
+  message:
+    type: RECURSIVE_RESPONSE
+    query_time: !!timestamp 2026-04-21T16:18:03.506Z
+    response_time: !!timestamp 2026-04-21T16:18:03.512Z
+    message_size: 351b
+    socket_family: INET
+    socket_protocol: TCP
+    response_address: "1.1.1.1"
+    response_port: 443
+    query_address: "0.0.0.0"
+    query_port: 0
+    response_message_data:
+      opcode: QUERY
+      status: NOERROR
+      id: 46331
+      flags: qr rd ra ad
+      QUESTION: 1
+      ANSWER: 0
+      AUTHORITY: 4
+      ADDITIONAL: 1
+      OPT_PSEUDOSECTION:
+        EDNS:
+          version: 0
+          flags: do
+          udp: 1232
+      QUESTION_SECTION:
+        - 'cloudflare.com. IN SIG'
+      AUTHORITY_SECTION:
+        - 'cloudflare.com. 300 IN SOA ns3.cloudflare.com. dns.cloudflare.com. 2401983296 10000 2400 604800 300'
+        - 'cloudflare.com. 300 IN RRSIG SOA 13 2 300 20260422171803 20260420151803 34505 cloudflare.com. D8uJ/NTzs62v4EtduuVbiM//Bu8Jk5yYNDqTvxnqdDaHJxZxKMfX5dIZ aC8l1bNkr6X5LK5NR/JQ7EpoydXdBg=='
+        - 'cloudflare.com. 300 IN NSEC \000.cloudflare.com. A NS SOA HINFO MX TXT AAAA LOC SRV NAPTR CERT SSHFP RRSIG NSEC DNSKEY TLSA SMIMEA HIP CDS CDNSKEY OPENPGPKEY SVCB HTTPS URI CAA'
+        - 'cloudflare.com. 300 IN RRSIG NSEC 13 2 300 20260422171803 20260420151803 34505 cloudflare.com. wZRfV8kcNjSPaS93RMo5aym5XFQQftPJtTavr15ul7cb/nbQXhWx/B6f EuqXn5kR9r9GfzQVkiuCsR1MDmYcEg=='
