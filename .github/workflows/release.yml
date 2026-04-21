@@ -64,7 +64,7 @@ jobs:
           echo DONE
   read-me:
     name: Publish Readme
-    uses: 0mniteck/.pki/.github/workflows/read-me.yml@c7a418ef0d4c7a71879cc6c7223251884145805f # v0.0.175
+    uses: 0mniteck/.pki/.github/workflows/read-me.yml@2c05d6147ed52e362fdb840c86b375cef00ca1f6 # v0.0.175
     concurrency:
       group: release
     needs:
