@@ -31,10 +31,10 @@ jobs:
           validate.pki() { # $1 = domain/FQDN/IDN
             curl $enforce_doh --pinnedpubkey "sha256//$(<registry/$1.pubkey)" \
             $common_tls https://$1 > /dev/null || return 1
-            echo "Successfully fetched and checked validity for $1.pubkey"
+            echo "Successfully fetched and checked validity for $1"
             if [[ -f "registry/$1.dnssec.valid" ]]; then
-              echo " --> +dnssec"; fi;
-            return 0
+              cp registry/$1.dnssec registry/$1.dnssec.valid; echo " --> +dnssec"; fi;
+            rm -f registry/$1.dnssec; return 0
           }
           
           fetch.pki() { # $1 = domain/FQDN/IDN
@@ -44,9 +44,9 @@ jobs:
               openssl asn1parse -noout -inform pem -in $1.pubkey.pem -out $1.pubkey.der && \
               openssl dgst -sha256 -binary $1.pubkey.der | openssl base64 > $1.pubkey && \
               declare -g -- SUCCESS+=:local.fetch.pki:$1 || exit 1 && rm -f *.pem *.der $1.dnssec* && touch $1.dnssec
-              dig -r +https +do +domain=$1 +yaml @one.one.one.one -q $1 -t SIG > $1.dnssec && echo "$1.dnssec Saved"
+              dig -r +https +do +domain=$1 +yaml @one.one.one.one -q $1 -t SIG > $1.dnssec
               if [[ "$(cat $1.dnssec | grep -o 'qr rd ra ad')" == "qr rd ra ad" ]]; then
-                echo "$1.dnssec Valid"; touch $1.dnssec.valid; echo null > $1.dnssec.valid; fi;
+                touch $1.dnssec.valid; echo null > $1.dnssec.valid; fi;
             popd > /dev/null
             validate.pki $1 || exit 1
           }
