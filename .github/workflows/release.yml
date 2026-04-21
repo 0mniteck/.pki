@@ -25,13 +25,13 @@ jobs:
     name: Fetch PKI
     concurrency:
       group: release
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@f481239fca624eaa3b0825fbe756c571a9a535a4 # v0.0.175
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@328f80f07b0118c1983009eb8229b1872bd93b5f # v0.0.175
   release-pki:
     name: Release PKI
     concurrency:
       group: release
     needs: fetch-pki
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@23386e8d898a859f651b92972a3e647d977ebac2 # v0.0.175
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@f5f469b23ae0da841d081e8bcaf7e112327d22e9 # v0.0.175
   attested-rel:
     name: Attest PKI
     runs-on: ubuntu-latest
@@ -55,13 +55,12 @@ jobs:
           persist-credentials: true
       - name: Run gh attestation verify
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{github.token}}
         run: |
-          for I in $GITHUB_WORKSPACE/.github/workflows/* $GITHUB_WORKSPACE/registry/* $GITHUB_WORKSPACE/index.* $GITHUB_WORKSPACE/local.sh ; do
+          for I in ${{github.workspace}}/.github/*/* ${{github.workspace}}/registry/* ${{github.workspace}}/index.** ${{github.workspace}}/local.sh ; do
             gh attestation verify $I --repo 0mniteck/.pki --source-ref refs/heads/main \
             --signer-workflow 0mniteck/.pki/.github/workflows/immutable.yml || exit 1;
-            sleep 1 && echo "$I Attested"
-          done;
+            echo "$I Attested"; done;
           echo DONE
   read-me:
     name: Publish Readme
@@ -75,7 +74,7 @@ jobs:
       id-token: write
       contents: write
     with:
-      attested_url: "${{ needs.release-pki.outputs.URL }}"
+      attested_url: "${{needs.release-pki.outputs.URL}}"
   gh-pages:
     name: Release Github Pages
     uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@7e0e7abc8652438ae63037545322baabe2c5f137 # v0.0.175
