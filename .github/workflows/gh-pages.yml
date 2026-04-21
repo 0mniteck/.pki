@@ -21,7 +21,7 @@ jobs:
           ssh-strict: true
           ssh-user: git
           clean: true
-          show-progress: true
+          show-progress: false
           persist-credentials: true
       - name: Git fetch
         run: |
