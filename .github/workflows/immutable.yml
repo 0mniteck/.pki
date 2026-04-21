@@ -4,7 +4,7 @@ on:
   workflow_call:
     outputs:
       URL: 
-        value: ${{ jobs.immutable-rel.outputs.URL }}
+        value: ${{jobs.immutable-rel.outputs.URL}}
 concurrency:
   group: release
   cancel-in-progress: true
@@ -14,7 +14,7 @@ jobs:
     environment:
       name: release
     outputs:
-      URL: ${{ steps.fetch_attestation.outputs.URL }}
+      URL: ${{steps.fetch_attestation.outputs.URL}}
     permissions:
       id-token: write
       contents: write
@@ -29,48 +29,63 @@ jobs:
           clean: true
           show-progress: false
           persist-credentials: true
-      - name: Git fetch
+      - name: Git fetch and Clear Attestations
         id: git_fetch
         run: |
           git fetch && git pull origin main && echo Fetched
-          echo "ver=$(cat index.ver)" >> $GITHUB_ENV
-      - name: Generate Attestation for Build Provenance v4
+          ver=$(cat index.ver) && echo "tag=v0.0.$ver" >> $GITHUB_ENV
+          ATTEST=$(cat README.md | sed -n '/attestations/,/]/p;//q' | cut -d'/' -f13 | cut -d')' -f1)
+          curl -L -X DELETE \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{github.token}}" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            https://api.github.com/users/0mniteck/attestations/${ATTEST}
+          DIGESTS=$(sha512sum --tag ${{github.workspace}}/.github/**/** ${{github.workspace}}/registry/** ${{github.workspace}}/index.** ${{github.workspace}}/local.sh | cut -d'=' -f2 | sed 's/ /sha512:/g' | tr '\n' ' ')
+          for DIGEST in $DIGESTS; do
+          	curl -L -X DELETE \
+          		-H "Accept: application/vnd.github+json" \
+          		-H "Authorization: Bearer ${{github.token}}" \
+          		-H "X-GitHub-Api-Version: 2026-03-10" \
+          		https://api.github.com/users/0mniteck/attestations/digest/${DIGEST}
+            echo "Cleared Attestation for ${DIGEST}"
+          done
+      - name: Generate Attestations for Build Provenance v4
         id: generate_attestation
         uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
         with:
-          subject-path: '${{github.workspace}}/registry/**'
-          subject-version: 'v0.0.${{ env.ver }}'
-          create-storage-record: false
-          github-token: ${{github.token}}
-      - name: Fetch Attestation ID via API
+          subject-path: '${{github.workspace}}/.github/**/**, ${{github.workspace}}/registry/**, ${{github.workspace}}/index.**, ${{github.workspace}}/local.sh'
+          subject-version: '${{env.tag}}'
+          github-token: '${{github.token}}'
+      - name: Fetch Attestation ID via Output
         id: fetch_attestation
         run: |
-          mkdir -p attestations && pushd attestations > /dev/null
-          echo 1. ${{ steps.generate_attestation.outputs.bundle-path }} > Runner\ output\ \(log\)
-          echo 2. ${{ steps.generate_attestation.outputs.attestation-url }} >> Runner\ output\ \(log\)
-          cat Runner\ output\ \(log\) && popd > /dev/null
-          echo "URL=${{ steps.generate_attestation.outputs.attestation-url }}" >> $GITHUB_OUTPUT
+          mkdir -p /attestations && pushd /attestations > /dev/null
+            echo 1. ${{steps.generate_attestation.outputs.bundle-path}} > Runner\ output\ \(log\)
+            echo 2. ${{steps.generate_attestation.outputs.attestation-url}} >> Runner\ output\ \(log\)
+            cat Runner\ output\ \(log\) && popd > /dev/null
+          echo "URL=${{steps.generate_attestation.outputs.attestation-url}}" >> $GITHUB_OUTPUT
       - name: Download Attestation (json) via API
         id: download_attestation
         run: |
-          pushd attestations > /dev/null
-          curl -L -H "Accept: application/vnd.github+json" \
-          -H "Authorization: Bearer ${{ github.token }}" \
-          ${{ steps.generate_attestation.outputs.attestation-url }}/download > Build\ attestation\ \(json\)
+          pushd /attestations > /dev/null
+            curl -L -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{github.token}}" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            ${{steps.generate_attestation.outputs.attestation-url}}/download > Build\ attestation\ \(json\)
           popd > /dev/null
       - name: Draft Release via API
         id: draft_release
         run: |
-          export -- response=$(curl -L -X POST -H "Accept: application/vnd.github+json" \
-          -H "Authorization: Bearer ${{ github.token }}" \
-          -H "X-GitHub-Api-Version: 2022-11-28" \
+          export -- response=$(curl -L -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{github.token}}" \
+          -H "X-GitHub-Api-Version: 2026-03-10" \
           https://api.github.com/repos/0mniteck/.pki/releases \
-          -d '{
-          "tag_name":"v0.0.${{ env.ver }}",
+          -d '{          
+          "tag_name":"${{env.tag}}",
           "target_commitish":"main",
-          "name":"v0.0.${{ env.ver }}",
+          "name":"${{env.tag}}",
           "draft":true,
-          "immutable":false,
           "prerelease":false,
           "generate_release_notes":true,
           "make_latest":"false" 
@@ -79,26 +94,22 @@ jobs:
           responded_body=$(echo $response | jq -r .body)
           echo "responded=$responded_id" >> $GITHUB_ENV
           echo "response=$responded_body" >> $GITHUB_ENV
-      - name: Add assets to draft release
+      - name: Add Assets to Draft
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{github.token}}
         run: |
-          tag="v0.0.${{ env.ver }}"
-          gh release upload $tag attestations/**
+          gh release upload $tag /attestations/**
       - name: Publish Release via API
         run: |
-          result=$(curl -L -X PATCH -H "Accept: application/vnd.github+json" \
-          -H "Authorization: Bearer ${{ github.token }}" \
-          -H "X-GitHub-Api-Version: 2022-11-28" \
-          https://api.github.com/repos/0mniteck/.pki/releases/${{ env.responded }} \
+          result=$(curl -L -X PATCH \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{github.token}}" \
+          -H "X-GitHub-Api-Version: 2026-03-10" \
+          https://api.github.com/repos/0mniteck/.pki/releases/${{env.responded}} \
           -d '{
-          "tag_name":"v0.0.${{ env.ver }}",
-          "target_commitish":"main",
-          "name":"v0.0.${{ env.ver }}",
-          "body":"## Attestable - Immutable - Ephemeral\n> #### Attestation Created - v0.0.${{ env.ver }} Immutable Tag\n> - [${{ steps.generate_attestation.outputs.attestation-url }}](${{ steps.generate_attestation.outputs.attestation-url }})\n\n${{ env.response }}\n\nBy: @0mniteck\n",
+          "name":"${{env.tag}}",
+          "body":"## Attestable - Immutable - Ephemeral\n> #### Attestation Created - ${{env.tag}} Immutable Tag\n> - [${{steps.generate_attestation.outputs.attestation-url}}](${{steps.generate_attestation.outputs.attestation-url}})\n\n${{env.response}}\n\nBy: @0mniteck\n",
           "draft":false,
-          "immutable":true,
-          "prerelease":false,
           "make_latest":"true"
           }') || exit 1
           if [[ "$result" == *null* ]]; then exit 1; fi;
