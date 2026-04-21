@@ -27,17 +27,20 @@ jobs:
           ssh-strict: true
           ssh-user: git
           clean: true
-          show-progress: true
+          show-progress: false
           persist-credentials: true
       - name: Git fetch
         id: git_fetch
         run: |
           git fetch && git pull origin main && echo Fetched
+          echo "ver=$(cat index.ver)" >> $GITHUB_ENV
       - name: Generate Attestation for Build Provenance v4
         id: generate_attestation
         uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
         with:
           subject-path: '${{github.workspace}}/registry/**'
+          subject-version: 'v0.0.${{ env.ver }}'
+          create-storage-record: false
           github-token: ${{github.token}}
       - name: Fetch Attestation ID via API
         id: fetch_attestation
@@ -54,7 +57,7 @@ jobs:
           curl -L -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ github.token }}" \
           ${{ steps.generate_attestation.outputs.attestation-url }}/download > Build\ attestation\ \(json\)
-          popd > /dev/null && echo "ver=$(cat index.ver)" >> $GITHUB_ENV
+          popd > /dev/null
       - name: Draft Release via API
         id: draft_release
         run: |
