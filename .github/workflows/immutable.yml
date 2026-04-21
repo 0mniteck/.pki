@@ -36,7 +36,7 @@ jobs:
             -H "Authorization: Bearer ${{github.token}}" \
             -H "X-GitHub-Api-Version: 2026-03-10" \
             https://api.github.com/users/0mniteck/attestations/${ATTEST}
-          DIGESTS=$(sha256sum --tag ${{github.workspace}}/.github/**/** ${{github.workspace}}/registry/** ${{github.workspace}}/index.** ${{github.workspace}}/local.sh | cut -d'=' -f2 | sed 's/ /sha256:/g' | tr '\n' ' ')
+          DIGESTS=$(sha512sum --tag ${{github.workspace}}/.github/*/* ${{github.workspace}}/registry/* ${{github.workspace}}/index.* ${{github.workspace}}/local.sh | cut -d'=' -f2 | sed 's/ /sha512:/g' | tr '\n' ' ')
           for DIGEST in $DIGESTS; do
           	curl -s -L -X DELETE \
           		-H "Accept: application/vnd.github+json" \
@@ -45,16 +45,18 @@ jobs:
           		https://api.github.com/users/0mniteck/attestations/digest/${DIGEST}
             echo "Cleared Attestation for ${DIGEST}"
           done
+          mkdir -p /home/runner/work/_temp/attestations
+          sha512sum ${{github.workspace}}/.github/*/* ${{github.workspace}}/registry/* ${{github.workspace}}/index.* ${{github.workspace}}/local.sh > /home/runner/work/_temp/attestations/sums.512
       - name: Generate Attestations for Build Provenance v4
         id: generate_attestation
         uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
         with:
-          subject-path: '${{github.workspace}}/index.ver'
+          subject-checksums: '/home/runner/work/_temp/attestations/sums.512'
           github-token: '${{github.token}}'
       - name: Fetch Attestation ID via Output
         id: fetch_attestation
         run: |
-          mkdir -p /home/runner/work/_temp/attestations && pushd /home/runner/work/_temp/attestations > /dev/null
+          pushd /home/runner/work/_temp/attestations > /dev/null
             echo 1. ${{steps.generate_attestation.outputs.bundle-path}} > Runner\ output\ \(log\)
             echo 2. ${{steps.generate_attestation.outputs.attestation-url}} >> Runner\ output\ \(log\)
             cat Runner\ output\ \(log\) && popd > /dev/null
@@ -63,7 +65,7 @@ jobs:
         id: download_attestation
         run: |
           pushd /home/runner/work/_temp/attestations > /dev/null
-            curl -L -H "Accept: application/vnd.github+json" \
+            curl -s -L -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{github.token}}" \
             -H "X-GitHub-Api-Version: 2026-03-10" \
             ${{steps.generate_attestation.outputs.attestation-url}}/download > Build\ attestation\ \(json\)
@@ -71,7 +73,7 @@ jobs:
       - name: Draft Release via API
         id: draft_release
         run: |
-          export -- response=$(curl -L -X POST \
+          export -- response=$(curl -s -L -X POST \
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{github.token}}" \
           -H "X-GitHub-Api-Version: 2026-03-10" \
@@ -95,7 +97,7 @@ jobs:
         run: gh release upload $tag /home/runner/work/_temp/attestations/**
       - name: Publish Release via API
         run: |
-          result=$(curl -L -X PATCH \
+          result=$(curl -s -L -X PATCH \
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{github.token}}" \
           -H "X-GitHub-Api-Version: 2026-03-10" \
