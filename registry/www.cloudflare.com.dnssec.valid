@@ -1,19 +1,19 @@
 - type: MESSAGE
   message:
     type: RECURSIVE_RESPONSE
-    query_time: !!timestamp 2026-04-21T17:58:12.518Z
-    response_time: !!timestamp 2026-04-21T17:58:12.524Z
+    query_time: !!timestamp 2026-04-21T18:22:32.714Z
+    response_time: !!timestamp 2026-04-21T18:22:32.718Z
     message_size: 371b
     socket_family: INET
     socket_protocol: TCP
-    response_address: "1.1.1.1"
+    response_address: "1.0.0.1"
     response_port: 443
     query_address: "0.0.0.0"
     query_port: 0
     response_message_data:
       opcode: QUERY
       status: NOERROR
-      id: 3993
+      id: 49070
       flags: qr rd ra ad
       QUESTION: 1
       ANSWER: 0
@@ -27,7 +27,7 @@
       QUESTION_SECTION:
         - 'www.cloudflare.com. IN SIG'
       AUTHORITY_SECTION:
-        - 'www.cloudflare.com. 1800 IN SOA jule.ns.cloudflare.com. dns.cloudflare.com. 2402029827 10000 2400 604800 1800'
-        - 'www.cloudflare.com. 1800 IN RRSIG SOA 13 3 1800 20260422185812 20260420165812 34505 www.cloudflare.com. gQkdrGY5OV7O8NvHWS7NVhzcFDeHNteJ1XSD5u0D5lPXIv4vdM5rtQx8 2A+rAB4/pX1U+F/xq3mpA7t78Lh7Ng=='
+        - 'www.cloudflare.com. 1800 IN SOA jule.ns.cloudflare.com. dns.cloudflare.com. 2402280690 10000 2400 604800 1800'
+        - 'www.cloudflare.com. 1800 IN RRSIG SOA 13 3 1800 20260422192232 20260420172232 34505 www.cloudflare.com. mKzIdlXBMXvL2uiLnDvfWUnyixkZjq1m/zlfB8HkuwyQ8FTEomCgoVnY jBMc+lQCI4YthWwJMPy1edL1CI0Ibw=='
         - 'www.cloudflare.com. 1800 IN NSEC \000.www.cloudflare.com. A NS SOA HINFO MX TXT AAAA LOC SRV NAPTR CERT SSHFP RRSIG NSEC DNSKEY TLSA SMIMEA HIP CDS CDNSKEY OPENPGPKEY SVCB HTTPS URI CAA'
-        - 'www.cloudflare.com. 1800 IN RRSIG NSEC 13 3 1800 20260422185812 20260420165812 34505 www.cloudflare.com. 0m5FlTgGHCvafkfpYiqN4QX4AWh5IWb+48AAiSHEuyR6PgXref0G0Q4R ekRiFnRMiwQy8GBmiCKFcZ8dCIG7zg=='
+        - 'www.cloudflare.com. 1800 IN RRSIG NSEC 13 3 1800 20260422192232 20260420172232 34505 www.cloudflare.com. Lpux+JljxTwp8iahnHrZtkqsavNTC88e0Su7J7hOU7rbfG19goIYJS60 jDHcxsMPcddA9CIcAuTZBPA7vUw2tA=='
