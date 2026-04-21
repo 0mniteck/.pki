@@ -33,7 +33,7 @@ fetch.pki() { # $1 = domain/FQDN/IDN
     curl $enforce_doh $common_tls -w %{certs} https://$1 | sed --sandbox -n "/-----BEGIN/,/-----END/p;/-----END/q" > $1.pem && \
     openssl x509 -in $1.pem -pubkey -noout > $1.pubkey.pem && openssl x509 -in $1.pem -enddate -noout > $1.exp && \
     openssl asn1parse -noout -inform pem -in $1.pubkey.pem -out $1.pubkey.der && \
-    openssl dgst -sha256 -binary $1.pubkey.der | openssl base64 > $1.pubkey && \
+    openssl dgst -sha256 -binary $1.pubkey.der | openssl base64 > $1.pubkey && echo -en ' '$e >> $1.pubkey && \
     declare -g -- SUCCESS+=:local.fetch.pki:$1 || declare -g -- FAIL+=:local.fetch.pki:$1
     rm -f *.pem *.der $1.dnssec* && touch $1.dnssec
     dig -r +https +do +domain=$1 +yaml @one.one.one.one -q $1 -t SIG > $1.dnssec
@@ -104,7 +104,9 @@ check.pki() { # $1 = domain/FQDN/IDN
 }
 
 check.index() {
+  unset e; e=1;
   for i in $(cat .pki/index.csv | tr ',' '\n' | cat); do
+    declare -g -- e=$((e + 1))
     fetch.pki $i || declare -g -- FAIL+=:fetch.pki:$i
     check.pki $i || declare -g -- FAIL+=:check.pki:$i                 # Exists/Expired
     # check.attest.pki $i || declare -g -- FAIL+=:check.attest.pki:$i # gh attestation verify
