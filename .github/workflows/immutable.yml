@@ -23,26 +23,22 @@ jobs:
     steps:
       - name: Checkout v6
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          ssh-strict: true
-          ssh-user: git
-          clean: true
-          show-progress: false
-          persist-credentials: true
-      - name: Git fetch and Clear Attestations
+      - name: Git fetch
         id: git_fetch
+        run: git fetch && git pull origin main && echo Fetched
+      - name: Clear Attestations
+        id: clear_attestations
         run: |
-          git fetch && git pull origin main && echo Fetched
           ver=$(cat index.ver) && echo "tag=v0.0.$ver" >> $GITHUB_ENV
           ATTEST=$(cat README.md | sed -n '/attestations/,/]/p;//q' | cut -d'/' -f13 | cut -d')' -f1)
-          curl -L -X DELETE \
+          curl -s -L -X DELETE \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{github.token}}" \
             -H "X-GitHub-Api-Version: 2026-03-10" \
             https://api.github.com/users/0mniteck/attestations/${ATTEST}
-          DIGESTS=$(sha512sum --tag ${{github.workspace}}/.github/**/** ${{github.workspace}}/registry/** ${{github.workspace}}/index.** ${{github.workspace}}/local.sh | cut -d'=' -f2 | sed 's/ /sha512:/g' | tr '\n' ' ')
+          DIGESTS=$(sha256sum --tag ${{github.workspace}}/.github/**/** ${{github.workspace}}/registry/** ${{github.workspace}}/index.** ${{github.workspace}}/local.sh | cut -d'=' -f2 | sed 's/ /sha256:/g' | tr '\n' ' ')
           for DIGEST in $DIGESTS; do
-          	curl -L -X DELETE \
+          	curl -s -L -X DELETE \
           		-H "Accept: application/vnd.github+json" \
           		-H "Authorization: Bearer ${{github.token}}" \
           		-H "X-GitHub-Api-Version: 2026-03-10" \
@@ -53,12 +49,12 @@ jobs:
         id: generate_attestation
         uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
         with:
-          subject-path: '${{github.workspace}}/local.sh'
+          subject-path: '${{github.workspace}}/index.ver'
           github-token: '${{github.token}}'
       - name: Fetch Attestation ID via Output
         id: fetch_attestation
         run: |
-          mkdir -p /attestations && pushd /attestations > /dev/null
+          mkdir -p /home/runner/work/_temp/attestations && pushd /home/runner/work/_temp/attestations > /dev/null
             echo 1. ${{steps.generate_attestation.outputs.bundle-path}} > Runner\ output\ \(log\)
             echo 2. ${{steps.generate_attestation.outputs.attestation-url}} >> Runner\ output\ \(log\)
             cat Runner\ output\ \(log\) && popd > /dev/null
@@ -66,7 +62,7 @@ jobs:
       - name: Download Attestation (json) via API
         id: download_attestation
         run: |
-          pushd /attestations > /dev/null
+          pushd /home/runner/work/_temp/attestations > /dev/null
             curl -L -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{github.token}}" \
             -H "X-GitHub-Api-Version: 2026-03-10" \
@@ -80,7 +76,7 @@ jobs:
           -H "Authorization: Bearer ${{github.token}}" \
           -H "X-GitHub-Api-Version: 2026-03-10" \
           https://api.github.com/repos/0mniteck/.pki/releases \
-          -d '{          
+          -d '{
           "tag_name":"${{env.tag}}",
           "target_commitish":"main",
           "name":"${{env.tag}}",
@@ -96,8 +92,7 @@ jobs:
       - name: Add Assets to Draft
         env:
           GH_TOKEN: ${{github.token}}
-        run: |
-          gh release upload $tag /attestations/**
+        run: gh release upload $tag /home/runner/work/_temp/attestations/**
       - name: Publish Release via API
         run: |
           result=$(curl -L -X PATCH \
