@@ -31,7 +31,7 @@ jobs:
     concurrency:
       group: release
     needs: fetch-pki
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@f7228f8fcdbe4a091b0509866c7d05fae6febbf8 # v0.0.175
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@8c92d68078946e58a23f3fd945e3e7fd84d42822 # v0.0.177
   attested-rel:
     name: Attest PKI
     runs-on: ubuntu-latest
@@ -51,9 +51,9 @@ jobs:
         env:
           GH_TOKEN: ${{github.token}}
         run: |
-          for I in ${{github.workspace}}/.github/*/* ${{github.workspace}}/registry/* ${{github.workspace}}/index.** ${{github.workspace}}/local.sh ; do
+          for I in ${{github.workspace}}/.github/*/* ${{github.workspace}}/registry/* ${{github.workspace}}/index.* ${{github.workspace}}/local.sh ; do
             gh attestation verify $I --repo 0mniteck/.pki --source-ref refs/heads/main \
-            --signer-workflow 0mniteck/.pki/.github/workflows/immutable.yml || exit 1;
+            --signer-workflow 0mniteck/.pki/.github/workflows/immutable.yml --digest-alg sha512 || exit 1;
             echo "$I Attested"; done; echo DONE;
   read-me:
     name: Publish Readme
