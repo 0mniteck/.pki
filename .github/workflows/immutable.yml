@@ -47,6 +47,7 @@ jobs:
           done
           mkdir -p /home/runner/work/_temp/attestations
           sha512sum ${{github.workspace}}/.github/*/* ${{github.workspace}}/registry/* ${{github.workspace}}/index.* ${{github.workspace}}/local.sh > /home/runner/work/_temp/attestations/sums.512
+          cat /home/runner/work/_temp/attestations/sums.512
       - name: Generate Attestations for Build Provenance v4
         id: generate_attestation
         uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
