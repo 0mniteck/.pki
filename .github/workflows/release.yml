@@ -25,13 +25,13 @@ jobs:
     name: Fetch PKI
     concurrency:
       group: release
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@ec3a615487a348edcad60970b6a302c33f39067c # v0.0.175
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@0ac0f15faffc3fbb5a52ad8cc9cf4f1d73168b0f # v0.0.175
   release-pki:
     name: Release PKI
     concurrency:
       group: release
     needs: fetch-pki
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@2ae9ff050b576c1367b7e1c64acc67a7f3ff6059 # v0.0.175
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@f7228f8fcdbe4a091b0509866c7d05fae6febbf8 # v0.0.175
   attested-rel:
     name: Attest PKI
     runs-on: ubuntu-latest
@@ -47,12 +47,6 @@ jobs:
     steps:
       - name: Checkout v6
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          ssh-strict: true
-          ssh-user: git
-          clean: true
-          show-progress: false
-          persist-credentials: true
       - name: Run gh attestation verify
         env:
           GH_TOKEN: ${{github.token}}
@@ -60,11 +54,10 @@ jobs:
           for I in ${{github.workspace}}/.github/*/* ${{github.workspace}}/registry/* ${{github.workspace}}/index.** ${{github.workspace}}/local.sh ; do
             gh attestation verify $I --repo 0mniteck/.pki --source-ref refs/heads/main \
             --signer-workflow 0mniteck/.pki/.github/workflows/immutable.yml || exit 1;
-            echo "$I Attested"; done;
-          echo DONE
+            echo "$I Attested"; done; echo DONE;
   read-me:
     name: Publish Readme
-    uses: 0mniteck/.pki/.github/workflows/read-me.yml@2c05d6147ed52e362fdb840c86b375cef00ca1f6 # v0.0.175
+    uses: 0mniteck/.pki/.github/workflows/read-me.yml@c74b68c8e463e7881e6d10660fdc5092a62582d6 # v0.0.175
     concurrency:
       group: release
     needs:
@@ -77,7 +70,7 @@ jobs:
       attested_url: "${{needs.release-pki.outputs.URL}}"
   gh-pages:
     name: Release Github Pages
-    uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@7e0e7abc8652438ae63037545322baabe2c5f137 # v0.0.175
+    uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@193aa0a41fc57924b299dda4f2dd55fa3eb95a11 # v0.0.175
     concurrency:
       group: release
     needs: read-me
