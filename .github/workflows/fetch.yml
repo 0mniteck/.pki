@@ -30,7 +30,7 @@ jobs:
           
           validate.pki() { # $1 = domain/FQDN/IDN
             curl $enforce_doh --pinnedpubkey "sha256//$(<registry/$1.pubkey)" \
-            $common_tls https://$1 > /dev/null || return
+            $common_tls https://$1 > /dev/null || return 1
             echo "Successfully fetched and checked validity for $1.pubkey"
             if [[ -f "registry/$1.dnssec" ]]; then
               echo " --> +dnssec"; fi;
@@ -43,11 +43,11 @@ jobs:
               openssl x509 -in $1.pem -pubkey -noout > $1.pubkey.pem && openssl x509 -in $1.pem -enddate -noout > $1.exp && \
               openssl asn1parse -noout -inform pem -in $1.pubkey.pem -out $1.pubkey.der && \
               openssl dgst -sha256 -binary $1.pubkey.der | openssl base64 > $1.pubkey && \
-              rm -f *.pem *.der $1.dnssec && declare -g -- SUCCESS+=:local.fetch.pki:$1 || exit 1
+              declare -g -- SUCCESS+=:local.fetch.pki:$1 || exit 1 && rm -f *.pem *.der $1.dnssec
               dig="$(dig -r +https +do +domain=$1 +yaml @one.one.one.one -q $1 -t SIG)"
               echo "$1 TEST: " && cat <(echo -e $dig)
               if [[ "$(echo -e $dig | grep -o 'qr rd ra ad')" == "qr rd ra ad" ]]; then
-                echo -e $dig > $1.dnssec; fi;
+                touch $1.dnssec; echo -e $dig > $1.dnssec; fi;
             popd > /dev/null
             validate.pki $1 || exit 1
           }
