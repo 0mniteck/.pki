@@ -31,9 +31,9 @@ fetch.with.pki() { # $1 = domain/FQDN/IDN, # $2 = filename-or-/dev/null, # $3 = 
 fetch.pki() { # $1 = domain/FQDN/IDN
   pushd $local/ > /dev/null
     curl $enforce_doh $common_tls -w %{certs} https://$1 | sed --sandbox -n "/-----BEGIN/,/-----END/p;/-----END/q" > $1.pem && \
-    openssl x509 -in $1.pem -pubkey -noout > $1.pubkey.pem && openssl x509 -in $1.pem -enddate -noout > $1.exp && \
-    echo -en '='$e >> $1.exp && openssl asn1parse -noout -inform pem -in $1.pubkey.pem -out $1.pubkey.der && \
-    openssl dgst -sha256 -binary $1.pubkey.der | openssl base64 > $1.pubkey && echo -en ' '$e >> $1.pubkey && \
+    openssl x509 -in $1.pem -pubkey -noout > $1.pubkey.pem && openssl x509 -in $1.pem -enddate -noout | tr '\n' '=' > $1.exp && \
+    echo -en $e >> $1.exp && openssl asn1parse -noout -inform pem -in $1.pubkey.pem -out $1.pubkey.der && \
+    openssl dgst -sha256 -binary $1.pubkey.der | openssl base64 | tr '\n' ' ' > $1.pubkey && echo -en $e >> $1.pubkey && \
     declare -g -- SUCCESS+=:local.fetch.pki:$1 || declare -g -- FAIL+=:local.fetch.pki:$1
     rm -f *.pem *.der $1.dnssec* && touch $1.dnssec
     dig -r +https +do +domain=$1 +yaml @one.one.one.one -q $1 -t SIG > $1.dnssec
