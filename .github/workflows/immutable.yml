@@ -37,7 +37,7 @@ jobs:
             -H "X-GitHub-Api-Version: 2026-03-10" \
             https://api.github.com/users/0mniteck/attestations/${ATTEST})
           if [[ "$RES" == "404" ]]; then
-            DIGESTS=$(sha512sum --tag ${{github.workspace}}/.github/{actions/Jekyll,workflows}/* ${{github.workspace}}/registry/* ${{github.workspace}}/index.* ${{github.workspace}}/local.sh | cut -d'=' -f2 | sed 's/ /sha512:/g' | tr '\n' ' ')
+            DIGESTS=$(sha512sum --tag ${{github.workspace}}/.github/{actions/jekyll,workflows}/* ${{github.workspace}}/registry/* ${{github.workspace}}/index.* ${{github.workspace}}/local.sh | cut -d'=' -f2 | sed 's/ /sha512:/g' | tr '\n' ' ')
             for DIGEST in $DIGESTS; do
             	curl -s -L -X DELETE \
             		-H "Accept: application/vnd.github+json" \
@@ -49,7 +49,7 @@ jobs:
           fi
           mkdir -p /home/runner/work/_temp/attestations
           pushd ${{github.workspace}}/ > /dev/null
-            sha512sum .github/{actions/Jekyll,workflows}/* registry/* index.* local.sh > /home/runner/work/_temp/attestations/sha512.sums
+            sha512sum .github/{actions/jekyll,workflows}/* registry/* index.* local.sh > /home/runner/work/_temp/attestations/sha512.sums
           popd > /dev/null
       - name: Generate Attestations for Build Provenance v4
         id: generate_attestation
