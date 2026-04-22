@@ -23,7 +23,7 @@ jobs:
       - name: Setup Github Pages v6
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - name: Build with Jekyll Securely
-        uses: ./.github/actions/action.yaml@c4d34a29084013d2c1d54ebc9d9bc3677621c4c8 #v0.0.179
+        uses: 0mniteck/.pki/.github/actions/@c4d34a29084013d2c1d54ebc9d9bc3677621c4c8 #v0.0.179
         with:
           destination: './_site\ \$(echo --config \<\(echo -en "title: Cayman theme\ndescription: Cayman is a clean, responsive theme for 0mniteck Pages.\nshow_downloads: true\ngoogle_analytics:\ntheme: jekyll-theme-cayman\n"\) '
           token: ${{github.token}}
