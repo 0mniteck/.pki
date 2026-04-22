@@ -36,7 +36,7 @@ jobs:
             -H "Authorization: Bearer ${{github.token}}" \
             -H "X-GitHub-Api-Version: 2026-03-10" \
             https://api.github.com/users/0mniteck/attestations/${ATTEST}
-          DIGESTS=$(sha512sum --tag ${{github.workspace}}/.github/*/* ${{github.workspace}}/registry/* ${{github.workspace}}/index.* ${{github.workspace}}/local.sh | cut -d'=' -f2 | sed 's/ /sha512:/g' | tr '\n' ' ')
+          DIGESTS=$(sha512sum --tag ${{github.workspace}}/.github/{actions/Jekyll,workflows}/* ${{github.workspace}}/registry/* ${{github.workspace}}/index.* ${{github.workspace}}/local.sh | cut -d'=' -f2 | sed 's/ /sha512:/g' | tr '\n' ' ')
           for DIGEST in $DIGESTS; do
           	curl -s -L -X DELETE \
           		-H "Accept: application/vnd.github+json" \
