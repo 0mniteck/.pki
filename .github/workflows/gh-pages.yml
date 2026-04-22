@@ -25,7 +25,7 @@ jobs:
         run: |
           cat >> ${{github.workspace}}/_config.yml << EOF
           theme: jekyll-theme-cayman
-          show_downloads: true
+          show_downloads: false
           incremental: true
           google_analytics:
           lsi: true
