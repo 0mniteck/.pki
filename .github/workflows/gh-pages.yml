@@ -20,6 +20,16 @@ jobs:
       - name: Git fetch
         id: git_fetch
         run: git fetch && git pull origin main && echo Fetched
+      - name: Set Config
+        id: set_theme
+        run: |
+          cat >> ${{github.workspace}}/_config.yml << EOF
+          theme: jekyll-theme-cayman
+          show_downloads: true
+          incremental: true
+          google_analytics:
+          lsi: true
+          EOF
       - name: Setup Github Pages v6
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - name: Build with Jekyll Securely
