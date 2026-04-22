@@ -1,5 +1,5 @@
 name: 'Build Jekyll for GitHub Pages Securely'
-description: 'A simple GitHub Action for producing pinned Jekyll build artifacts'
+description: 'A simple GitHub Action for producing pinned Jekyll release artifacts'
 author: 'Github + Shant Tchatalbachian'
 branding:
   icon: aperture
