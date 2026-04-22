@@ -15,7 +15,7 @@ with know domains and their expiries adding into the `registry/` from the list s
 > - [https://github.com/0mniteck/.pki/attestations/25189942](https://github.com/0mniteck/.pki/attestations/25189942)
 ##
 
-#### client side validation of `registry/` against expiry, liveness, and remote/ref, using DoH+DNSEC(if available)
+#### client side validation of `registry/` against expiry, liveness, and remote/ref, using DoH+DNSEC
 > [local.sh](https://github.com/0mniteck/.pki/blob/main/local.sh) # WIP - gh attestation verify (Ubuntu v2.46) - (Needs v2.50+) - skipping for now...
 
 #### call function from local.sh to run validation in each project level script
