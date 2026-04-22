@@ -25,7 +25,7 @@ jobs:
     name: Fetch PKI
     concurrency:
       group: release
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@cd839797193a83820be78dbcfa9c73d1909308c6 # v0.0.189
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@84ded84497db89d9189f02973541d65c9fb0aca0 # v0.0.189
   release-pki:
     name: Release PKI
     concurrency:
