@@ -25,7 +25,7 @@ jobs:
       - name: Build with Jekyll Securely
         uses: 0mniteck/.pki/.github/actions/Jekyll/@d388f82c9ebfc92e14d089c53fbc0583f3b0ef48 #v0.0.181
         with:
-          destination: './_site\ \$(echo --config \<\(echo -en "title: Cayman theme\ndescription: Cayman is a clean, responsive theme for 0mniteck Pages.\nshow_downloads: true\ngoogle_analytics:\ntheme: jekyll-theme-cayman\n"\) '
+          destination: './_site $(echo --config <(echo -en "title: Cayman theme\ndescription: Cayman is a clean, responsive theme for 0mniteck Pages.\nshow_downloads: true\ngoogle_analytics:\ntheme: jekyll-theme-cayman\n") '
           token: ${{github.token}}
       - name: Upload Pages Artifact v5
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
