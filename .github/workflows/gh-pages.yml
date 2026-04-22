@@ -33,7 +33,7 @@ jobs:
       - name: Setup Github Pages v6
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - name: Build with Jekyll Securely
-        uses: 0mniteck/.pki/.github/actions/Jekyll/@d388f82c9ebfc92e14d089c53fbc0583f3b0ef48 #v0.0.181
+        uses: 0mniteck/.pki/.github/actions/jekyll/@ee393f31920cc6db4cb1118e5a8b502684fb6404 #v0.0.189
         with:
           destination: './_site'
           token: ${{github.token}}
