@@ -1,8 +1,8 @@
 - type: MESSAGE
   message:
     type: RECURSIVE_RESPONSE
-    query_time: !!timestamp 2026-04-22T02:17:22.069Z
-    response_time: !!timestamp 2026-04-22T02:17:22.075Z
+    query_time: !!timestamp 2026-04-22T02:57:36.811Z
+    response_time: !!timestamp 2026-04-22T02:57:36.826Z
     message_size: 351b
     socket_family: INET
     socket_protocol: TCP
@@ -13,7 +13,7 @@
     response_message_data:
       opcode: QUERY
       status: NOERROR
-      id: 3445
+      id: 63346
       flags: qr rd ra ad
       QUESTION: 1
       ANSWER: 0
@@ -28,6 +28,6 @@
         - 'cloudflare.com. IN SIG'
       AUTHORITY_SECTION:
         - 'cloudflare.com. 300 IN SOA ns3.cloudflare.com. dns.cloudflare.com. 2401983296 10000 2400 604800 300'
-        - 'cloudflare.com. 300 IN RRSIG SOA 13 2 300 20260423031722 20260421011722 34505 cloudflare.com. 3+m/N59NRF5h2Xd8at1QDD3bx/dDV4GgBo1gw+hsP2kJfXavLR5nnMKB rqfM5cjGxjDMks9nSP5gM3+swsHlRg=='
+        - 'cloudflare.com. 300 IN RRSIG SOA 13 2 300 20260423035736 20260421015736 34505 cloudflare.com. 1Ola8UYb4lSNfP297O+ikZDcEc/20qQ00AcfOctUQpTvpqX7G18bij7n sQJGGhELAjcq0o302XXqKfqfQUTlpg=='
         - 'cloudflare.com. 300 IN NSEC \000.cloudflare.com. A NS SOA HINFO MX TXT AAAA LOC SRV NAPTR CERT SSHFP RRSIG NSEC DNSKEY TLSA SMIMEA HIP CDS CDNSKEY OPENPGPKEY SVCB HTTPS URI CAA'
-        - 'cloudflare.com. 300 IN RRSIG NSEC 13 2 300 20260423031722 20260421011722 34505 cloudflare.com. OeokSX/hjdDaY/RZZPoSjLvUtZEPF1+gz+XziO1EDqvkL8hrD9Pko0Zb 6UfacEfF1tppmFP3Kpd3746oMus+/w=='
+        - 'cloudflare.com. 300 IN RRSIG NSEC 13 2 300 20260423035736 20260421015736 34505 cloudflare.com. VmQ6/aKqa+8vOJgm8ZhM9nARYvizmdKDBAlaoaDf8v3x8qD1AzWUAsOq em2xoHx3pv/9iBqwJPDa9tgI/HfKYw=='
