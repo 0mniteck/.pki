@@ -25,13 +25,13 @@ jobs:
     name: Fetch PKI
     concurrency:
       group: release
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@cd839797193a83820be78dbcfa9c73d1909308c6 # v0.0.179
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@cd839797193a83820be78dbcfa9c73d1909308c6 # v0.0.189
   release-pki:
     name: Release PKI
     concurrency:
       group: release
     needs: fetch-pki
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@6c4f06c54cdc4a338efbf28c78977b6357a46f23 # v0.0.181
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@6c4f06c54cdc4a338efbf28c78977b6357a46f23 # v0.0.189
   attested-rel:
     name: Attest PKI
     runs-on: ubuntu-latest
@@ -60,7 +60,7 @@ jobs:
             echo "$I Attested"; done; echo DONE;
   read-me:
     name: Publish Readme
-    uses: 0mniteck/.pki/.github/workflows/read-me.yml@c74b68c8e463e7881e6d10660fdc5092a62582d6 # v0.0.175
+    uses: 0mniteck/.pki/.github/workflows/read-me.yml@c74b68c8e463e7881e6d10660fdc5092a62582d6 # v0.0.189
     concurrency:
       group: release
     needs:
