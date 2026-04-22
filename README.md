@@ -1,7 +1,7 @@
 # .pki
 
 `.github/workflows` for attesting and pinning widely used public keys for mutual auth in https curl requests
-(as a stop gap measure, only after an initial ssh-sk connection has been established, along with DoH and DNSSEC)
+(as a stop gap measure, only after an initial ssh-sk connection has been established, along with DoH+DNSSEC)
 
 Add it to other projects as a submodule. Github workflows will update, validate, and attest to this repo
 with know domains and their expiries adding into the `registry/` from the list stored in `index.csv` every 6 hours.
@@ -21,8 +21,8 @@ with know domains and their expiries adding into the `registry/` from the list s
 #### call function from local.sh to run validation in each project level script
 $CLIENT_ID is an optional github app ID to run a repository_dispatch event to trigger an manual run of the workflow
 ```
-validate.with.pki() { # $1 = full_url.TDL/.../[file] or blank to only verify
-  chmod +x .pki/local.sh && ./.pki/local.sh $1 $CLIENT_ID || exit 1
+validate.with.pki() { # $1 = full_url.TDL/.../[file] or blank to only verify, $CLIENT_ID = Github App Client ID (optional)
+  ./.pki/local.sh $1 $CLIENT_ID || exit 1
 }
 ```
 
