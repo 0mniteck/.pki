@@ -73,7 +73,7 @@ jobs:
       attested_url: "${{needs.release-pki.outputs.URL}}"
   gh-pages:
     name: Release Github Pages
-    uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@b535bd6d5634ce1c040bfbc8ee97d324467d754b # v0.0.179
+    uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@25d227c24e31925f269a9d52838dc5c954943fec # v0.0.179
     concurrency:
       group: release
     needs: read-me
