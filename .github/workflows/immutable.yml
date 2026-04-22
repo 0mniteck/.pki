@@ -46,13 +46,14 @@ jobs:
             echo "Cleared Attestation for ${DIGEST}"
           done
           mkdir -p /home/runner/work/_temp/attestations
-          sha512sum ${{github.workspace}}/.github/*/* ${{github.workspace}}/registry/* ${{github.workspace}}/index.* ${{github.workspace}}/local.sh > /home/runner/work/_temp/attestations/sums.512
-          cat /home/runner/work/_temp/attestations/sums.512
+          pushd ${{github.workspace}}/ > /dev/null
+            sha512sum .github/*/* registry/* index.* local.sh > /home/runner/work/_temp/attestations/sha512.sums
+          popd > /dev/null
       - name: Generate Attestations for Build Provenance v4
         id: generate_attestation
         uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
         with:
-          subject-checksums: '/home/runner/work/_temp/attestations/sums.512'
+          subject-checksums: '/home/runner/work/_temp/attestations/sha512.sums'
           github-token: '${{github.token}}'
       - name: Fetch Attestation ID via Output
         id: fetch_attestation
