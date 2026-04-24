@@ -1,19 +1,19 @@
 - type: MESSAGE
   message:
     type: RECURSIVE_RESPONSE
-    query_time: !!timestamp 2026-04-24T00:28:36.265Z
-    response_time: !!timestamp 2026-04-24T00:28:36.278Z
+    query_time: !!timestamp 2026-04-24T06:38:47.318Z
+    response_time: !!timestamp 2026-04-24T06:38:47.334Z
     message_size: 709b
     socket_family: INET
     socket_protocol: TCP
-    response_address: "1.0.0.1"
+    response_address: "1.1.1.1"
     response_port: 443
     query_address: "0.0.0.0"
     query_port: 0
     response_message_data:
       opcode: QUERY
       status: NXDOMAIN
-      id: 40757
+      id: 639
       flags: qr rd ra ad
       QUESTION: 1
       ANSWER: 0
@@ -27,7 +27,7 @@
       QUESTION_SECTION:
         - '1.1.1.1. IN SIG'
       AUTHORITY_SECTION:
-        - '. 86400 IN SOA a.root-servers.net. nstld.verisign-grs.com. 2026042301 1800 900 604800 86400'
-        - '. 86400 IN RRSIG SOA 8 0 86400 20260506170000 20260423160000 54393 . rO+rnuyCfBw1TUtnGgnatuI39iaaMWkmSltjBJhruD//ZGOVXxO9ZW9Z ji3ty6ENgT3n5lv87ZumxHY/bPShQ8vzTtxxS9VqD8BykPhX4zQSh5R2 zul98bT9Zo1j+653019yHQQ25+A9dLuDV6iwWbnoZASOzoFb0P2BZStv BXxzh/puT5DNUdDhLLgLCDriQE4PRlbHTN2T0+sb2ahNE3U0cme+Ipio WQRbLaciG1MMmbkLqfVoBYiWczGqXmBGaWgGVhHTwRvXR6MGI6fsaPl1 TQQVyL7RTzYbvNkweL7M92weX76d8ZQM9CgdiYBqFxMZ0KuuW30BbRjn qxYgfw=='
+        - '. 86400 IN SOA a.root-servers.net. nstld.verisign-grs.com. 2026042400 1800 900 604800 86400'
+        - '. 86400 IN RRSIG SOA 8 0 86400 20260507050000 20260424040000 54393 . YhL84mSWkepTJz6Qc/94WxTRSdg9KFFzj8sdrhwOnZEAg5TGa7cwLVv3 RzyUaIzPSnm/Hws9vkPeJcvoRjRhvCwK5sjFj0WRTZYlR3fSnJqVKLIg 6LeI9XT38TOY4+6u6EQlfeldJtCsv4ofpZXhdWbiKr5GuN7D7UMjPu1t ydYIUVQN2Vum4ghgVWZNkJ1WOFxjti1UhEXma9KtcKIFNiU5ZoXyEDR/ kkYbPThQgRZrWyD/DxMS6DFLfF9Y+JMdJsXEr3XHrh4oA3EdowuqPaT5 S6QmPbk/xqwOZnEbNjwOh2qiGzM/Uykz9f7moCJvWYTmUE9tu77xBfBG HA7tyg=='
         - '. 86400 IN NSEC aaa. NS SOA RRSIG NSEC DNSKEY ZONEMD'
-        - '. 86400 IN RRSIG NSEC 8 0 86400 20260506170000 20260423160000 54393 . PdscsFZuYRzj66cFfRb90mvpb6J7kvPuXGfc6ZSt7qn4Z/iBAc51Wvew 1SJ2egfEs/XRcSxPAQQzly+jZWGj8l+kgJxBvpSDbeIUhtsY5VPzBhcU KUoXeReFUw82Onj235yE8Gd86FfOlFWQUsr85O1LY9Bv4irkPSbMoUD4 HCL9Kj7iJXurHFOdTo2pSrJjG8F5PB/QTa3Cp8648njH/ZApGlqSrjb4 I7WvCjKWVu5VgIDMPCFoMiN9jhG2x2bEAKJ8W6fBM793amVhCOeE9ndt RUQnTaUOu6gjdfyaWkSpPlPMYGonXkHTbIwda6Y5TgCstQd8Imq8yy/R 76k2uw=='
+        - '. 86400 IN RRSIG NSEC 8 0 86400 20260507050000 20260424040000 54393 . fD5tZ28Sc/dCNslo0hNtCVitPrEt14rZNnqyb4WgVFfM/Qh8xJ00Elb2 35E8cK9LghdnF+Y09km1OPGt7KXu+N/QVmNZWZWzdP5juMIDPzm3GOhQ llzL1RpO02AefUPAqK2wDOZhLzmzkJIwKgkYi6S5h5c6uFkev8x0Stwg jgyCTkaFg9MVJOZergLJBCoMVavPctB6vhYwq9ZBDO6fiVobxM+KlVHO JqPWiXu9JjwktxSnJ2eycOzmDIcN2P7pebeE5NC0/9u5Nx1WWd5oTaDi CLy3olMZSf4uafgjlpSWPuElAsbthef9v51kgrVEc6Xjo3yeYQLwH7n7 Giuf9A=='
