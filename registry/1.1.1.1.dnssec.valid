@@ -1,8 +1,8 @@
 - type: MESSAGE
   message:
     type: RECURSIVE_RESPONSE
-    query_time: !!timestamp 2026-04-28T18:32:06.479Z
-    response_time: !!timestamp 2026-04-28T18:32:06.486Z
+    query_time: !!timestamp 2026-04-29T00:32:09.836Z
+    response_time: !!timestamp 2026-04-29T00:32:09.853Z
     message_size: 709b
     socket_family: INET
     socket_protocol: TCP
@@ -13,7 +13,7 @@
     response_message_data:
       opcode: QUERY
       status: NXDOMAIN
-      id: 63790
+      id: 59304
       flags: qr rd ra ad
       QUESTION: 1
       ANSWER: 0
@@ -27,7 +27,7 @@
       QUESTION_SECTION:
         - '1.1.1.1. IN SIG'
       AUTHORITY_SECTION:
-        - '. 86400 IN SOA a.root-servers.net. nstld.verisign-grs.com. 2026042801 1800 900 604800 86400'
-        - '. 86400 IN RRSIG SOA 8 0 86400 20260511170000 20260428160000 54393 . HQynlj4NdS2YUmwSYbCLsmnu+g3WHaTnKITWcAPsXkFXemA09t1/tvSX SmhfwzrSlADAJkS+LGAd5/2no7oLH4VBI+rGgSnFkOZ5I8q/LZsHeCMO tT9UdnS/q2qO4gHrj33KVsgYOIIFwugXsDTyHH7hj9jpspSKpILvRv4t DMuAPXFBg7jGgeB6JG+804vnIDDW+o9KgXBWYJCFOIyX1KSyOdILavVs JjAiut3rfsvj2OJkqBvBF2OjDAkF9wNQtl0LCz3nbcS6IppLa8ZL9P8+ iwf/6sdtIPmOEdsKkeGxdYS2yntEXadf4iptScSOY+InRrOhzOzp5WmZ Y/Gk2w=='
+        - '. 86400 IN SOA a.root-servers.net. nstld.verisign-grs.com. 2026042802 1800 900 604800 86400'
+        - '. 86400 IN RRSIG SOA 8 0 86400 20260511210000 20260428200000 54393 . psrbLDtoC17tjJ2gEdIa58BkFUgeUzuMZ5TnllIvTyOFLa8+ZAuJa04c Gpj40MuKncbuuRUK2jq5134JA7p7ZFFse50HOwHHY/DU92h4sUC7ANfV klfKnnOGBB2hnuut0f7lFTHRC2mIa+bLqDicmuVXEQ82ydtKLDbY7kAY 5Z1y3+pQ4l6GLeX5TyLkAWd3BeU+xqEmpN+DYHNwhUc9pfpZIgBSYzI5 wdFz7vifGiLbMEOKrJNcFSV3WGlme4E/gLwQmesqLO+S0Ju1X0uy4cSS uum7wMylXJkjmPRCzmi3+oxvlVyfGPKYD56r79/y1zejTLkZfcsqMNTf YL5Naw=='
         - '. 86400 IN NSEC aaa. NS SOA RRSIG NSEC DNSKEY ZONEMD'
-        - '. 86400 IN RRSIG NSEC 8 0 86400 20260511170000 20260428160000 54393 . VuTDnq++rf0i9Wie98sRA1/fnITwaaQKjoZx4FH8Xxo+Kzjha3ItltlJ fEuag0vtvYjoQVlrki71zJ9xkqNA0b2WOwk/+b0y8NpDEp6jQSpE0/RO AaBx11Hc3WKJegsllcwUWasD1eDjVo1YNAajoCJzlkk56Us2//bZrFRP Km/tYePS99OqVyLZuJ9VnP50gp14nHwFiQVf4PvVM62E2k+w0tc3nzC+ F1ii97jndo+aGm4WWdV5cBiSvI/8KA/y86QoSioKVgWq/nzoEVS91KNi tPY7C9BdHiiOhWGwVWqLR5ZkEKhNmzaz1lzG9Rl+5Xbn1rhWD+mjyZnq CulYLw=='
+        - '. 86400 IN RRSIG NSEC 8 0 86400 20260511210000 20260428200000 54393 . jbIFosKuxVcHFviUmRVYJQN+SiURe42mMQskVu5cDYq8rUDTF4zim3XC Awd+0s9oqr6PqDbNJZAuJuXEuTTVSSE6puyzj16Hw65zENHIbXCiTH1Y kkNgo+MG+LTWgZJyqLnhBA1ByPPls0TOMB6HPfsuMKKTb/yxl6LQ+ZPD J2saxHFbn6+P1DaH2BiXeD9J5eEI7yTmrHi5/Syd4SjTqckbjk7cIprM usfK1TnssBevVz+0/QCL5gjiV7GbTpDfA4tPbXAhNSPHY0tTnlgcNzTf 8qMbqPVPgrYkxuDjw3on+nBzbQMbNZBnIwnbh0MsZMFHBLO9T7HOUcar L8Pqjg=='
