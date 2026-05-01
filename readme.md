@@ -11,8 +11,8 @@ adding into the `registry/` from the list stored in `index.csv` every 6 hours.
 
 #### [Github Workflow](https://github.com/0mniteck/.pki/blob/main/.github/workflows/release.yml) - <sub><sub>[![Release](https://github.com/0mniteck/.pki/actions/workflows/release.yml/badge.svg)](https://github.com/0mniteck/.pki/actions/workflows/release.yml)</sub></sub>
 
-> #### Attestation Created - v0.0.226 Immutable Tag
-> - [https://github.com/0mniteck/.pki/attestations/26104151](https://github.com/0mniteck/.pki/attestations/26104151)
+> #### Attestation Created - v0.0.227 Immutable Tag
+> - [https://github.com/0mniteck/.pki/attestations/26132091](https://github.com/0mniteck/.pki/attestations/26132091)
 ##
 
 #### client side validation of `registry/` against expiry, liveness, and remote/ref, using DoH+DNSEC
