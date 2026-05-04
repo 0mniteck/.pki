@@ -40,6 +40,7 @@ jobs:
               echo -en $e >> $1.exp && openssl asn1parse -noout -inform pem -in $1.pubkey.pem -out $1.pubkey.der && \
               openssl dgst -sha256 -binary $1.pubkey.der | openssl base64 | tr '\n' ' ' > $1.pubkey && echo -en $e >> $1.pubkey && \
               declare -g -- SUCCESS+=:local.fetch.pki:$1 || exit 1 && rm -f *.pem *.der $1.dnssec* && touch $1.dnssec
+              if [[ ! -s "$1.etag" ]]; then rm -f $1.etag; fi;
               dig -r +https +do +domain=$1 +yaml @one.one.one.one -q $1 -t SIG > $1.dnssec
               if [[ "$(cat $1.dnssec | grep -o 'qr rd ra ad')" == "qr rd ra ad" ]]; then
                 touch $1.dnssec.valid; echo null > $1.dnssec.valid; fi;
