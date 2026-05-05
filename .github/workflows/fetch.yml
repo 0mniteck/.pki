@@ -6,6 +6,9 @@ on:
       DOCKER:
         description: 'A secret passed from the caller workflow'
         required: true
+permissions:
+  id-token: write
+  contents: write
 concurrency:
   group: release
   cancel-in-progress: true
@@ -29,7 +32,7 @@ jobs:
       - name: Git fetch
         run: git fetch && git pull origin main && echo Fetched
       - name: Validate PKI
-        shell: /usr/bin/bash -e {0}
+        shell: bash
         run: |
           state="$(curl --version | grep curl)\n$(openssl --version)\n$(dig -v)"
           enforce_doh="--disable --doh-cert-status --doh-url https://one.one.one.one/dns-query --resolve one.one.one.one:443:1.1.1.1"
@@ -44,12 +47,11 @@ jobs:
             echo -e "\nSuccessfully fetched and checked validity for $1"
             if [[ -f "registry/$1.etag" ]]; then echo -en " --> +etag"; fi;
             if [[ -f "registry/$1.pq" ]]; then echo -en " --> +post_quantum"; fi;
-            if [[ -f "registry/$1.dnssec" ]]; then echo -en " --> +dnssec"; fi; echo
+            if [[ -f "registry/$1.dnssec" ]]; then echo -en " --> +dnssec"; fi;
             echo -e "\n$e:\nSuccessfully fetched and checked validity for $1" >> index.state
             if [[ -f "registry/$1.etag" ]]; then echo -en " --> +etag" >> index.state; fi;
             if [[ -f "registry/$1.pq" ]]; then echo -en " --> +post_quantum" >> index.state; fi;
-            if [[ -f "registry/$1.dnssec" ]]; then echo -en " --> +dnssec" >> index.state; fi;
-            echo >> index.state; return 0
+            if [[ -f "registry/$1.dnssec" ]]; then echo -en " --> +dnssec" >> index.state; fi; return 0
           }
           
           fetch.pki() { # $1 = domain/FQDN/IDN
