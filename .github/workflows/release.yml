@@ -25,7 +25,7 @@ jobs:
     name: Fetch PKI
     concurrency:
       group: release
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@fe34d0e245622df49e376a9701be4179ffa26e43 # v0.0.245
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@9e319694b5aa2f9884414377e48d6bf6afca1e76 # v0.0.247
   release-pki:
     name: Release PKI
     concurrency:
@@ -48,7 +48,6 @@ jobs:
       - name: Checkout v6
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Git fetch
-        id: git_fetch
         run: git fetch && git pull origin main && echo Fetched
       - name: Run gh attestation verify
         env:
