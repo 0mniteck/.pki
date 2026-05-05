@@ -27,7 +27,7 @@ jobs:
       group: release
     secrets:
       DOCKER: ${{secrets.DOCKER}}
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@40b417d3812008749f628079c597da40459f41d9 # v0.0.247
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@304bf5ca1749bcb68c0e2b474eceecdb11488c5a # v0.0.247
   release-pki:
     name: Release PKI
     concurrency:
