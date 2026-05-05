@@ -15,11 +15,7 @@ on:
 concurrency:
   group: release-main
   cancel-in-progress: true
-permissions:
-  id-token: write
-  contents: write
-  attestations: write
-  artifact-metadata: write
+permissions: {}
 jobs:
   fetch-pki:
     name: Fetch PKI
@@ -27,13 +23,13 @@ jobs:
       group: release
     secrets:
       DOCKER: ${{secrets.DOCKER}}
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@dd82e75eeb3041fa211bacfd2602be9b8251277c # v0.0.247
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@bb6d607e8977f7a21d2cc7b81804dc6becf88ed6 # v0.0.247
   release-pki:
     name: Release PKI
     concurrency:
       group: release
     needs: fetch-pki
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@416d7eb821720e2cc602e3e63cfef745932f715a # v0.0.243
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@90bfc66bf5b3e1b38b998906d7dae4633abb0474 # v0.0.247
   attested-rel:
     name: Attest PKI
     runs-on: ubuntu-latest
@@ -61,24 +57,17 @@ jobs:
             echo "$I Attested"; done; echo DONE;
   read-me:
     name: Publish Readme
-    uses: 0mniteck/.pki/.github/workflows/read-me.yml@bcfc99236dd081e17cfc533233b8d66a371ecb88 # v0.0.221
+    uses: 0mniteck/.pki/.github/workflows/read-me.yml@d2748b9108892c35d35e2c203ed2e7b897e5d1e6 # v0.0.247
     concurrency:
       group: release
     needs:
       - attested-rel
       - release-pki
-    permissions:
-      id-token: write
-      contents: write
     with:
       attested_url: "${{needs.release-pki.outputs.URL}}"
   gh-pages:
     name: Release Github Pages
-    uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@57f212d011849aa3d2320c315df33a11dfff4a4c # v0.0.189
+    uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@76f3ed0e459b99fbba05131d34684020aff12739 # v0.0.247
     concurrency:
       group: release
     needs: read-me
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
