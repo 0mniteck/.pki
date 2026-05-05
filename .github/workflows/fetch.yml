@@ -4,6 +4,8 @@ on:
   workflow_call:
     secrets:
       DOCKER:
+        description: 'A secret passed from the caller workflow'
+        required: true
 concurrency:
   group: release
   cancel-in-progress: true
