@@ -9,7 +9,7 @@ jobs:
   fetch-validate:
     runs-on: ubuntu-latest
     container:
-      image: docker://dhi.io/debian-base:9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3 # v2026.03.14 trixie-debian13-dev dhi/debian-base
+      image: docker://dhi.io/debian-base@sha256:9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3 # v2026.03.14 trixie-debian13-dev dhi/debian-base
     environment:
       name: release
     steps:
