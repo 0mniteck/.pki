@@ -31,8 +31,8 @@ jobs:
     name: Release PKI
     permissions:
       id-token: write
-      attestations: write
       contents: write
+      attestations: write
     concurrency:
       group: release
     needs: fetch-pki
