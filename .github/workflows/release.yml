@@ -41,8 +41,8 @@ jobs:
     name: Attest PKI
     permissions:
       id-token: write
-      contents: read
       attestations: read
+      contents: read
     concurrency:
       group: release
     environment:
