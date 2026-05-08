@@ -2,10 +2,10 @@ name: Release
 run-name: Release
 description: GitHub Action to manage the immutable/attestable release cycle of 0mniteck/.pki
 on:
+  workflow_dispatch:
   repository_dispatch:
     types:
       - Global_Fetch
-  workflow_dispatch:
   schedule:
     - cron: '0 0/6 * * *'
   push:
@@ -36,7 +36,7 @@ jobs:
     concurrency:
       group: release
     needs: fetch-pki
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@2ff6dcdb2f61bc51541cd2096e7eafb091f9a43c # v0.0.247
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@e3286723846c55a223f6437ef9a078bbc14aac5a # v0.0.247
   attested-rel:
     name: Attest PKI
     permissions:
@@ -58,7 +58,7 @@ jobs:
         env:
           GH_TOKEN: ${{github.token}}
         run: |
-          for I in ${{github.workspace}}/.github/{actions/jekyll,workflows}/* ${{github.workspace}}/registry/* ${{github.workspace}}/index.* ${{github.workspace}}/local.sh ; do
+          for I in .github/{actions/jekyll,workflows}/* registry/* index.* local.sh ; do
             gh attestation verify $I --repo 0mniteck/.pki --source-ref refs/heads/main \
             --signer-workflow 0mniteck/.pki/.github/workflows/immutable.yml --digest-alg sha512 || exit 1;
             echo "$I Attested"; done; echo DONE;
@@ -73,7 +73,7 @@ jobs:
       - attested-rel
       - release-pki
     with:
-      attested_url: "${{needs.release-pki.outputs.URL}}"
+      attested_url: ${{needs.release-pki.outputs.URL}}
     uses: 0mniteck/.pki/.github/workflows/read-me.yml@c01f8ecab9b83d9e1c02a5bfa78f7b60524c77de # v0.0.247
   gh-pages:
     name: Release Github Pages
