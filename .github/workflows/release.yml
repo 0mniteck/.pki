@@ -3,6 +3,11 @@ run-name: Release
 description: GitHub Action to manage the immutable/attestable release cycle of 0mniteck/.pki
 on:
   workflow_dispatch:
+    inputs:
+      RUN_REF:
+        required: true
+        type: string
+        description: 'pinning for this runners ref'
   repository_dispatch:
     types:
       - Global_Fetch
@@ -59,6 +64,7 @@ jobs:
           GH_TOKEN: ${{github.token}}
           SUMS: ${{needs.release-pki.outputs.SUMS}}
         run: |
+          echo "${{github.workflow_ref}}@${{github.workflow_sha}} == ${{inputs.RUN_REF}}"
           for I in .github/{actions/jekyll,workflows}/* registry/* index/index.* local.sh ; do
             gh attestation verify $I --repo 0mniteck/.pki --source-ref refs/heads/main \
             --signer-workflow 0mniteck/.pki/.github/workflows/immutable.yml --digest-alg sha512 \
