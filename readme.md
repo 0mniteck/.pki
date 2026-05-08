@@ -3,8 +3,8 @@
 `.github/workflows` that pin widely used public keys for curl requests; attested and protected by PQ+DoH+dnssec
 (as a long-term stop gap measure, only after an initial ssh-sk connection has been established to fetch this submodule)
 
-The `.github/workflows` will update, validate, and attest this repo with know domains, dnssec info, and their expiries;
-adding into the `registry/` from the list stored in `index.csv` every 6 hours.
+The `.github/workflows` will update, validate, and attest this repo with know domain pubkeys, dnssec response, post quantum state, and their expiries;
+adding into the `registry/` from the list stored in `index/index.csv` every 6 hours.
 ## 
 
 #### fetch and validate index registry + attest with sigstore + release immutably anywhere from a repo_dispatch api call.
@@ -15,7 +15,7 @@ adding into the `registry/` from the list stored in `index.csv` every 6 hours.
 > - [https://github.com/0mniteck/.pki/attestations/26414970](https://github.com/0mniteck/.pki/attestations/26414970)
 ##
 
-#### client side validation of `registry/` against expiry, liveness, and remote/ref, using DoH+DNSEC
+#### client side validation of `registry/` against expiry, liveness, and remote/ref, using PQ+DoH+DNSEC
 > [local.sh](https://github.com/0mniteck/.pki/blob/main/local.sh) # WIP - gh attestation verify (Ubuntu v2.46) - (Needs v2.50+) - skipping for now...
 
 #### call function from `./local.sh` to run validation in each project level script
