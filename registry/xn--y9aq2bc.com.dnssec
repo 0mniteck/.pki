@@ -1,19 +1,19 @@
 - type: MESSAGE
  message:
  type: RECURSIVE_RESPONSE
- query_time: !!timestamp 2026-05-08T12:22:41.782Z
- response_time: !!timestamp 2026-05-08T12:22:41.832Z
+ query_time: !!timestamp 2026-05-08T12:24:48.138Z
+ response_time: !!timestamp 2026-05-08T12:24:48.150Z
  message_size: 198b
  socket_family: INET
  socket_protocol: TCP
- response_address: "1.1.1.1"
+ response_address: "1.0.0.1"
  response_port: 443
  query_address: "0.0.0.0"
  query_port: 0
  response_message_data:
  opcode: QUERY
  status: NOERROR
- id: 51083
+ id: 37942
  flags: qr rd ra ad
  QUESTION: 1
  ANSWER: 0
