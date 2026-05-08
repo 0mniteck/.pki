@@ -32,20 +32,23 @@ Successfully fetched and checked validity for one.one.one.one
 Successfully fetched and checked validity for omniteck.com
  --> +etag --> +post_quantum --> +dnssec
 11:
-Successfully fetched and checked validity for raw.githubusercontent.com
+Successfully fetched and checked validity for pq.cloudflareresearch.com
  --> +post_quantum
 12:
-Successfully fetched and checked validity for release-assets.githubusercontent.com
+Successfully fetched and checked validity for raw.githubusercontent.com
  --> +post_quantum
 13:
+Successfully fetched and checked validity for release-assets.githubusercontent.com
+ --> +post_quantum
+14:
 Successfully fetched and checked validity for www.cloudflare.com
  --> +post_quantum --> +dnssec
-14:
+15:
 Successfully fetched and checked validity for xn--y9aq2bc.com
  --> +etag --> +post_quantum --> +dnssec
-15:
+16:
 Successfully fetched and checked validity for Շանթ.com
  --> +etag --> +post_quantum --> +dnssec
-16:
+17:
 Successfully fetched and checked validity for շանթ.com
  --> +etag --> +post_quantum --> +dnssec
