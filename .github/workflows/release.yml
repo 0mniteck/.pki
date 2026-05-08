@@ -36,7 +36,7 @@ jobs:
     concurrency:
       group: release
     needs: fetch-pki
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@e64e130abc89a144d6a347c9e84984d9ea4fb3fb # v0.0.251
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@ca9e4f398f106f24da21b454a0c40bd5c048f4d3 # v0.0.251
   attested-rel:
     name: Attest PKI
     permissions:
@@ -57,17 +57,18 @@ jobs:
       - name: Run gh attestation verify
         env:
           GH_TOKEN: ${{github.token}}
+          SUMS: ${{needs.release-pki.outputs.SUMS}}
         run: |
           for I in .github/{actions/jekyll,workflows}/* registry/* index/index.* local.sh ; do
             gh attestation verify $I --repo 0mniteck/.pki --source-ref refs/heads/main \
             --signer-workflow 0mniteck/.pki/.github/workflows/immutable.yml --digest-alg sha512 \
             --predicate-type provenance || exit 1;
             echo "$I Attested"; done; echo Done checking provenance;
-            for J in index/index.state; do
+            for J in ${{env.SUMS}}; do
             gh attestation verify $J --repo 0mniteck/.pki --source-ref refs/heads/main \
-            --signer-workflow 0mniteck/.pki/.github/workflows/immutable.yml --digest-alg sha512 \
+            --signer-workflow 0mniteck/.pki/.github/workflows/immutable.yml --digest-alg sha256 \
             --predicate-type release || exit 1;
-            echo "$I Attested"; done; echo DONE checking release;
+            echo "$J Attested"; done; echo Done checking release;
   read-me:
     name: Publish readme.md
     permissions:
