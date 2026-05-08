@@ -35,6 +35,7 @@ jobs:
       - name: Validate PKI
         shell: bash
         run: |
+          set -xv
           state="$(curl --version | grep curl)\n$(openssl --version)\n$(dig -v)"
           enforce_doh="--disable --doh-cert-status --doh-url https://one.one.one.one/dns-query --resolve one.one.one.one:443:1.1.1.1"
           common_tls="--tlsv1.3 --proto -all,+https --remove-on-error --no-insecure -s"
