@@ -1,6 +1,12 @@
 name: Release
 run-name: Release
 description: GitHub Action to manage the immutable/attestable release cycle of 0mniteck/.pki
+env:
+  CHECKOUT: de0fac2e4500dabe0009e67214ff5f5447ce83dd
+  FETCH: 5f4357453413b33d9c85d4152e48c45587ff28b4
+  IMMUTABLE: 2ff6dcdb2f61bc51541cd2096e7eafb091f9a43c
+  READ-ME: c01f8ecab9b83d9e1c02a5bfa78f7b60524c77de
+  GH-PAGES: 7d265b0ba9324017b4e315196a6483f3c59cffee
 on:
   repository_dispatch:
     types:
@@ -26,7 +32,7 @@ jobs:
       group: release
     secrets:
       DOCKER: ${{secrets.DOCKER}}
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@d5919629f201275bc5ef3941ce4306030c40aa62 # v0.0.247
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@${FETCH} # v0.0.247
   release-pki:
     name: Release PKI
     permissions:
@@ -36,7 +42,7 @@ jobs:
     concurrency:
       group: release
     needs: fetch-pki
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@2ff6dcdb2f61bc51541cd2096e7eafb091f9a43c # v0.0.247
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@${IMMUTABLE} # v0.0.247
   attested-rel:
     name: Attest PKI
     permissions:
@@ -51,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout v6
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@${CHECKOUT} # v6.0.2
       - name: Git Fetch
         run: git fetch && git pull origin main && echo Fetched
       - name: Run gh attestation verify
@@ -74,7 +80,7 @@ jobs:
       - release-pki
     with:
       attested_url: "${{needs.release-pki.outputs.URL}}"
-    uses: 0mniteck/.pki/.github/workflows/read-me.yml@c01f8ecab9b83d9e1c02a5bfa78f7b60524c77de # v0.0.247
+    uses: 0mniteck/.pki/.github/workflows/read-me.yml@${READ-ME} # v0.0.247
   gh-pages:
     name: Release Github Pages
     permissions: 
@@ -84,4 +90,4 @@ jobs:
     concurrency:
       group: release
     needs: read-me
-    uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@7d265b0ba9324017b4e315196a6483f3c59cffee # v0.0.247
+    uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@${GH-PAGES} # v0.0.247
