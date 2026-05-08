@@ -54,7 +54,7 @@ jobs:
               openssl dgst -sha256 -binary $1.pubkey.der | openssl base64 | tr '\n' ' ' > $1.pubkey && \
               echo -en $e >> $1.pubkey && declare -g -- SUCCESS+=:local.fetch.pki:$1 || exit 1
               rm -f *.pem *.der $1.pq $1.dnssec
-              if [[ ! -s "$1.etag" ]]; then rm -f $1.etag; else echo $(cat $1.etag | tr '\n' ' ') > $1.etag; echo -en ' '$e >> $1.etag; fi;
+              if [[ ! -s "$1.etag" ]]; then rm -f $1.etag; else echo -en $(cat $1.etag | tr '\n' ' ' ) > $1.etag; echo -en $e >> $1.etag; fi;
               PQC=$(cat <(curl $enforce_doh $common_tls -o /dev/null -v https://$1 2>&1 | grep -e 'SSL certificate verify ok' -e 'SSL connection using' | sed 's/\* /\\n/g' | sed 's/\\nS/S/g' | sed 's/ SSL/SSL/g'))
               echo -en $PQC | grep -e MLKEM -e MLDSA -e SLHDSA > /dev/null && touch $1.pq && echo -en $PQC > $1.pq || printf ''
               DIG=$(cat <(dig -r +https +do +domain=$1 +yaml @one.one.one.one -q $1 -t SIG | tr '\n' '^' ))
