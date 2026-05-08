@@ -26,7 +26,7 @@ jobs:
       group: release
     secrets:
       DOCKER: ${{secrets.DOCKER}}
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@6bd81da37ca1aa38d4caf0b2604b513e2164b867 # v0.0.247
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@cd18903e089b34e7feadb46defc2c0456566b91a # v0.0.247
   release-pki:
     name: Release PKI
     permissions:
@@ -41,8 +41,8 @@ jobs:
     name: Attest PKI
     permissions:
       id-token: write
-      attestations: read
       contents: read
+      attestations: read
     concurrency:
       group: release
     environment:
