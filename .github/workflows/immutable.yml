@@ -111,7 +111,7 @@ jobs:
             ${{env.DIR}}/sha512.sums#Shasums\ \(sha512\) \
             ${{env.DIR}}/Runner_output.log#Runner\ Output\ \(log\) \
             ${{env.DIR}}/Build_attestation.json#Build\ Attestation\ \(json\) || exit 1
-          echo \'SUMS=\"$(ls ${{env.DIR}}/ )\"\' >> $GITHUB_OUTPUT
+          echo SUMS=\"$(ls ${{env.DIR}}/ )\" >> $GITHUB_OUTPUT
       - name: Publish Release via API
         env:
           TAG: ${{steps.git_fetch.outputs.TAG}}
