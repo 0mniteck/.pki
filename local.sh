@@ -109,7 +109,7 @@ check.pki() { # $1 = domain/FQDN/IDN
 
 check.index() {
   unset e; e=1;
-  for i in $(cat .pki/index.csv | tr ',' '\n' | cat); do
+  for i in $(cat .pki/index/index.csv | tr ',' '\n' | cat); do
     declare -g -- e=$((e + 1))
     fetch.pki $i || declare -g -- FAIL+=:fetch.pki:$i
     check.pki $i || declare -g -- FAIL+=:check.pki:$i                 # Exists/Expired
