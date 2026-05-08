@@ -69,7 +69,7 @@ jobs:
               --signer-workflow 0mniteck/.pki/.github/workflows/immutable.yml --digest-alg sha512 \
               --predicate-type provenance || exit 1;
             echo "$I Attested"; done; echo Done checking provenance;
-            for J in ${{env.SUMS}}; do
+            for J in $(echo -en {{env.SUMS}} | sed 's/\\//g'); do
             gh attestation verify $J --repo 0mniteck/.pki --source-ref refs/heads/main \
               --signer-workflow 0mniteck/.pki/.github/workflows/immutable.yml --digest-alg sha256 \
               --predicate-type release || exit 1;
