@@ -41,7 +41,7 @@ jobs:
     concurrency:
       group: release
     needs: fetch-pki
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@ca9e4f398f106f24da21b454a0c40bd5c048f4d3 # v0.0.251
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@08f90ddd439b6255d8b76b967f1d84e0e1fb8a8e # v0.0.251
   attested-rel:
     name: Attest PKI
     permissions:
