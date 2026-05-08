@@ -15,8 +15,12 @@ on:
   repository_dispatch:
     types:
       - Global_Fetch
+  watch:
+    types:
+      - started
   schedule:
     - cron: '0 0/6 * * *'
+      timezone: America/Los_Angeles
   push:
     paths:
       - 'registry/*'
