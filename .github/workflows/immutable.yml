@@ -28,9 +28,9 @@ jobs:
       - name: Clear Attestations
         id: clear_attestations
         run: |
-          DIR=/home/runner/work/_temp/attestations
+          ATT_DIR=/home/runner/work/_temp/attestations
           echo "TAG=v0.0.$(cat index.version)" >> $GITHUB_ENV
-          echo "ATT_DIR=${DIR}" >> $GITHUB_ENV; echo "attestation-dir=${DIR}" >> $GITHUB_OUTPUT
+          echo "ATT_DIR=${ATT_DIR}" >> $GITHUB_ENV; echo "attestation-dir=${ATT_DIR}" >> $GITHUB_OUTPUT
           ATTEST=$(cat readme.md | sed -n '/attestations/,/]/p;//q' | cut -d'/' -f13 | cut -d')' -f1)
           DEL=$(curl -s -L -X DELETE -w "%{http_code}" \
             -H "Accept: application/vnd.github+json" \
