@@ -26,7 +26,7 @@ jobs:
         run: git fetch && git pull origin main && echo Fetched
       - name: Update readme.md
         run: |
-            VER=$(cat index.version)
+            VER=$(cat index/index.version)
             sed -i "s/$(echo $(grep Created readme.md))/> #### Attestation Created - v0.0.$VER Immutable Tag/" readme.md
             INP="> - [${{inputs.attested_url}}](${{inputs.attested_url}})"
             sed -i "$(($(grep -n Created readme.md | cut -d':' -f1) + 1))d" readme.md
