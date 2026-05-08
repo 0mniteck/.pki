@@ -9,8 +9,7 @@
 ##
 ## Future Requirements: gh v2.50+ (ubuntu:25.10 - gh v2.46)
 
-export -- LANG=C.UTF-8
-export -- TERM=xterm
+export -- LANG=C.UTF-8 TERM=xterm
 
 run_as=$(id -u -n)
 run_home=/home/$run_as
