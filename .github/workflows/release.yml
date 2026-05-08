@@ -11,6 +11,7 @@ on:
   push:
     paths:
       - 'registry/**'
+      - 'index/index.*'
 permissions: {}
 concurrency:
   group: release-main
@@ -25,7 +26,7 @@ jobs:
       group: release
     secrets:
       DOCKER: ${{secrets.DOCKER}}
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@5f4357453413b33d9c85d4152e48c45587ff28b4 # v0.0.247
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@7e70a681b774f0f3cc7ba8989e621270bc54d12e # v0.0.247
   release-pki:
     name: Release PKI
     permissions:
@@ -35,7 +36,7 @@ jobs:
     concurrency:
       group: release
     needs: fetch-pki
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@f2e444e6792968210745d4b77f6398b6d70c7b03 # v0.0.247
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@d81f1ddf808fec66ee114553a5d036fe1748c940 # v0.0.247
   attested-rel:
     name: Attest PKI
     permissions:
@@ -73,7 +74,7 @@ jobs:
       - release-pki
     with:
       attested_url: ${{needs.release-pki.outputs.URL}}
-    uses: 0mniteck/.pki/.github/workflows/read-me.yml@3a5852a387bb7f54af336f50acece56a001cf6c0 # v0.0.247
+    uses: 0mniteck/.pki/.github/workflows/read-me.yml@5f5a3f361400226fbf6698a3fd94e4238f35bf72 # v0.0.247
   gh-pages:
     name: Release Github Pages
     permissions: 
