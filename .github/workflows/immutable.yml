@@ -64,7 +64,7 @@ jobs:
           pushd ${{env.DIR}} > /dev/null
             echo 1. ${{steps.generate_attestation.outputs.bundle-path}} > Runner_output.log
             echo 2. ${{env.URL}} >> Runner_output.log
-            cat Runner_output.log; popd > /dev/null; cp -f index/index.state ${{env.DIR}}/
+            cat Runner_output.log; popd > /dev/null; cp -f index/index.state ${{env.DIR}}/index.state
       - name: Download Attestation (json) via API
         env:
           URL: ${{steps.generate_attestation.outputs.attestation-url}}
@@ -104,9 +104,9 @@ jobs:
         run: |
           gh release upload ${{env.TAG}} \
             ${{env.DIR}}/index.state#Index\ State \
-            ${{env.DIR}}/sha512.sums#\(Sha512sums\) \
+            ${{env.DIR}}/sha512.sums#Shasums\ \(sha512\) \
             ${{env.DIR}}/Runner_output.log#Runner\ Output\ \(log\) \
-            ${{env.DIR}}/Build_attestation.json#Build\ Attestation\ \(json\)
+            ${{env.DIR}}/Build_attestation.json#Build\ Attestation\ \(json\) || exit 1
       - name: Publish Release via API
         env:
           TAG: ${{steps.git_fetch.outputs.TAG}}
