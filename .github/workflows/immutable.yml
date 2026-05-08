@@ -29,7 +29,7 @@ jobs:
         id: clear_attestations
         run: |
           ATT_DIR=/home/runner/work/_temp/attestations
-          echo "TAG=v0.0.$(cat index.version)" >> $GITHUB_ENV
+          echo "TAG=v0.0.$(cat index/index.version)" >> $GITHUB_ENV
           echo "ATT_DIR=${ATT_DIR}" >> $GITHUB_ENV; echo "attestation-dir=${ATT_DIR}" >> $GITHUB_OUTPUT
           ATTEST=$(cat readme.md | sed -n '/attestations/,/]/p;//q' | cut -d'/' -f13 | cut -d')' -f1)
           DEL=$(curl -s -L -X DELETE -w "%{http_code}" \
@@ -38,7 +38,7 @@ jobs:
             -H "X-GitHub-Api-Version: 2026-03-10" \
             https://api.github.com/users/0mniteck/attestations/${ATTEST})
           if [[ "$DEL" == "404" ]]; then
-            DIGESTS=$(sha512sum --tag .github/{actions/jekyll,workflows}/* registry/* index.* local.sh | cut -d'=' -f2 | sed 's/ /sha512:/g' | tr '\n' ' ')
+            DIGESTS=$(sha512sum --tag .github/{actions/jekyll,workflows}/* registry/* index/index.* local.sh | cut -d'=' -f2 | sed 's/ /sha512:/g' | tr '\n' ' ')
             for DIGEST in $DIGESTS; do
             	curl -s -L -X DELETE \
             		-H "Accept: application/vnd.github+json" \
@@ -47,7 +47,7 @@ jobs:
             		https://api.github.com/users/0mniteck/attestations/digest/${DIGEST}
               echo "Cleared Attestation for ${DIGEST}"
             done; fi; mkdir -p $ATT_DIR
-          sha512sum .github/{actions/jekyll,workflows}/* registry/* index.* local.sh > $ATT_DIR/sha512.sums; cat $ATT_DIR/sha512.sums
+          sha512sum .github/{actions/jekyll,workflows}/* registry/* index/index.* local.sh > $ATT_DIR/sha512.sums; cat $ATT_DIR/sha512.sums
       - name: Generate Attestations for Build Provenance v4
         id: generate_attestation
         uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
@@ -62,7 +62,7 @@ jobs:
             echo 1. ${{steps.generate_attestation.outputs.bundle-path}} > Runner_output.log
             echo 2. ${{steps.generate_attestation.outputs.attestation-url}} >> Runner_output.log
             echo "URL=${{steps.generate_attestation.outputs.attestation-url}}" >> $GITHUB_OUTPUT
-            cat Runner_output.log; popd > /dev/null; cp -f index.state $ATT_DIR/
+            cat Runner_output.log; popd > /dev/null; cp -f index/index.state $ATT_DIR/
       - name: Download Attestation (json) via API
         run: |
           curl -s -L -o $ATT_DIR/Build_attestation.json \
