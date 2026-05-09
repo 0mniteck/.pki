@@ -89,7 +89,7 @@ jobs:
           
           for J in $(echo -en ${{env.SUMS}} | sed 's/\\//g'); do
             gh release verify-asset ${{env.TAG}} attestations/$J || exit 1;
-            echo "$I Attested";  
+            echo "$J Attested";  
           done; echo Done checking all attestations;
   read-me:
     name: Publish readme.md
