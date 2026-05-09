@@ -19,8 +19,8 @@ Successfully fetched and checked validity for 0mniteck.com
 
 #### [Github Workflow](https://github.com/0mniteck/.pki/blob/main/.github/workflows/release.yml) - <sub><sub>[![Release](https://github.com/0mniteck/.pki/actions/workflows/release.yml/badge.svg)](https://github.com/0mniteck/.pki/actions/workflows/release.yml)</sub></sub>
 
-> #### Attestation Created - v0.0.258 Immutable Tag
-> - [https://github.com/0mniteck/.pki/attestations/26918732](https://github.com/0mniteck/.pki/attestations/26918732)
+> #### Attestation Created - v0.0.266 Immutable Tag
+> - [https://github.com/0mniteck/.pki/attestations/26961371](https://github.com/0mniteck/.pki/attestations/26961371)
 ##
 
 #### client side validation of `registry/` against expiry, liveness, and remote/ref, using PQ+DoH+DNSEC
