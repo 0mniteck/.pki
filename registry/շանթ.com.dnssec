@@ -1,8 +1,8 @@
 - type: MESSAGE
  message:
  type: RECURSIVE_RESPONSE
- query_time: !!timestamp 2026-05-09T19:07:50.617Z
- response_time: !!timestamp 2026-05-09T19:07:50.623Z
+ query_time: !!timestamp 2026-05-09T19:21:49.851Z
+ response_time: !!timestamp 2026-05-09T19:21:49.881Z
  message_size: 198b
  socket_family: INET
  socket_protocol: TCP
@@ -13,7 +13,7 @@
  response_message_data:
  opcode: QUERY
  status: NOERROR
- id: 12377
+ id: 64001
  flags: qr rd ra ad
  QUESTION: 1
  ANSWER: 0
@@ -28,4 +28,4 @@
  - 'xn--y9aq2bc.com. IN SIG'
  AUTHORITY_SECTION:
  - 'xn--y9aq2bc.com. 300 IN NSEC *.xn--y9aq2bc.com. A NS SOA KEY AAAA RRSIG NSEC DNSKEY CAA'
- - 'xn--y9aq2bc.com. 300 IN RRSIG NSEC 13 2 300 20260511190748 20260507190748 3551 xn--y9aq2bc.com. DniBAURBcN23XVWzeSw3XLFE8nMrR+L8fsrIdjZC5hR/sXlhXiVFF4EG 2SX7YkPIU7sbU7/u+NR/EIJTEMLR4w=='
+ - 'xn--y9aq2bc.com. 300 IN RRSIG NSEC 13 2 300 20260511192149 20260507192149 3551 xn--y9aq2bc.com. JipK0OvSJF+r0JhRZB0SkQtDTZzSrLMSBW+awQxDsa8Cl7YCWs/wBrYU 47B2beSuoty4pX7GE4Ov0wYaVYNRNA=='
