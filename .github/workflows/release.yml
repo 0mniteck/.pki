@@ -7,11 +7,11 @@ on:
       RUN_CHECK:
         required: true
         type: boolean
-        default: true
+        default: false
       RUN_REF:
         required: true
         type: string
-        description: 'State pinning for this runners ref'
+        description: 'State pinning to the signers ref'
   repository_dispatch:
     types:
       - Global_Fetch
@@ -31,7 +31,6 @@ concurrency:
   cancel-in-progress: true
 jobs:
   fetch-pki:
-    if: ${{inputs.RUN_CHECK == false || inputs.RUN_REF == github.workflow_sha}}
     name: Fetch PKI
     permissions:
       id-token: write
@@ -50,7 +49,7 @@ jobs:
     concurrency:
       group: release
     needs: fetch-pki
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@a6bf143f6cac37e1d082187b77c9036e6865e64a # v0.0.288
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@cd57210d555d705f494bf9cfcc40c0d0c82462f1 # v0.0.288
   attested-rel:
     name: Attest PKI
     permissions:
@@ -74,28 +73,37 @@ jobs:
       - name: Run gh attestation verify
         env:
           GH_TOKEN: ${{github.token}}
-          SUMS: ${{needs.release-pki.outputs.SUMS}}
           TAG: ${{steps.git_fetch.outputs.TAG}}
+          SUMS: ${{needs.release-pki.outputs.SUMS}}
+          SIGNER: ${{needs.release-pki.outputs.SIGNER}}
+          SIGNER_WF: 0mniteck/.pki/.github/workflows/immutable.yml
+        if: ${{inputs.RUN_CHECK == false || inputs.RUN_REF == env.SIGNER}}
+        timeout-minutes: 10
         run: |
           for I in .github/{actions/jekyll,workflows}/* registry/* index/index.* local.sh ; do
-            gh attestation verify $I --repo 0mniteck/.pki --source-ref refs/heads/main \
-              --signer-workflow  ${{job.workflow_file_path.immutable-rel}} --digest-alg sha512 \
-              --signer-digest ${{job.workflow_sha.immutable-rel}} --predicate-type provenance \
+            gh attestation verify $I --repo ${{github.repository}} --source-ref ${{github.ref}} \
+              --signer-workflow ${{env.SIGNER_WF}} --digest-alg sha512 \
+              --signer-digest ${{env.SIGNER}} --predicate-type provenance \
               --deny-self-hosted-runners -L 1 || exit 1;
-            echo "$I Attested"; done; echo Done checking provenance;
-            gh release verify ${{env.TAG}} || exit 1; mkdir -p attestations/
-            echo Done checking release by tag;
-            gh release download ${{env.TAG}} -p '*.json' -p '*.log' -p '*.state' -p '*.sums' -D attestations
-          done;
+            echo "$I Attested";
+          done; echo Done checking provenance;
+          
+          gh release verify ${{env.TAG}} || exit 1; mkdir -p attestations/
+          echo Done checking release by tag;
+          gh release download ${{env.TAG}} -p '*.json' -p '*.log' -p '*.state' -p '*.sums' -D attestations
+          
           for J in $(echo -en ${{env.SUMS}} | sed 's/\\//g'); do
             gh release verify-asset ${{env.TAG}} attestations/$J || exit 1;
+            echo "$I Attested";
           done; echo Done checking release assets;
-          for J in $(echo -en ${{env.SUMS}} | sed 's/\\//g'); do
-            gh attestation verify attestations/$J --repo 0mniteck/.pki --source-ref refs/heads/main \
-              --signer-workflow ${{job.workflow_file_path.immutable-rel}} --digest-alg sha256 \
-              --signer-digest ${{job.workflow_sha.immutable-rel}} --predicate-type release \
+          
+          for K in $(echo -en ${{env.SUMS}} | sed 's/\\//g'); do
+            gh attestation verify attestations/$K --repo ${{github.repository}} --source-ref ${{github.ref}} \
+              --signer-workflow ${{env.SIGNER_WF}} --digest-alg sha256 \
+              --signer-digest ${{env.SIGNER}} --predicate-type release \
               --deny-self-hosted-runners -L 1 || exit 1;
-            echo "$J Attested"; done; echo Done checking;
+            echo "$J Attested again";
+          done; echo Done checking all attestations;
   read-me:
     name: Publish readme.md
     permissions:
