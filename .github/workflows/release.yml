@@ -4,13 +4,10 @@ description: GitHub Action to manage the immutable/attestable release cycle of 0
 on:
   workflow_dispatch:
     inputs:
-      RUN_CHECK:
-        required: true
-        type: boolean
-        default: false
       RUN_REF:
         required: true
         type: string
+        default: cd57210d555d705f494bf9cfcc40c0d0c82462f1
         description: 'State pinning to the signers ref'
   repository_dispatch:
     types:
@@ -75,9 +72,8 @@ jobs:
           GH_TOKEN: ${{github.token}}
           TAG: ${{steps.git_fetch.outputs.TAG}}
           SUMS: ${{needs.release-pki.outputs.SUMS}}
-          SIGNER: ${{needs.release-pki.outputs.SIGNER}}
+          SIGNER: ${{inputs.RUN_REF}}
           SIGNER_WF: 0mniteck/.pki/.github/workflows/immutable.yml
-        if: ${{inputs.RUN_CHECK == false || inputs.RUN_REF == env.SIGNER}}
         timeout-minutes: 10
         run: |
           for I in .github/{actions/jekyll,workflows}/* registry/* index/index.* local.sh ; do
