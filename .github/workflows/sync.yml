@@ -3,6 +3,10 @@ run-name: Sync Fork
 description: 'This workflow uses the GitHub CLI to keep one branch on a forked repo in sync with the upstream repo'
 on:
   workflow_call:
+permissions: {}
+concurrency:
+  group: release
+  cancel-in-progress: true
 jobs:
   sync:
     if: ${{github.ref != 'refs/heads/main'}}
