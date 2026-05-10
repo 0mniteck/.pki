@@ -34,7 +34,7 @@ jobs:
       - name: Git Fetch
         id: git_fetch
         run: |
-          git fetch && git pull origin main && echo Fetched
+          git fetch && git pull origin ${{github.ref_name}} && echo Fetched
           echo "TAG=v0.0.$(cat index/index.version)" >> $GITHUB_OUTPUT
       - name: Clear Attestations
         id: clear_attestations
