@@ -44,7 +44,7 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{github.token}}" \
             -H "X-GitHub-Api-Version: 2026-03-10" \
-            https://api.github.com/users/0mniteck/attestations/$ATTEST)
+            https://api.github.com/users/${{github.repository_owner}}/attestations/$ATTEST)
           if [[ "$DEL" == "404" ]]; then
             DIGESTS=$(sha512sum --tag .github/{actions/jekyll,workflows}/* registry/* index/index.* local.sh | cut -d'=' -f2 | sed 's/ /sha512:/g' | tr '\n' ' ')
             for DIGEST in $DIGESTS; do
@@ -52,7 +52,7 @@ jobs:
             		-H "Accept: application/vnd.github+json" \
             		-H "Authorization: Bearer ${{github.token}}" \
             		-H "X-GitHub-Api-Version: 2026-03-10" \
-            		https://api.github.com/users/0mniteck/attestations/digest/$DIGEST
+            		https://api.github.com/users/${{github.repository_owner}}/attestations/digest/$DIGEST
               echo "Cleared Attestation for $DIGEST"
             done; fi; mkdir -p ${{env.DIR}}
           sha512sum .github/{actions/jekyll,workflows}/* registry/* index/index.* local.sh > $DIR/sha512.sums; cat $DIR/sha512.sums
@@ -89,7 +89,7 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{github.token}}" \
             -H "X-GitHub-Api-Version: 2026-03-10" \
-            https://api.github.com/repos/0mniteck/.pki/releases \
+            https://api.github.com/repos/${{github.repository}}/releases \
             -d '{
               "tag_name":"${{env.TAG}}",
               "target_commitish":"main",
@@ -124,7 +124,7 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{github.token}}" \
             -H "X-GitHub-Api-Version: 2026-03-10" \
-            https://api.github.com/repos/0mniteck/.pki/releases/${{steps.draft_release.outputs.responded}} \
+            https://api.github.com/repos/${{github.repository}}/releases/${{steps.draft_release.outputs.responded}} \
             -d '{
               "name":"${{env.TAG}}",
               "body":"## Attestable - Immutable - Post Quantum\n> #### Attestation Created - ${{env.TAG}} Immutable Tag\n> - [${{env.URL}}](${{env.URL}})\n\n${{steps.draft_release.outputs.response}}\n\nBy: @0mniteck\n",
