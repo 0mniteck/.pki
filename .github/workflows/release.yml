@@ -1,6 +1,6 @@
 name: Release
 run-name: Release
-description: GitHub Action to manage the immutable/attestable release cycle of 0mniteck/.pki
+description: 'GitHub Action to manage the immutable/attestable release cycle of 0mniteck/.pki pinned at tag v0.0.279'
 on:
   workflow_dispatch:
     inputs:
@@ -35,7 +35,7 @@ jobs:
       group: release
     secrets:
       DOCKER: ${{secrets.DOCKER}}
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@bef7e587d9e97db5e3a50494091f4f72153ed58d # v0.0.278
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@ed973f249bf28fe9dd99faf1a26bb6ffa4d26b39 # v0.0.279
   release-pki:
     name: Release PKI
     permissions:
@@ -45,7 +45,7 @@ jobs:
     concurrency:
       group: release
     needs: fetch-pki
-    uses: 0mniteck/.pki/.github/workflows/immutable.yml@4d101c99b0d87ec4e96e15661b6d383baf87e8c0 # v0.0.277
+    uses: 0mniteck/.pki/.github/workflows/immutable.yml@70b1aa53705db3ab9b7aab98e9bea1b05eec525d # v0.0.279
   attested-rel:
     name: Attest PKI
     permissions:
@@ -64,14 +64,14 @@ jobs:
       - name: Git Fetch
         id: git_fetch
         run: |
-          git fetch && git pull origin main && echo Fetched
+          git fetch && git pull origin ${{github.ref_name}} && echo Fetched
           echo "TAG=v0.0.$(cat index/index.version)" >> $GITHUB_OUTPUT
       - name: Run gh attestation verify
         env:
           GH_TOKEN: ${{github.token}}
           TAG: ${{steps.git_fetch.outputs.TAG}}
           SUMS: ${{needs.release-pki.outputs.SUMS}}
-          SIGNER: ${{inputs.RUN_REF || '4d101c99b0d87ec4e96e15661b6d383baf87e8c0'}}
+          SIGNER: ${{inputs.RUN_REF || '70b1aa53705db3ab9b7aab98e9bea1b05eec525d'}} # v0.0.279
           SIGNER_WF: 0mniteck/.pki/.github/workflows/immutable.yml
         timeout-minutes: 10
         run: |
@@ -103,7 +103,7 @@ jobs:
       - release-pki
     with:
       attested_url: ${{needs.release-pki.outputs.URL}}
-    uses: 0mniteck/.pki/.github/workflows/read-me.yml@5f5a3f361400226fbf6698a3fd94e4238f35bf72 # v0.0.247
+    uses: 0mniteck/.pki/.github/workflows/read-me.yml@bc57d7378d1f5eae73ec686b926b99474c088c5e # v0.0.279
   gh-pages:
     name: Release Github Pages
     permissions: 
@@ -113,7 +113,7 @@ jobs:
     concurrency:
       group: release
     needs: read-me
-    uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@7d265b0ba9324017b4e315196a6483f3c59cffee # v0.0.247
+    uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@30b4438d02fc2e4ceebb05b087251fd442acf324 # v0.0.279
   sync-branch:
     name: Sync Branch ${{github.ref_name}}
     permissions:
@@ -121,4 +121,4 @@ jobs:
     concurrency:
       group: release
     needs: gh-pages
-    uses: 0mniteck/.pki/.github/workflows/sync.yml@481f1d7706ce1c5e8374c68368e3e0a1e8eb4e94 # v0.0.278
+    uses: 0mniteck/.pki/.github/workflows/sync.yml@9abc4d44732a1e08856b83184c96cd5292ba1607 # v0.0.279
