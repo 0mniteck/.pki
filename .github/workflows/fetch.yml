@@ -27,11 +27,11 @@ jobs:
       - name: Apt Install
         run: apt-get -qq update > /dev/null && apt-get install curl dnsutils git -qq --no-install-recommends > /dev/null && which curl dig git || exit 1
       - name: Git Config
-        run: git config --global --add safe.directory /__w/.pki/.pki && git config --global init.defaultBranch main && git config --global pull.ff only
+        run: git config --global --add safe.directory /__w/.pki/.pki && git config --global init.defaultBranch ${{github.ref_name}}
       - name: Checkout v6
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Git Fetch
-        run: git fetch && git pull origin main && echo Fetched
+        run: git fetch && git pull origin ${{github.ref_name}} && echo Fetched
       - name: Validate PKI
         shell: bash
         run: |
