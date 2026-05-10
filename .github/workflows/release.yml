@@ -35,7 +35,7 @@ jobs:
       group: release
     secrets:
       DOCKER: ${{secrets.DOCKER}}
-    uses: 0mniteck/.pki/.github/workflows/fetch.yml@7e70a681b774f0f3cc7ba8989e621270bc54d12e # v0.0.247
+    uses: 0mniteck/.pki/.github/workflows/fetch.yml@bef7e587d9e97db5e3a50494091f4f72153ed58d # v0.0.278
   release-pki:
     name: Release PKI
     permissions:
@@ -114,3 +114,11 @@ jobs:
       group: release
     needs: read-me
     uses: 0mniteck/.pki/.github/workflows/gh-pages.yml@7d265b0ba9324017b4e315196a6483f3c59cffee # v0.0.247
+  sync-branch:
+    name: Sync Branch ${{github.ref_name}}
+    permissions:
+      contents: write
+    concurrency:
+      group: release
+    needs: gh-pages
+    uses: 0mniteck/.pki/.github/workflows/sync.yml@5a31c7417d6f72e23db908a495aea1e88bb73c43 # v0.0.278
