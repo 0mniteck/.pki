@@ -28,6 +28,7 @@ Successfully fetched and checked validity for 0mniteck.com
 > [local.sh](https://github.com/0mniteck/.pki/blob/main/local.sh) # WIP - gh attestation verify (Ubuntu v2.46) - (Needs v2.50+) - skipping for now...
 
 #### call function from `./local.sh` to run validation in each project level script
+
 $CLIENT_ID is an optional github app ID to run a repository_dispatch event to trigger a manual run of the workflow
 ```
 validate.with.pki() { # $1 = full_url.TDL/.../[file] or blank to only verify, $CLIENT_ID = Github App Client ID (optional)
