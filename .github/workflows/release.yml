@@ -67,7 +67,9 @@ jobs:
       - name: Git Fetch
         id: git_fetch
         run: |
-          git fetch && git pull origin ${{github.ref_name}} && echo Fetched
+          git fetch --no-tags --no-all ${{github.repository}} refs/heads/${{github.ref_name}}
+          git pull origin ${{github.ref_name}}
+          echo Fetched
           echo "TAG=v0.0.$(cat index/index.version)" >> $GITHUB_OUTPUT
       - name: Run gh attestation verify
         env:
@@ -107,7 +109,7 @@ jobs:
       - release-pki
     with:
       attested_url: ${{needs.release-pki.outputs.URL}}
-    uses: 0mniteck/.pki/.github/workflows/read-me.yml@cfa3e7f69963aa1f0eb029fce9731136804adfb8 # v0.0.281
+    uses: 0mniteck/.pki/.github/workflows/read-me.yml@8e617047316bea5a27762cba13a82db7c1bf4266 # v0.0.331
   gh-pages:
     name: Release Github Pages
     permissions: 
