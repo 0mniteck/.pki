@@ -7,7 +7,7 @@ on:
       RUN_REF:
         required: true
         type: string
-        description: 'State pinning to the immutable signers ref'
+        description: 'Ref pinning to the immutable signer:'
   repository_dispatch:
     types:
       - Global_Fetch
