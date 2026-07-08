@@ -45,10 +45,10 @@ Successfully fetched and checked validity for www.cloudflare.com
  --> +post_quantum --> +dnssec
 15:
 Successfully fetched and checked validity for xn--y9aq2bc.com
- --> +etag --> +post_quantum --> +dnssec
+ --> +post_quantum --> +dnssec
 16:
 Successfully fetched and checked validity for Շանթ.com
- --> +etag --> +post_quantum --> +dnssec
+ --> +post_quantum --> +dnssec
 17:
 Successfully fetched and checked validity for շանթ.com
- --> +etag --> +post_quantum --> +dnssec
+ --> +post_quantum --> +dnssec
