@@ -30,7 +30,7 @@ Successfully fetched and checked validity for one.one.one.one
  --> +etag --> +post_quantum --> +dnssec
 10:
 Successfully fetched and checked validity for omniteck.com
- --> +etag --> +post_quantum --> +dnssec
+ --> +post_quantum --> +dnssec
 11:
 Successfully fetched and checked validity for pq.cloudflareresearch.com
  --> +post_quantum
