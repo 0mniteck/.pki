@@ -1,8 +1,8 @@
 - type: MESSAGE
  message:
  type: RECURSIVE_RESPONSE
- query_time: !!timestamp 2026-07-10T01:41:25.057Z
- response_time: !!timestamp 2026-07-10T01:41:25.097Z
+ query_time: !!timestamp 2026-07-10T08:11:25.821Z
+ response_time: !!timestamp 2026-07-10T08:11:25.853Z
  message_size: 189b
  socket_family: INET
  socket_protocol: TCP
@@ -13,7 +13,7 @@
  response_message_data:
  opcode: QUERY
  status: NOERROR
- id: 22984
+ id: 33645
  flags: qr rd ra ad
  QUESTION: 1
  ANSWER: 0
@@ -28,4 +28,4 @@
  - 'omniteck.com. IN SIG'
  AUTHORITY_SECTION:
  - 'omniteck.com. 300 IN NSEC *.omniteck.com. A NS SOA MX TXT RP AAAA RRSIG NSEC DNSKEY CAA'
- - 'omniteck.com. 300 IN RRSIG NSEC 13 2 300 20260712014125 20260708014125 1926 omniteck.com. ehD81fKzuElwh0PgSeegsUxzOQmye/AEyX98EOQLuTjr/DkDKYGP1Puc pewRPveE4pD2fZlkCIFUuAFWocQ6Eg=='
+ - 'omniteck.com. 300 IN RRSIG NSEC 13 2 300 20260712081125 20260708081125 1926 omniteck.com. dsdru4JcnXc4IGG/vAn+ecCftGze4x417PIjW96T0AN4jJ8cmnFL0No/ UVNr9BaO7sxeUqoN5v+h3wH/c+k0xg=='
