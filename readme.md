@@ -11,8 +11,8 @@ adding into the `registry/` from the list stored in `index/index.csv` every 6 ho
 
 #### [Github Workflow](https://github.com/0mniteck/.pki/blob/main/.github/workflows/release.yml) - <sub><sub>[![Release](https://github.com/0mniteck/.pki/actions/workflows/release.yml/badge.svg)](https://github.com/0mniteck/.pki/actions/workflows/release.yml)</sub></sub>
 
-> #### Attestation Created - v0.0.396 Immutable Tag
-> - [https://github.com/0mniteck/.pki/attestations/34950105](https://github.com/0mniteck/.pki/attestations/34950105)
+> #### Attestation Created - v0.0.397 Immutable Tag
+> - [https://github.com/0mniteck/.pki/attestations/34970210](https://github.com/0mniteck/.pki/attestations/34970210)
 ##
 
 Auto generated statefile in `index/index.state` hold current available connections.
