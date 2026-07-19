@@ -3,7 +3,7 @@ OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)
 DiG 9.20.23-1~deb13u1-Debian
 1:
 Successfully fetched and checked validity for 0mniteck.com
- --> +etag --> +post_quantum --> +dnssec
+ --> +post_quantum --> +dnssec
 2:
 Successfully fetched and checked validity for 1.1.1.1
  --> +post_quantum --> +dnssec
