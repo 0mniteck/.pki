@@ -1,8 +1,8 @@
 - type: MESSAGE
  message:
  type: RECURSIVE_RESPONSE
- query_time: !!timestamp 2026-07-21T13:37:13.893Z
- response_time: !!timestamp 2026-07-21T13:37:13.943Z
+ query_time: !!timestamp 2026-07-21T19:34:32.674Z
+ response_time: !!timestamp 2026-07-21T19:34:32.787Z
  message_size: 198b
  socket_family: INET
  socket_protocol: TCP
@@ -13,7 +13,7 @@
  response_message_data:
  opcode: QUERY
  status: NOERROR
- id: 17125
+ id: 37122
  flags: qr rd ra ad
  QUESTION: 1
  ANSWER: 0
@@ -28,4 +28,4 @@
  - 'xn--y9aq2bc.com. IN SIG'
  AUTHORITY_SECTION:
  - 'xn--y9aq2bc.com. 300 IN NSEC *.xn--y9aq2bc.com. A NS SOA KEY AAAA RRSIG NSEC DNSKEY CAA'
- - 'xn--y9aq2bc.com. 300 IN RRSIG NSEC 13 2 300 20260723133713 20260719133713 3551 xn--y9aq2bc.com. P0a2FzUK074+l/txKOW6v5oO8mV33+SKKw4Vgv0mQ4tkCpcolvV6LmRf IEOtkNb913lH/UDCHb9YDnCYFFzs1g=='
+ - 'xn--y9aq2bc.com. 300 IN RRSIG NSEC 13 2 300 20260723193431 20260719193431 3551 xn--y9aq2bc.com. SwaHqlmZB/M4f0/tyyccPM9pRotME7Bb+1rOa7LVbWxXv6aQSahGIjA8 Y4gJmK3cgEtcaaM20yb/cae/UpoRAg=='
