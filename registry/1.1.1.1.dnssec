@@ -1,8 +1,8 @@
 - type: MESSAGE
  message:
  type: RECURSIVE_RESPONSE
- query_time: !!timestamp 2026-07-26T07:52:39.757Z
- response_time: !!timestamp 2026-07-26T07:52:39.769Z
+ query_time: !!timestamp 2026-07-26T08:16:15.188Z
+ response_time: !!timestamp 2026-07-26T08:16:15.193Z
  message_size: 709b
  socket_family: INET
  socket_protocol: TCP
@@ -13,7 +13,7 @@
  response_message_data:
  opcode: QUERY
  status: NXDOMAIN
- id: 19007
+ id: 53494
  flags: qr rd ra ad
  QUESTION: 1
  ANSWER: 0
