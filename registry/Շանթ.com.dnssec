@@ -1,19 +1,19 @@
 - type: MESSAGE
  message:
  type: RECURSIVE_RESPONSE
- query_time: !!timestamp 2026-07-28T13:38:40.726Z
- response_time: !!timestamp 2026-07-28T13:38:40.792Z
+ query_time: !!timestamp 2026-07-28T19:35:55.970Z
+ response_time: !!timestamp 2026-07-28T19:35:55.975Z
  message_size: 198b
  socket_family: INET
  socket_protocol: TCP
- response_address: "1.0.0.1"
+ response_address: "1.1.1.1"
  response_port: 443
  query_address: "0.0.0.0"
  query_port: 0
  response_message_data:
  opcode: QUERY
  status: NOERROR
- id: 30986
+ id: 41925
  flags: qr rd ra ad
  QUESTION: 1
  ANSWER: 0
@@ -27,5 +27,5 @@
  QUESTION_SECTION:
  - 'xn--y9aq2bc.com. IN SIG'
  AUTHORITY_SECTION:
- - 'xn--y9aq2bc.com. 300 IN NSEC *.xn--y9aq2bc.com. A NS SOA KEY AAAA RRSIG NSEC DNSKEY CAA'
- - 'xn--y9aq2bc.com. 300 IN RRSIG NSEC 13 2 300 20260730133840 20260726133840 3551 xn--y9aq2bc.com. Za+EV0JQAtAovsrB8UTVYPcmchwL8ZaJe0VpsEdR5jY9VX9cQYlBrVU6 AR4SjAgMQwPhfKwjxAvO8j8WocI4FA=='
+ - 'xn--y9aq2bc.com. 299 IN NSEC *.xn--y9aq2bc.com. A NS SOA KEY AAAA RRSIG NSEC DNSKEY CAA'
+ - 'xn--y9aq2bc.com. 299 IN RRSIG NSEC 13 2 300 20260730193554 20260726193554 3551 xn--y9aq2bc.com. 8ffShCFeRxpPAiCA89n4060+vmK83rcNMCPaLPeXInZqtJn7Lsla/3wD JDwuH4ycGSrMUcwxYvcDsmhmfc0QGA=='
