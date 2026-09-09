@@ -1,19 +1,19 @@
 - type: MESSAGE
  message:
  type: RECURSIVE_RESPONSE
- query_time: !!timestamp 2026-09-09T12:15:06.265Z
- response_time: !!timestamp 2026-09-09T12:15:06.422Z
+ query_time: !!timestamp 2026-09-09T17:05:45.341Z
+ response_time: !!timestamp 2026-09-09T17:05:45.356Z
  message_size: 709b
  socket_family: INET
  socket_protocol: TCP
- response_address: "1.1.1.1"
+ response_address: "1.0.0.1"
  response_port: 443
  query_address: "0.0.0.0"
  query_port: 0
  response_message_data:
  opcode: QUERY
  status: NXDOMAIN
- id: 22484
+ id: 50424
  flags: qr rd ra ad
  QUESTION: 1
  ANSWER: 0
