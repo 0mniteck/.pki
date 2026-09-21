@@ -1,19 +1,19 @@
 - type: MESSAGE
  message:
  type: RECURSIVE_RESPONSE
- query_time: !!timestamp 2026-09-21T13:18:22.175Z
- response_time: !!timestamp 2026-09-21T13:18:22.212Z
+ query_time: !!timestamp 2026-09-21T19:15:04.573Z
+ response_time: !!timestamp 2026-09-21T19:15:04.624Z
  message_size: 204b
  socket_family: INET
  socket_protocol: TCP
- response_address: "1.0.0.1"
+ response_address: "1.1.1.1"
  response_port: 443
  query_address: "0.0.0.0"
  query_port: 0
  response_message_data:
  opcode: QUERY
  status: NOERROR
- id: 37234
+ id: 48111
  flags: qr rd ra ad
  QUESTION: 1
  ANSWER: 0
@@ -28,4 +28,4 @@
  - '0mniteck.com. IN SIG'
  AUTHORITY_SECTION:
  - '0mniteck.com. 300 IN NSEC _dns-update._udp.0mniteck.com. A NS SOA TXT RP AAAA RRSIG NSEC DNSKEY CAA'
- - '0mniteck.com. 300 IN RRSIG NSEC 13 2 300 20260923131822 20260919131822 41738 0mniteck.com. H4tXf3lKhijP+SNVmsMBuzQ0XUZlmdXybdISjQCmPZjBHykL0FBZl8xt 9g9scgYw1PE6aogQjIAVo/o847RJhA=='
+ - '0mniteck.com. 300 IN RRSIG NSEC 13 2 300 20260923191504 20260919191504 41738 0mniteck.com. p0HFTeIoS3HHr7Aqx+bEV6M+R33OhYV4Wl1GMqs2wwQhG4auNFl1gLeC GsQuPZ+h5mozJ+Qq1dc6zpBPT0cLNQ=='
