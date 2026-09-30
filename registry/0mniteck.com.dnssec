@@ -1,8 +1,8 @@
 - type: MESSAGE
  message:
  type: RECURSIVE_RESPONSE
- query_time: !!timestamp 2026-09-30T13:21:08.717Z
- response_time: !!timestamp 2026-09-30T13:21:08.769Z
+ query_time: !!timestamp 2026-09-30T19:15:45.769Z
+ response_time: !!timestamp 2026-09-30T19:15:45.804Z
  message_size: 192b
  socket_family: INET
  socket_protocol: TCP
@@ -13,7 +13,7 @@
  response_message_data:
  opcode: QUERY
  status: NOERROR
- id: 10130
+ id: 12217
  flags: qr rd ra ad
  QUESTION: 1
  ANSWER: 0
@@ -28,4 +28,4 @@
  - '0mniteck.com. IN SIG'
  AUTHORITY_SECTION:
  - '0mniteck.com. 300 IN NSEC _udp.0mniteck.com. A NS SOA TXT RP AAAA RRSIG NSEC DNSKEY CAA'
- - '0mniteck.com. 300 IN RRSIG NSEC 13 2 300 20261002132108 20260928132108 41738 0mniteck.com. RTImoyoY3Np83Xmjs3wfS4Bu/JSVd8tZyjwvYrl+T3PtUq1a6n2zin9B lKO/RbqGereMrBPC26PvDt89lDQ+nQ=='
+ - '0mniteck.com. 300 IN RRSIG NSEC 13 2 300 20261002191545 20260928191545 41738 0mniteck.com. zgxqZai3PxT0Pk7opZDHM8WU2a4K+oYe64B63K4wEhuUDfXjEEMPudk2 DU1RyLwgsE0KB/QtSpIsEWcS8fiWuw=='
