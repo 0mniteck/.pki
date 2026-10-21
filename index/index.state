@@ -15,7 +15,7 @@ Successfully fetched and checked validity for cloudflare.com
  --> +post_quantum --> +dnssec
 5:
 Successfully fetched and checked validity for dhi.io
- --> +post_quantum
+
 6:
 Successfully fetched and checked validity for docker.com
  --> +post_quantum
